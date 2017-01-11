@@ -76,3 +76,32 @@ def visual(dataset, date, wavelength, path_name):
         cbar.ax.tick_params(labelsize=17, pad=5) 
         plt.tight_layout()
         plt.savefig('%s/%s_%i_visual_%s.jpeg' % (path_name, date, wavelength, names[i]))
+        
+
+def other(who, what, when):
+    """
+    Just a test example
+    
+    who : 
+        Path of file containing visual image data. (String)
+        
+    what : 
+        Date of dataset in 'YYYYMMDD' format. (String)
+    
+    when :
+        Wavelength of dataset. (Integer)
+                        
+    Example:
+    ::
+        fm.visual(dataset='C:/Users/Brendan/Desktop/SDO/param_20120923_211_0_300_0_574_numpy.npy',
+          wavelength=211, path_name='C:/Users/Brendan/Desktop/PHYS 326') 
+    """
+
+    titles = ['Average', 'Middle-File']
+    names = ['average', 'mid']
+    
+    wavelength = wavelength
+    year = date[0:4]
+    month = date[4:6]
+    day = date[6:8]
+    date_title = '%s-%s-%s' % (year,month,day)

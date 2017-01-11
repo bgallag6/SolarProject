@@ -14,3 +14,13 @@ If you have questions, contact me
 
    Return an iterator that yields tuples of an index and an item of the
    *sequence*. (And so on.)
+
+test function docs
+
+.. autofunction:: other
+
+
+test module docs
+
+.. automodule:: visual
+   :members:
