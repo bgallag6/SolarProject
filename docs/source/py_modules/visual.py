@@ -79,16 +79,15 @@ def visual(dataset, date, wavelength, path_name):
         
 
 def other(who, what, when):
-    """
-    Just a test example
+    """Just a test example.
     
-    who : 
+    who: 
         Path of file containing visual image data. (String)
         
-    what : 
+    what: 
         Date of dataset in 'YYYYMMDD' format. (String)
     
-    when :
+    when:
         Wavelength of dataset. (Integer)
                         
     Example:

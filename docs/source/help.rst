@@ -15,13 +15,22 @@ If you have questions, contact me
    Return an iterator that yields tuples of an index and an item of the
    *sequence*. (And so on.)
 
-test function docs
-:mod:`visual` -- visual
-.. autofunction:: other
 
+Documentation for the Code
+**************************
 
-test module docs
+visual == auto members 
+======================
 
-:mod:`visual` -- visual
+Lets see if this works
+
+:mod:`visual`
 .. automodule:: visual
    :members:
+
+visual == explicit members 
+======================
+
+:mod:`visual`
+.. automodule:: visual
+   :members: other
