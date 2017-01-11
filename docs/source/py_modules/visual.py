@@ -1,3 +1,6 @@
+"""
+.. module:: visual
+
 # -*- coding: utf-8 -*-
 """
 Created on Wed Jan 11 00:57:23 2017
@@ -26,19 +29,18 @@ from matplotlib import colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 def visual(dataset, date, wavelength, path_name):
-    """
-    Generates visual images for the region.
+    """Generates visual images for the region.
     
-    dataset : 
+    dataset: 
         Path of file containing visual image data. (String)
         
-    date : 
+    date: 
         Date of dataset in 'YYYYMMDD' format. (String)
     
-    wavelength :
+    wavelength:
         Wavelength of dataset. (Integer)
                    
-    path_name : 
+    path_name: 
         The directory to which the files should be saved. (String)
       
     Example:

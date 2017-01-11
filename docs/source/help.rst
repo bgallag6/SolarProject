@@ -19,18 +19,13 @@ If you have questions, contact me
 Documentation for the Code
 **************************
 
-visual == auto members 
-======================
-
 Lets see if this works
 
-:mod:`visual`
+:mod:`visual` -- visual
 .. automodule:: visual
    :members:
 
-visual == explicit members 
-======================
 
-:mod:`visual`
+:mod:`visual` -- visual
 .. automodule:: visual
    :members: other
