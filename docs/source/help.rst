@@ -16,11 +16,12 @@ If you have questions, contact me
    *sequence*. (And so on.)
 
 test function docs
-
+:mod:`visual` -- visual
 .. autofunction:: other
 
 
 test module docs
 
+:mod:`visual` -- visual
 .. automodule:: visual
    :members:
