@@ -6,7 +6,7 @@ Header Hold
 
 Text explanations place holder.::
 
-    print 'hello'
+    print 'test'
     >> hello
 
 Contents
