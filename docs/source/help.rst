@@ -29,3 +29,5 @@ Lets see if this works
 :mod:`visual` -- visual
 .. automodule:: visual
    :members: other
+
+..autofunction:: visual.other

@@ -29,24 +29,26 @@ from matplotlib import colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 def visual(dataset, date, wavelength, path_name):
-    """Generates visual images for the region.
-    
-    dataset: 
-        Path of file containing visual image data. (String)
-        
-    date: 
-        Date of dataset in 'YYYYMMDD' format. (String)
-    
-    wavelength:
-        Wavelength of dataset. (Integer)
-                   
-    path_name: 
-        The directory to which the files should be saved. (String)
-      
-    Example:
-    ::
-        fm.visual(dataset='C:/Users/Brendan/Desktop/SDO/param_20120923_211_0_300_0_574_numpy.npy',
-          wavelength=211, path_name='C:/Users/Brendan/Desktop/PHYS 326') 
+    """
+    This function raises num to the power of x and returns the result
+
+    :type num: int
+    :param num: The number to raise
+
+    :type x: int
+    :param x: The power to raise the number to
+
+    :rtype: int
+    :returns: The result
+
+    :raises: ValueError if x isn't an int
+
+    .. code-block:: python
+
+        >>> result = power(2, 3)
+        >>> print result
+        8
+
     """
 
     titles = ['Average', 'Middle-File']
