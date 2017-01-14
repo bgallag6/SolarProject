@@ -86,3 +86,10 @@ import h5py
 #np.save('C:/Users/Brendan/Desktop/SDO/M2_20130530_1600_2300_2600i_2200_3000j_rebin4_2x2_median', M2_fit)
 #np.save('C:/Users/Brendan/Desktop/SDO/uncertainties_20130815_193_1000_1600i_1950_2950j_rebin2', Uncertainties)  # if want to keep?
 #np.save('C:/Users/Brendan/Desktop/SDO/diffm1m2_20130815_193_1000_1600i_1950_2950j_rebin2', diffM1M2)  # if want to keep?
+
+
+"""
+## parameter masking  (doesn't work - wont stay connected to plot as function call)
+"""
+#HEATMAPS = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/param_20130530_1600_0_296_0_634_numpy.npy')
+#fm.mask_param(heatmaps = HEATMAPS)
