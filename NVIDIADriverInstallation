@@ -1,0 +1,133 @@
+Installation process for NVIDIA Driver, CUDA Toolkit, Anaconda Accelerate
+
+OS: Ubuntu 16.04 64-bit
+
+
+NVIDIA Driver Installation
+==========================
+
+clean install ubuntu 16.04 64-bit 
+
+download NVIDIA driver 375.26 as local runfile from: (supports GTX 1050 Ti + TITAN)
+http://www.nvidia.com/download/find.aspx
+
+put NVIDIA driver file on desktop
+
+$ sudo service lightdm stop  # stop x server
+
+press [ctrl+alt+f1]  # enter text-only mode
+
+login as brendan (or user) + enter password
+
+$ cd Desktop
+
+$ sudo bash NVIDIA_..._.run  # execute NVIDIA driver runfile
+
+* "pre-install script failed: continue?" -- yes
+
+* "DKMS ... ...?" -- no
+
+* "create x-config" -- yes
+
+driver installation finishes
+
+$ sudo reboot
+
+when starts back up - both monitors should be working
+
+$ lspci 
+# still only shows (NVIDIA Corp. Device 1c82 -- not GTX 1050 Ti)
+
+$ nvidia-settings
+# shows correct detailed info (confirms driver installed correctly)
+
+
+
+
+CUDA Toolkit Installation
+=========================
+
+Download CUDA 8.0 Toolkit from:
+https://developer.nvidia.com/cuda-downloads
+
+put CUDA Toolkit runfile on desktop
+
+$ cd desktop
+
+$ sudo sh cuda_8.0.44_linux.run
+
+* "install nvidia accelerated graphics driver" -- no
+
+* "install CUDA toolkit" -- yes
+
+* accept default toolkit location
+
+* "install symbolic link" -- yes
+
+* "install CUDA samples" -- yes
+
+* accept default samples location
+
+$ export PATH=/usr/local/cuda-8.0/bin${PATH:+:${PATH}}
+
+$ export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64\
+>                          ${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+
+$ sudo reboot
+
+things should look to be working correctly
+
+
+
+
+Anaconda Accelerate Installation
+================================
+
+Download Anaconda (Python 2.7 version) from:
+https://www.continuum.io/downloads
+
+$ bash Anaconda2-4.2.0-Linux-x86_64.sh
+
+* "prepend install location to PATH" -- yes
+
+$ conda update conda
+
+download licenses from:
+https://anaconda.org/bgallag6/settings/add-ons
+
+$ anaconda-navigator
+
+* help --> license manager --> add the 3 files and confirm that they are valid
+
+$ conda install accelerate
+
+$ conda install numbapro
+
+create python script cuda_check.py, with commands:
+import numbapro
+numbapro.check_cuda()
+
+run cuda_check.py script -- should identify correct GPU installed
+
+run mandelbrot python examples examples copied from:
+http://nbviewer.jupyter.org/gist/harrism/f5707335f40af9463c43
+- all 3, including the GPU-accelerated one, should run correctly
+
+be amazed at speed increase on GPU
+
+celebrate accomplishment
+
+
+%%% Other Stuff %%%
+% ran "Example: Basic Example" from:
+https://docs.continuum.io/numbapro/CUDAufunc
+- got same "NameError: global name 'warnings' is not defined" error as on Windows 10: dektop
+
+% next steps: CUDA examples / tutorials
+https://docs.continuum.io/numbapro/quickstart
+
+% for some reason, now attempting to run [$ anaconda-navigator] raises qt-type error messages
+% however, everything else still works 
+
+
+
