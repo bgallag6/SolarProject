@@ -736,6 +736,9 @@ def pix2arc(x1, x2, y1, y2, image):
 # have visual / time be both at beginning or end of filename
 
 # add printout of region dimensions and rebinned region dimensions
+
+# 
+
 from pylab import *
 import glob
 import sunpy
@@ -941,7 +944,7 @@ from scipy import signal
 import scipy.misc
 import astropy.units as u
 import h5py
-from scipy import fftpack
+#from scipy import fftpack  # not working with this called here???
 from timeit import default_timer as timer
 
 
@@ -969,7 +972,9 @@ def fft_avg(datacube, timeseries, num_seg):
     #with h5py.File('C:/Users/Brendan/Desktop/SDO/SDO_20120923_211A_(528)_(132)x_(100)_100y.hdf5', 'r', driver='core') as f:
         #DATA = f['Image Data']
         #TIME = f['Time Data']
-        
+    
+    from scipy import fftpack
+    
     DATA = datacube
     
     TIME = timeseries
@@ -1086,6 +1091,11 @@ def fft_avg(datacube, timeseries, num_seg):
 """    
 # ran through 1600 rebin4 region and results were identical
 
+# timer doesn't work when called in same console after fft_avg
+
+# structure for future parallelization - have loop that computes all 3x3 pixel boxes (spectra array variable)
+# then run loop through that of curve-fitting, so no dependencies
+
 import numpy as np
 import scipy.signal
 #matplotlib.use('TkAgg') 	# NOTE: This is a MAC/OSX thing. Probably REMOVE for linux/Win
@@ -1104,7 +1114,7 @@ from scipy import signal
 import scipy.misc
 import astropy.units as u
 import h5py
-from scipy import fftpack
+from scipy import fftpack  # doesnt work in module when called here???
 from statsmodels.nonparametric.smoothers_lowess import lowess
 import matplotlib.pylab as plt
 from astropy.convolution import convolve, Box1DKernel
@@ -1132,7 +1142,9 @@ def spec_fit(spectra_array):
     ::
         fm.spec_fit(spectra_array = SPECTRA)
     """
-        
+
+    from scipy import fftpack    
+    
     # define Power-Law-fitting function (Model M1)
     def PowerLaw(f, A, n, C):
         return A*f**-n + C

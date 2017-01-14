@@ -63,9 +63,9 @@ from timeit import default_timer as timer
     #DATA = f['Image Data']
     #TIME = f['Time Data']
     
-DATA = np.load('F:/Users/Brendan/Desktop/SolarProject/datacubes/20130530_1600_2300_2600i_2200_3000j_data_rebin4.npy')
+DATA = np.load('F:/Users/Brendan/Desktop/SolarProject/datacubes/20140902_193_2000_2900i_1850_3050j_data_rebin2.npy')
 
-TIME = np.load('F:/Users/Brendan/Desktop/SolarProject/time_arrays/SDO_20130530_1600A_2300_2600i_2200_3000j_float_time.npy')
+TIME = np.load('F:/Users/Brendan/Desktop/SolarProject/time_arrays/20140902_193_2000_2900i_1850_3050j_time.npy')
 
 print DATA.shape 
 
