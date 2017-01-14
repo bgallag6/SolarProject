@@ -5,6 +5,8 @@ Created on Wed Dec 07 22:19:52 2016
 @author: Brendan
 """
 
+# want to include this in module - in datacube creation - so can get full subregion desired
+
 import scipy.signal
 import matplotlib
 #matplotlib.use('TkAgg') 	# NOTE: This is a MAC/OSX thing. Probably REMOVE for linux/Win
