@@ -31,10 +31,10 @@ import h5py
     #VISUAL = np.array(f['visual'])
     #r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20141025', wavelength=1600, path_name='C:/Users/Brendan/Desktop/PDFs')
     
-#HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/param_20120923_304A_(528)_(132)x_(100)_100y.npy')
+#HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/param_20130530_193_2300_2600_2200_3000.npy')
 #HEATMAPS = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/param_20120923_193A_(528)_(132)x_(100)_100y_numpy_dogbox.npy')
-#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20120923_304A_(528)_(132)x_(100)_100y_float.npy')
-#r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20120923', wavelength=304, path_name='C:/Users/Brendan/Desktop/PHYS 326')
+#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20130530_193A_2300_2600i_2200_3000j_float.npy')
+#r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130530', wavelength=193, path_name='C:/Users/Brendan/Desktop/PHYS 326')
 
 
 
@@ -76,13 +76,13 @@ import h5py
 ## 3x3 pixel box averaging + fitting
 """
 #SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/spectra_array_FFT6_20130530_1600_2300_2600i_2200_3000j_rebin4_rev_t_interp.npy')
-SPECTRA = np.load('F:/Users/Brendan/Desktop/SolarProject/spectra_array_FFT/spectra_array_FFT6_20130530_193_2300_2600_2200_3000_float_numpy.npy')
+#SPECTRA = np.load('F:/Users/Brendan/Desktop/SolarProject/spectra_array_FFT/spectra_array_FFT6_20130530_193_2300_2600_2200_3000_float_numpy.npy')
 #SPECTRA = spectra_array
-params, spectra, M2_fit = fm.spec_fit(spectra_array = SPECTRA)
+#params, spectra, M2_fit = fm.spec_fit(spectra_array = SPECTRA)
 
-np.save('C:/Users/Brendan/Desktop/SDO/param_20130530_193_2300_2600_2200_3000', params)
-np.save('C:/Users/Brendan/Desktop/SDO/spectra_20130530_193_2300_2600_2200_3000', spectra)
-np.save('C:/Users/Brendan/Desktop/SDO/M2_20130530_193_2300_2600_2200_3000', M2_fit)
+#np.save('C:/Users/Brendan/Desktop/SDO/param_20130530_193_2300_2600_2200_3000', params)
+#np.save('C:/Users/Brendan/Desktop/SDO/spectra_20130530_193_2300_2600_2200_3000', spectra)
+#np.save('C:/Users/Brendan/Desktop/SDO/M2_20130530_193_2300_2600_2200_3000', M2_fit)
 #np.save('C:/Users/Brendan/Desktop/SDO/uncertainties_20130815_193_1000_1600i_1950_2950j_rebin2', Uncertainties)  # if want to keep?
 #np.save('C:/Users/Brendan/Desktop/SDO/diffm1m2_20130815_193_1000_1600i_1950_2950j_rebin2', diffM1M2)  # if want to keep?
 

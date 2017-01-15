@@ -1021,7 +1021,7 @@ def fft_avg(datacube, timeseries, num_seg):
 
 # update 1/14: changed estimated time to reset (not go crazy negative if in same kernel as run before)
 
-# lowered min slope bound to 0.1 from 0.5 - try on 193 coronal hole - switch back if doesn't work
+# lowered min slope bound to 0.1 from 0.5 - try on 193 coronal hole - switch back if doesn't work (switched back)
 
 import numpy as np
 import scipy.signal
@@ -1164,8 +1164,8 @@ def spec_fit(spectra_array):
             try:
                 # initial guesses for fitting parameters
                 #P0 = [0.000, 2.0, 0.00003, 0.0022, -6.5, 0.5]
-                #M1_low = [-0.1, 0.5, -0.1]
-                M1_low = [-0.1, 0.1, -0.1]  # test on 193 - coronal hole
+                M1_low = [-0.1, 0.5, -0.1]
+                #M1_low = [-0.1, 0.1, -0.1]  # test on 193 - coronal hole
                 M1_high = [0.1, 4., 0.1]
                 nlfit_l, nlpcov_l = scipy.optimize.curve_fit(PowerLaw, f, s, bounds=(M1_low, M1_high), sigma=ds, method='dogbox')  # replaced #'s with arrays
                
@@ -1230,8 +1230,8 @@ def spec_fit(spectra_array):
             #"""        
             try:
                 #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=([-4.34,0.5,-8.68,0.00001,-6.5,0.05], [2.,6.,2.,0.2,-4.6,0.8]), sigma=ds)                                  
-                #M2_low = [-0.1, 0.5, -0.1, 0.00001, -6.5, 0.05]
-                M2_low = [-0.1, 0.1, -0.1, 0.00001, -6.5, 0.05]  # test on 193 - coronal hole
+                M2_low = [-0.1, 0.5, -0.1, 0.00001, -6.5, 0.05]
+                #M2_low = [-0.1, 0.1, -0.1, 0.00001, -6.5, 0.05]  # test on 193 - coronal hole
                 M2_high = [0.1, 4., 0.1, 0.2, -4.6, 0.8]
                 # change method to 'dogbox' and increase max number of function evaluations to 3000
                 nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000) # replaced #'s with arrays
