@@ -14,9 +14,13 @@ Created on Tue Dec 20 22:30:43 2016
 # document
 
 
-# so far have tested:
-# download date - works perfectly
-# generate heatmaps - works perfectly
+# so far have tested all and work
+
+# maybe make separate function with whole program as one from get data to heatmaps?
+
+# maybe put module imports inside function definitions (so not executing all for each)
+
+# update 1/14: deleted visual function since had put in heatmaps
 
 """
 ############################
@@ -484,25 +488,6 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
         plt.savefig('%s/%s_%i_heatmap_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
         
-        """
-        fig = plt.figure(figsize=(15,9))
-        frac = 9. / h_map.shape[1]
-        plt.title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[i]), y = 1.01, fontsize=25)
-        im = plt.imshow(h_map[i], vmin=vmin[i], vmax=vmax[i])
-        cbar = plt.colorbar(im,fraction=frac, pad=0.01)
-        #cbar.set_label("Gaussian Amplitude", size=20, labelpad=10)
-        #cbar.set_label("$\chi_r^2$", size=20, labelpad=10)
-        #cbar.set_label("Gaussian Location [e^(value) Hz]", size=20, labelpad=10)
-        cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
-        #cbar.set_label("$\chi_r^2$", size=20, labelpad=10)
-        cbar.ax.tick_params(labelsize=17, pad=5) 
-        plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
-        plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
-        plt.xticks(fontsize=17)
-        plt.yticks(fontsize=17)
-        plt.tight_layout()
-        plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
-        """        
         
     flatten_slopes = np.reshape(h_map[1], (h_map[1].shape[0]*h_map[1].shape[1]))
 
@@ -514,7 +499,7 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
     plt.yticks(fontsize=17)
     plt.xlim(0.5, 3.)
     plt.ylim(0, 25000)
-    y, x, _ = plt.hist(flatten_slopes, bins=400)
+    y, x, _ = plt.hist(flatten_slopes, bins=250)
     plt.ylim(0, y.max()*1.1)
     #plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
     #plt.savefig('%s/%s_%i_Histogram_Slopes.jpeg' % (path_name, date, wavelength))
@@ -548,79 +533,6 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
 
 
 
-"""
-############################
-############################
-# generate visual images
-############################
-############################
-"""
-
-## probably should include in heatmap generation function
-## probably should have arrays included in param array - 
-## created during 3x3 fitting?
-
-## obviously need to make so that can load in different image arrays
-
-
-import matplotlib.pyplot as plt
-import numpy as np
-from matplotlib import colors
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-
-def visual(dataset, date, wavelength, path_name):
-    """
-    Generates visual images for the region.
-    
-    dataset : 
-        Path of file containing visual image data. (String)
-        
-    date : 
-        Date of dataset in 'YYYYMMDD' format. (String)
-    
-    wavelength :
-        Wavelength of dataset. (Integer)
-                   
-    path_name : 
-        The directory to which the files should be saved. (String)
-      
-    Example:
-    ::
-        fm.visual(dataset='C:/Users/Brendan/Desktop/SDO/param_20120923_211_0_300_0_574_numpy.npy',
-          date = '20130815', wavelength=211, path_name='C:/Users/Brendan/Desktop/PHYS 326') 
-    """
-
-    titles = ['Average', 'Middle-File']
-    names = ['average', 'mid']
-    
-    wavelength = wavelength
-    year = date[0:4]
-    month = date[4:6]
-    day = date[6:8]
-    date_title = '%s-%s-%s' % (year,month,day)
-    
-    vis = np.load('%s' % dataset)
-    
-    for i in range(2):
-        
-        fig = plt.figure(figsize=(15,9))
-        ax = plt.gca()
-        plt.title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[i]), y = 1.01, fontsize=25)
-        #im = ax.imshow(h_map[i], vmin=vmin[i], vmax=vmax[i])
-        im = ax.imshow(vis[i], cmap='sdoaia%i' % wavelength)
-        plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
-        plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
-        plt.xticks(fontsize=17)
-        plt.yticks(fontsize=17)
-        divider = make_axes_locatable(ax)
-        cax = divider.append_axes("right", size="3%", pad=0.07)
-        cbar = plt.colorbar(im,cax=cax)
-        cbar.set_label('Intensity', size=20, labelpad=10)
-        cbar.ax.tick_params(labelsize=17, pad=5) 
-        plt.tight_layout()
-        plt.savefig('%s/%s_%i_visual_%s.jpeg' % (path_name, date, wavelength, names[i]))
-
-
 
 """
 ############################
@@ -629,9 +541,8 @@ def visual(dataset, date, wavelength, path_name):
 ############################
 ############################
 """
-"""
+
 # doesn't account for derotation amount - build that in
-"""
 
 
 import matplotlib.pyplot as plt
@@ -737,7 +648,7 @@ def pix2arc(x1, x2, y1, y2, image):
 
 # add printout of region dimensions and rebinned region dimensions
 
-# 
+# update 1/14 - changed 'nf' to % nf - so will print actual # 
 
 from pylab import *
 import glob
@@ -821,14 +732,14 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
         for filename in flist:
             mc_list.append(Map(filename).submap([x1,x2]*u.pixel, [y1,y2]*u.pixel))
             if (count%10) == 0:
-                print("file %i out of nf" % count)  # just to see where program is at
+                print("file %i out of %i" % (count,nf))  # just to see where program is at
             count += 1
     
     if coords_type == 'arc':
         for filename in flist:
             mc_list.append(Map(filename).submap([x1,x2]*u.arcsec, [y1,y2]*u.arcsec))
             if (count%10) == 0:
-               print("file %i out of nf" % count)  # just to see where program is at
+               print("file %i out of %i" % (count,nf))  # just to see where program is at
             count += 1
         
     	
@@ -925,6 +836,8 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
 
 # t_interp issue -- ran through full program and was exactly same 
 # changed t_interp to linspace with one extra point, took out conversion to float in loop
+
+# update 1/14: changed estimated time to reset (not go crazy negative if in same kernel as run before)
 
 
 import numpy as np
@@ -1065,12 +978,24 @@ def fft_avg(datacube, timeseries, num_seg):
             spectra_array[ii][jj] = avg_array  # construct 3D array with averaged FFTs from each pixel
         
         # estimate time remaining and print to screen     
-        T = timer() - start
-        T2 = T - start - T1
+        #T = timer() - start
+        #T2 = T - start - T1
+        #if ii == 0:
+        #    T_est = T2*(spectra_array.shape[0])    
+        #T_est2 = T2*(spectra_array.shape[0]-ii)
+        #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_array.shape[0], T_est2)
+        #T1 = T
+        
+        # estimate time remaining and print to screen  (looks to be much better - not sure why had above?)
+        T = timer()
+        T2 = T - T1
         if ii == 0:
-            T_est = T2*(spectra_array.shape[0])    
-        T_est2 = T2*(spectra_array.shape[0]-ii)
-        print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_array.shape[0], T_est2)
+            T_init = T - start
+            T_est = T_init*(spectra_array.shape[0])  
+            print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_array.shape[0], T_est)
+        else:
+            T_est2 = T2*(spectra_array.shape[0]-ii)
+            print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_array.shape[0], T_est2)
         T1 = T
     
     # print estimated and total program time to screen 
@@ -1091,10 +1016,12 @@ def fft_avg(datacube, timeseries, num_seg):
 """    
 # ran through 1600 rebin4 region and results were identical
 
-# timer doesn't work when called in same console after fft_avg
-
 # structure for future parallelization - have loop that computes all 3x3 pixel boxes (spectra array variable)
 # then run loop through that of curve-fitting, so no dependencies
+
+# update 1/14: changed estimated time to reset (not go crazy negative if in same kernel as run before)
+
+# lowered min slope bound to 0.1 from 0.5 - try on 193 coronal hole - switch back if doesn't work
 
 import numpy as np
 import scipy.signal
@@ -1237,7 +1164,8 @@ def spec_fit(spectra_array):
             try:
                 # initial guesses for fitting parameters
                 #P0 = [0.000, 2.0, 0.00003, 0.0022, -6.5, 0.5]
-                M1_low = [-0.1, 0.5, -0.1]
+                #M1_low = [-0.1, 0.5, -0.1]
+                M1_low = [-0.1, 0.1, -0.1]  # test on 193 - coronal hole
                 M1_high = [0.1, 4., 0.1]
                 nlfit_l, nlpcov_l = scipy.optimize.curve_fit(PowerLaw, f, s, bounds=(M1_low, M1_high), sigma=ds, method='dogbox')  # replaced #'s with arrays
                
@@ -1302,7 +1230,8 @@ def spec_fit(spectra_array):
             #"""        
             try:
                 #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=([-4.34,0.5,-8.68,0.00001,-6.5,0.05], [2.,6.,2.,0.2,-4.6,0.8]), sigma=ds)                                  
-                M2_low = [-0.1, 0.5, -0.1, 0.00001, -6.5, 0.05]
+                #M2_low = [-0.1, 0.5, -0.1, 0.00001, -6.5, 0.05]
+                M2_low = [-0.1, 0.1, -0.1, 0.00001, -6.5, 0.05]  # test on 193 - coronal hole
                 M2_high = [0.1, 4., 0.1, 0.2, -4.6, 0.8]
                 # change method to 'dogbox' and increase max number of function evaluations to 3000
                 nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000) # replaced #'s with arrays
@@ -1385,12 +1314,24 @@ def spec_fit(spectra_array):
             """
         
         # estimate time remaining and print to screen   
-        T = timer() - start
-        T2 = T - start - T1
+        #T = timer() - start
+        #T2 = T - start - T1
+        #if l == 1:
+        #    T_est = T2*(SPECTRA.shape[0]-2)    
+        #T_est2 = T2*((SPECTRA.shape[0]-2)-l+1)
+        #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0]-2, T_est2)
+        #T1 = T
+        
+        # estimate time remaining and print to screen  (looks to be much better - not sure why had above?)
+        T = timer()
+        T2 = T - T1
         if l == 1:
-            T_est = T2*(SPECTRA.shape[0]-2)    
-        T_est2 = T2*((SPECTRA.shape[0]-2)-l+1)
-        print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0]-2, T_est2)
+            T_init = T - start
+            T_est = T_init*(SPECTRA.shape[0]-2)  
+            print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0]-2, T_est)
+        else:
+            T_est2 = T2*((SPECTRA.shape[0]-2)-l+1)
+            print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0]-2, T_est2)
         T1 = T
     
     # print estimated and total program time to screen        
