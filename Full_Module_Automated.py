@@ -22,6 +22,8 @@ Created on Tue Dec 20 22:30:43 2016
 
 # update 1/14: deleted visual function since had put in heatmaps
 
+# maybe write script to compare results easier
+
 """
 ############################
 ############################
@@ -324,7 +326,7 @@ def get_data_fill(wavelength, cadence, time_begin, time_end, path_name):
     
     arr_have = []
     
-    #adj = 5  # adjust 5 characters for 20130815 193 dataset
+    #adj = 5  # adjust 5 characters for 20130815 193 dataset (doesn't have extra '.fits')
     adj = 0  # for all other datasets
     
     for i in range(0,l):
@@ -825,7 +827,7 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
 """
 ############################
 ############################
-# FFT segment averaging
+# FFT segment averaging + 3x3 Pixel Box Averaging
 ############################
 ############################
 """
@@ -838,6 +840,10 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
 # changed t_interp to linspace with one extra point, took out conversion to float in loop
 
 # update 1/14: changed estimated time to reset (not go crazy negative if in same kernel as run before)
+
+# should any of the arrays be reset within loop?
+
+# update 1/16: including 3x3 pixel-box averaging within this function, so fitting function it by itself
 
 
 import numpy as np
@@ -863,7 +869,7 @@ from timeit import default_timer as timer
 
 def fft_avg(datacube, timeseries, num_seg):
     """
-    Calculates segment-averaged FFT for region.
+    Calculates segment-averaged FFT for region, and 3x3 pixel-box average.
     
     datacube : 
         3D datacube of timeseries of images.  (array)
@@ -875,7 +881,7 @@ def fft_avg(datacube, timeseries, num_seg):
         Number of segments to divide timeseries into.  (int)
         
     Returns : 
-        3D array of FFT-segment-averaged region
+        3D array of FFT-segment and 3x3-pixel-box averaged region
       
     Example:
     ::
@@ -913,7 +919,7 @@ def fft_avg(datacube, timeseries, num_seg):
     print "DATA and TIME array sizes match: %s" % reslt
     
     pixmed=np.empty(DATA.shape[0])  # Initialize array to hold median pixel values
-    spectra_array = np.zeros((DATA.shape[1],DATA.shape[2],len(freqs)))
+    spectra_seg = np.zeros((DATA.shape[1],DATA.shape[2],len(freqs)))
     
     print "length time-interp array = %i" % n
     print "size for FFT to consider = %i" % freq_size
@@ -924,10 +930,10 @@ def fft_avg(datacube, timeseries, num_seg):
     start = timer()
     T1 = 0
     
-    for ii in range(0,spectra_array.shape[0]):
+    for ii in range(0,spectra_seg.shape[0]):
     #for ii in range(142,160):
     
-        for jj in range(0,spectra_array.shape[1]):
+        for jj in range(0,spectra_seg.shape[1]):
         #for jj in range(0,574):        
         
             x1_box = 0+ii
@@ -974,34 +980,57 @@ def fft_avg(datacube, timeseries, num_seg):
             avg_array /= n_segments  # take the average of the segments
             
             avg_array = np.transpose(avg_array)  # take transpose of array to fit more cleanly in 3D array
-           
-            spectra_array[ii][jj] = avg_array  # construct 3D array with averaged FFTs from each pixel
+                       
+            spectra_seg[ii][jj] = avg_array  # construct 3D array with averaged FFTs from each pixel
         
-        # estimate time remaining and print to screen     
-        #T = timer() - start
-        #T2 = T - start - T1
-        #if ii == 0:
-        #    T_est = T2*(spectra_array.shape[0])    
-        #T_est2 = T2*(spectra_array.shape[0]-ii)
-        #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_array.shape[0], T_est2)
-        #T1 = T
         
-        # estimate time remaining and print to screen  (looks to be much better - not sure why had above?)
+        # estimate time remaining and print to screen
         T = timer()
         T2 = T - T1
         if ii == 0:
             T_init = T - start
-            T_est = T_init*(spectra_array.shape[0])  
-            print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_array.shape[0], T_est)
+            T_est = T_init*(spectra_seg.shape[0])  
+            print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_seg.shape[0], T_est)
         else:
-            T_est2 = T2*(spectra_array.shape[0]-ii)
-            print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_array.shape[0], T_est2)
+            T_est2 = T2*(spectra_seg.shape[0]-ii)
+            print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_seg.shape[0], T_est2)
         T1 = T
-    
+        
+        
     # print estimated and total program time to screen 
     print "Beginning Estimated time = %i sec" % T_est
     T_act = timer() - start
     print "Actual total time = %i sec" % T_act 
+    
+    
+    # initialize arrays to hold temporary results for calculating geometric average
+    temp = np.zeros((9,spectra_seg.shape[2]))  # maybe have 3x3 to be generalized   
+    p_geometric = np.zeros((spectra_seg.shape[2]))  # would pre-allocating help? (seems to)
+    spectra_array = np.zeros((spectra_seg.shape[0]-2, spectra_seg.shape[1]-2, spectra_seg.shape[2]))  # would pre-allocating help? (seems to)
+        
+    
+    ### calculate 3x3 pixel-box geometric average.  start at 1 and end 1 before to deal with edges.
+    ## 10^[(log(a) + log(b) + log(c) + ...) / 9] = [a*b*c*...]^(1/9)
+
+    for l in range(1,spectra_seg.shape[0]-1):
+    #for l in range(1,25):
+        #print l
+        for m in range(1,spectra_seg.shape[1]-1):
+        #for m in range(1,25):
+            
+            temp[0] = np.log10(spectra_seg[l-1][m-1])
+            temp[1] = np.log10(spectra_seg[l-1][m])
+            temp[2] = np.log10(spectra_seg[l-1][m+1])
+            temp[3] = np.log10(spectra_seg[l][m-1])
+            temp[4] = np.log10(spectra_seg[l][m])
+            temp[5] = np.log10(spectra_seg[l][m+1])
+            temp[6] = np.log10(spectra_seg[l+1][m-1])
+            temp[7] = np.log10(spectra_seg[l+1][m])
+            temp[8] = np.log10(spectra_seg[l+1][m+1])
+    
+            temp9 = np.sum(temp, axis=0)
+            p_geometric = temp9 / 9.
+            spectra_array[l-1][m-1] = np.power(10,p_geometric)
     
     return spectra_array
     
@@ -1010,7 +1039,7 @@ def fft_avg(datacube, timeseries, num_seg):
 """
 ############################
 ############################
-# 3x3 Pixel-Box Averaging and Curve Fitting
+# Curve Fitting
 ############################
 ############################
 """    
@@ -1021,7 +1050,19 @@ def fft_avg(datacube, timeseries, num_seg):
 
 # update 1/14: changed estimated time to reset (not go crazy negative if in same kernel as run before)
 
-# lowered min slope bound to 0.1 from 0.5 - try on 193 coronal hole - switch back if doesn't work (switched back)
+# think will change slope min to 0.3, keep max at 4.0
+
+# think change pl_A from (-0.1, 0.1) to (-0.001 0.001) for M1, and (-0.002, 0.002) for M2
+# think change pl_C from (-0.1, 0.1) to (-0.01, 0.01)
+# should have changing bounds?  certain wavelengths have higher/lower max/min bounds for certain parameters.
+
+# either change this one, or make another function that does the 3x3 averaging first, then the fits
+
+# removed the 3x3 pixel-box averaging - only fitting now -- pretty sure changed all indices to correct values
+
+# could I keep default method for M1 fit?  
+
+# ran through fitting routine with one region - same results - great
 
 import numpy as np
 import scipy.signal
@@ -1060,10 +1101,10 @@ def spec_fit(spectra_array):
     Calculates pixel-box averages and fits spectra.
     
     spectra_array : 
-        3D array of FFT-segment-averaged region  (array)
+        3D array of FFT-segment and 3x3-pixel-box averaged region  (array)
         
     Returns : 
-        Parameter, Spectra, and M2-Fit arrays
+        Parameter and M2-fit arrays
       
     Example:
     ::
@@ -1092,8 +1133,7 @@ def spec_fit(spectra_array):
     print "%i frequencies were evaluated in the FFT" % SPECTRA.shape[2] 
     
     num_freq = SPECTRA.shape[2]  # determine nubmer of frequencies that are used
-    
-    
+        
     # determine frequency values that FFT will evaluate
     freq_size = ((num_freq)*2) + 1  # determined from FFT-averaging script
     time_step = 12  # add as argument, or leave in as constant?
@@ -1103,21 +1143,13 @@ def spec_fit(spectra_array):
     freqs = sample_freq[pidxs]
     
     
-    # initialize arrays to hold temporary results for calculating geometric average
-    p_geometric = np.zeros((num_freq))  # would pre-allocating help? (seems to)
-    temp = np.zeros((9,num_freq))  # maybe have 3x3 to be generalized
+    # initialize arrays to hold parameter values, also each pixel's combined model fit - for tool
+    diffM1M2 = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1]))  # dont really use - get rid of?
+    params = np.zeros((7, SPECTRA.shape[0], SPECTRA.shape[1]))
+    #M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], (len(freqs)+1)/2))  # would save storage / memory space
+    M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], SPECTRA.shape[2]))
     
-    # initialize arrays to hold parameter values, also each pixel's spectra and combined model fit - for tool
-    diffM1M2 = np.zeros((SPECTRA.shape[0]-2,SPECTRA.shape[1]-2))  # dont really use - get rid of?
-    params = np.zeros((7,SPECTRA.shape[0]-2,SPECTRA.shape[1]-2))
-    spectra = np.zeros((SPECTRA.shape[0]-2,SPECTRA.shape[1]-2,SPECTRA.shape[2]))
-    #M2_fit = np.zeros((SPECTRA.shape[0]-2,SPECTRA.shape[1]-2,(len(freqs)+1)/2))  # would save storage / memory space
-    M2_fit = np.zeros((SPECTRA.shape[0]-2,SPECTRA.shape[1]-2,SPECTRA.shape[2]))
-    
-    Uncertainties = np.zeros((6,SPECTRA.shape[0]-2,SPECTRA.shape[1]-2))
-    
-    #visual_avg = np.average(data,axis=0)  # add visual image to params array - easy access for heatmaps / tool
-    #params[7] = visual_avg
+    Uncertainties = np.zeros((6, SPECTRA.shape[0], SPECTRA.shape[1]))
     
     start = timer()
     T1 = 0
@@ -1126,32 +1158,18 @@ def spec_fit(spectra_array):
     ### calculate 3x3 pixel-box geometric average.  start at 1 and end 1 before to deal with edges.
     ## 10^[(log(a) + log(b) + log(c) + ...) / 9] = [a*b*c*...]^(1/9)
     
-    for l in range(1,SPECTRA.shape[0]-1):
-    #for l in range(25,26):
+    for l in range(0,SPECTRA.shape[0]):
+    #for l in range(0,2):
         #print l
-        for m in range(1,SPECTRA.shape[1]-1):
-        #for m in range(80,85):
+        for m in range(0,SPECTRA.shape[1]):
+        #for m in range(65,75):
             
-            temp[0] = np.log10(SPECTRA[l-1][m-1])
-            temp[1] = np.log10(SPECTRA[l-1][m])
-            temp[2] = np.log10(SPECTRA[l-1][m+1])
-            temp[3] = np.log10(SPECTRA[l][m-1])
-            temp[4] = np.log10(SPECTRA[l][m])
-            temp[5] = np.log10(SPECTRA[l][m+1])
-            temp[6] = np.log10(SPECTRA[l+1][m-1])
-            temp[7] = np.log10(SPECTRA[l+1][m])
-            temp[8] = np.log10(SPECTRA[l+1][m+1])
-    
-            temp2 = np.sum(temp, axis=0)
-            p_geometric = temp2 / 9.
-            p_geometric = np.power(10,p_geometric)
-                                
-            
+                                            
             f = freqs  # frequencies
-            s = p_geometric  # fourier power
+            s = spectra_array[l][m]  # fourier power
             
             #ds = (1./f**2.2)/1000
-            ds = p_geometric*0.1  # set the error / variance estimate to a constant percentage of the spectra power-values
+            ds = s*0.1  # set the error / variance estimate to a constant percentage of the spectra power-values
             
             # create points to fit model with final parameters 
             #f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],(len(freqs)+1)/2)  # would save storage / memory space
@@ -1164,9 +1182,9 @@ def spec_fit(spectra_array):
             try:
                 # initial guesses for fitting parameters
                 #P0 = [0.000, 2.0, 0.00003, 0.0022, -6.5, 0.5]
-                M1_low = [-0.1, 0.5, -0.1]
+                M1_low = [-0.002, 0.3, -0.01]
                 #M1_low = [-0.1, 0.1, -0.1]  # test on 193 - coronal hole
-                M1_high = [0.1, 4., 0.1]
+                M1_high = [0.002, 4., 0.01]
                 nlfit_l, nlpcov_l = scipy.optimize.curve_fit(PowerLaw, f, s, bounds=(M1_low, M1_high), sigma=ds, method='dogbox')  # replaced #'s with arrays
                
             
@@ -1230,9 +1248,9 @@ def spec_fit(spectra_array):
             #"""        
             try:
                 #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=([-4.34,0.5,-8.68,0.00001,-6.5,0.05], [2.,6.,2.,0.2,-4.6,0.8]), sigma=ds)                                  
-                M2_low = [-0.1, 0.5, -0.1, 0.00001, -6.5, 0.05]
+                M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
                 #M2_low = [-0.1, 0.1, -0.1, 0.00001, -6.5, 0.05]  # test on 193 - coronal hole
-                M2_high = [0.1, 4., 0.1, 0.2, -4.6, 0.8]
+                M2_high = [0.002, 4., 0.01, 0.2, -4.6, 0.8]
                 # change method to 'dogbox' and increase max number of function evaluations to 3000
                 nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000) # replaced #'s with arrays
                 
@@ -1253,7 +1271,7 @@ def spec_fit(spectra_array):
             
             
             uncertainties_arr = [dA2, dn2, dC2, dP2, dfp2, dfw2]  # not sure if want to keep these
-            Uncertainties[:, l-1, m-1] = uncertainties_arr
+            Uncertainties[:, l, m] = uncertainties_arr
             
             
             # create model functions from fitted parameters
@@ -1264,23 +1282,22 @@ def spec_fit(spectra_array):
             m2G_fit = Gauss(f_fit, P2, fp2, fw2)
             
             diffM1M2_temp = (m2_fit - m1_fit)**2  # differences squared
-            diffM1M2[l-1][m-1] = np.sum(diffM1M2_temp)  # sum of squared differences 
+            diffM1M2[l][m] = np.sum(diffM1M2_temp)  # sum of squared differences 
             
             residsgp = (s - s_fit_gp_full)
             redchisqrgp = ((residsgp/ds)**2).sum()/float(f.size-6)
             
             # populate array with parameters
-            params[0][l-1][m-1] = A2
-            params[1][l-1][m-1] = n2
-            params[2][l-1][m-1] = C2
-            params[3][l-1][m-1] = P2
-            params[4][l-1][m-1] = fp2
-            params[5][l-1][m-1] = fw2
-            params[6][l-1][m-1] = redchisqrgp
+            params[0][l][m] = A2
+            params[1][l][m] = n2
+            params[2][l][m] = C2
+            params[3][l][m] = P2
+            params[4][l][m] = fp2
+            params[5][l][m] = fw2
+            params[6][l][m] = redchisqrgp
             
-            # populate arrays holding spectra / fits
-            spectra[l-1][m-1] = p_geometric
-            M2_fit[l-1][m-1] = m2_fit
+            # populate array holding model fits
+            M2_fit[l][m] = m2_fit
             
             
             
@@ -1313,25 +1330,16 @@ def spec_fit(spectra_array):
             #plt.close()
             """
         
-        # estimate time remaining and print to screen   
-        #T = timer() - start
-        #T2 = T - start - T1
-        #if l == 1:
-        #    T_est = T2*(SPECTRA.shape[0]-2)    
-        #T_est2 = T2*((SPECTRA.shape[0]-2)-l+1)
-        #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0]-2, T_est2)
-        #T1 = T
-        
         # estimate time remaining and print to screen  (looks to be much better - not sure why had above?)
         T = timer()
         T2 = T - T1
-        if l == 1:
+        if l == 0:
             T_init = T - start
-            T_est = T_init*(SPECTRA.shape[0]-2)  
-            print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0]-2, T_est)
+            T_est = T_init*(SPECTRA.shape[0])  
+            print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est)
         else:
-            T_est2 = T2*((SPECTRA.shape[0]-2)-l+1)
-            print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0]-2, T_est2)
+            T_est2 = T2*((SPECTRA.shape[0])-l)
+            print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est2)
         T1 = T
     
     # print estimated and total program time to screen        
@@ -1339,7 +1347,7 @@ def spec_fit(spectra_array):
     T_act = timer() - start
     print "Actual total time = %i sec" % T_act           
     
-    return params, spectra, M2_fit
+    return params, M2_fit
     
     
 """
