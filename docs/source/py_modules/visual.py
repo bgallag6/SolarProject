@@ -4,15 +4,28 @@ from matplotlib import colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 def visual(dataset, date, wavelength, path_name):
-    """This function does something.
- 
-    :param name: The name to use.
-    :type name: str.
-    :param state: Current state to be in.
-    :type state: bool.
-    :returns:  int -- the return code.
-    :raises: AttributeError, KeyError
- 
+    """
+    Downloads .fits image files from database. 
+    
+    Parameters
+    ----------
+    
+    wavelength : 
+        Wavelength to be downloaded. (Integer)
+       
+    time_begin : 
+        Beginning of time range in YYYY/MM/DD HH:MM:SS format. (String)
+     
+    time_end : 
+        Ending of time range in YYYY/MM/DD HH:MM:SS format. (String)
+                   
+    path_name : 
+        The directory to which the files should be downloaded. (String)
+      
+    Example:
+    ::
+        fm.get_data(wavelength=1600, time_begin='2016/09/23 00:00:00', time_end='2016/09/23 00:05:00', 
+          path_name='C:/Users/Brendan/Desktop/SDO_test')
     """
 
     titles = ['Average', 'Middle-File']

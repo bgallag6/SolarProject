@@ -47,15 +47,28 @@
 <span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="k">import</span> <span class="n">make_axes_locatable</span>
 
 <div class="viewcode-block" id="visual"><a class="viewcode-back" href="../help.html#visual.visual">[docs]</a><span class="k">def</span> <span class="nf">visual</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">path_name</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This function does something.</span>
-<span class="sd"> </span>
-<span class="sd">    :param name: The name to use.</span>
-<span class="sd">    :type name: str.</span>
-<span class="sd">    :param state: Current state to be in.</span>
-<span class="sd">    :type state: bool.</span>
-<span class="sd">    :returns:  int -- the return code.</span>
-<span class="sd">    :raises: AttributeError, KeyError</span>
-<span class="sd"> </span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Downloads .fits image files from database. </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    wavelength : </span>
+<span class="sd">        Wavelength to be downloaded. (Integer)</span>
+<span class="sd">       </span>
+<span class="sd">    time_begin : </span>
+<span class="sd">        Beginning of time range in YYYY/MM/DD HH:MM:SS format. (String)</span>
+<span class="sd">     </span>
+<span class="sd">    time_end : </span>
+<span class="sd">        Ending of time range in YYYY/MM/DD HH:MM:SS format. (String)</span>
+<span class="sd">                   </span>
+<span class="sd">    path_name : </span>
+<span class="sd">        The directory to which the files should be downloaded. (String)</span>
+<span class="sd">      </span>
+<span class="sd">    Example:</span>
+<span class="sd">    ::</span>
+<span class="sd">        fm.get_data(wavelength=1600, time_begin=&#39;2016/09/23 00:00:00&#39;, time_end=&#39;2016/09/23 00:05:00&#39;, </span>
+<span class="sd">          path_name=&#39;C:/Users/Brendan/Desktop/SDO_test&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">titles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Average&#39;</span><span class="p">,</span> <span class="s1">&#39;Middle-File&#39;</span><span class="p">]</span>

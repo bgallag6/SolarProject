@@ -84,21 +84,36 @@
 <dl class="function">
 <dt id="visual.visual">
 <code class="descclassname">visual.</code><code class="descname">visual</code><span class="sig-paren">(</span><em>dataset</em>, <em>date</em>, <em>wavelength</em>, <em>path_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visual.html#visual"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visual.visual" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function does something.</p>
+<dd><p>Downloads .fits image files from database.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> (<em>str.</em>) &#8211; The name to use.</li>
-<li><strong>state</strong> (<em>bool.</em>) &#8211; Current state to be in.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">int &#8211; the return code.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>wavelength :</strong></p>
+<blockquote>
+<div><p>Wavelength to be downloaded. (Integer)</p>
+</div></blockquote>
+<p><strong>time_begin :</strong></p>
+<blockquote>
+<div><p>Beginning of time range in YYYY/MM/DD HH:MM:SS format. (String)</p>
+</div></blockquote>
+<p><strong>time_end :</strong></p>
+<blockquote>
+<div><p>Ending of time range in YYYY/MM/DD HH:MM:SS format. (String)</p>
+</div></blockquote>
+<p><strong>path_name :</strong></p>
+<blockquote>
+<div><p>The directory to which the files should be downloaded. (String)</p>
+</div></blockquote>
+<p><strong>Example:</strong></p>
+<p><strong>::</strong></p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>fm.get_data(wavelength=1600, time_begin=&#8216;2016/09/23 00:00:00&#8217;, time_end=&#8216;2016/09/23 00:05:00&#8217;, </dt>
+<dd><p class="first last">path_name=&#8217;C:/Users/Brendan/Desktop/SDO_test&#8217;)</p>
+</dd>
+</dl>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
