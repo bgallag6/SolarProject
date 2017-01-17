@@ -21,7 +21,6 @@ Documentation for the Code
 
 Lets see if this works
 
-:mod:`visual` -- visual
 .. automodule:: visual
    :members:
 
