@@ -31,10 +31,10 @@ import h5py
     #VISUAL = np.array(f['visual'])
     #r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20141025', wavelength=1600, path_name='C:/Users/Brendan/Desktop/PDFs')
     
-#HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/param_20130530_1600_2300_2600_2200_3000_new.npy')
+#HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/param_20120923_304A_(528)_(132)x_(100)_100y_lowess_025.npy')
 #HEATMAPS = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/param_20120923_193A_(528)_(132)x_(100)_100y_numpy_dogbox.npy')
-#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20130530_1600A_2300_2600i_2200_3000j_float.npy')
-#r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130530', wavelength=1600, path_name='C:/Users/Brendan/Desktop/PHYS 326')
+#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20120923_304A_(528)_(132)x_(100)_100y_float.npy')
+#r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20120923', wavelength=304, path_name='C:/Users/Brendan/Desktop/PHYS 326/test')
 
 
 
@@ -58,18 +58,18 @@ import h5py
 """
 ## create derotated region datacube
 """
-fm.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20130530/1700', date='20130530', wavelength=1700, sub_reg_coords=[2200,3000,2300,2600], coords_type='pix', bin_frac=1)
+#fm.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20130530/1700', date='20130530', wavelength=1700, sub_reg_coords=[2200,3000,2300,2600], coords_type='pix', bin_frac=1)
 
 
 
 """
 ## fft-averaging + 3x3 averaging
 """
-#DATA = np.load('F:/Users/Brendan/Desktop/SolarProject/datacubes/SDO_20120923_304A_(528)_(132)x_(100)_100y_float.npy')
-#TIME = np.load('F:/Users/Brendan/Desktop/SolarProject/time_arrays/SDO_20120923_304A_(528)_(132)x_(100)_100y_float_time.npy')
+#DATA = np.load('F:/Users/Brendan/Desktop/SolarProject/datacubes/20130530_1700_2300_2600i_2200_3000j_data_rebin1.npy')
+#TIME = np.load('F:/Users/Brendan/Desktop/SolarProject/time_arrays/20130530_1700_2300_2600i_2200_3000j_time.npy')
 
-#spectra_array = fm.fft_avg(datacube = DATA, timeseries = TIME, num_seg = 3)
-#np.save('C:/Users/Brendan/Desktop/SDO/spectra_array_FFT3_20120923_304A_(528)_(132)x_(100)_100y.npy', spectra_array)
+#spectra_array = fm.fft_avg(datacube = DATA, timeseries = TIME, num_seg = 6)
+#np.save('C:/Users/Brendan/Desktop/SDO/spectra_20130530_1700_2300_2600i_2200_3000j', spectra_array)
 #np.save('C:/Users/Brendan/Desktop/SDO/spectra_20130530_193_2300_2600_2200_3000', spectra)  # now this
 
 
@@ -77,12 +77,12 @@ fm.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20130530/1700'
 ## spectra fitting
 """
 #SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/spectra_20130530_1600_2300_2600i_2200_3000j_data_rebin4.npy')
-#SPECTRA = np.load('F:/Users/Brendan/Desktop/SolarProject/spectra_array_FFT/spectra_array_FFT6_20130530_193_2300_2600_2200_3000_float_numpy.npy')
+#SPECTRA = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/spectra_20130815_193_1000_1600i_1950_2950j_rebin2.npy')
 #SPECTRA = spectra_array
 #params, M2_fit = fm.spec_fit(spectra_array = SPECTRA)
 
-#np.save('C:/Users/Brendan/Desktop/SDO/param_20130530_1600_2300_2600_2200_3000_new', params)
-#np.save('C:/Users/Brendan/Desktop/SDO/M2_20130530_193_2300_2600_2200_3000', M2_fit)
+#np.save('C:/Users/Brendan/Desktop/SDO/param_20120923_304A_(528)_(132)x_(100)_100y_lowess_025', params)
+#np.save('C:/Users/Brendan/Desktop/SDO/M2_20130530_1700_2300_2600i_2200_3000j', M2_fit)
 #np.save('C:/Users/Brendan/Desktop/SDO/uncertainties_20130815_193_1000_1600i_1950_2950j_rebin2', Uncertainties)  # if want to keep?
 #np.save('C:/Users/Brendan/Desktop/SDO/diffm1m2_20130815_193_1000_1600i_1950_2950j_rebin2', diffM1M2)  # if want to keep?
 

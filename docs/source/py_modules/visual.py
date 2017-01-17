@@ -8,47 +8,27 @@ Created on Wed Jan 11 00:57:23 2017
 @author: Brendan
 """
 
-"""
-############################
-############################
-# generate visual images
-############################
-############################
-"""
-
-## probably should include in heatmap generation function
-## probably should have arrays included in param array - 
-## created during 3x3 fitting?
-
-## obviously need to make so that can load in different image arrays
-
-
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 def visual(dataset, date, wavelength, path_name):
-    """
-    This function raises num to the power of x and returns the result
-
-    :type num: int
-    :param num: The number to raise
-
-    :type x: int
-    :param x: The power to raise the number to
-
-    :rtype: int
-    :returns: The result
-
-    :raises: ValueError if x isn't an int
-
-    .. code-block:: python
-
-        >>> result = power(2, 3)
-        >>> print result
-        8
-
+    """This function does something.
+ 
+    Parameters
+    ----------
+    var1 : array_like
+        This is a type.
+    var2 : int
+        This is another var.
+    Long_variable_name : {'hi', 'ho'}, optional
+        Choices in brackets, default first when optional.
+ 
+    Returns
+    -------
+    describe : type
+        Explanation
     """
 
     titles = ['Average', 'Middle-File']

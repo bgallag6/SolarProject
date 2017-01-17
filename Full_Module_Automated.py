@@ -501,7 +501,7 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
     plt.yticks(fontsize=17)
     plt.xlim(0.5, 3.)
     plt.ylim(0, 25000)
-    y, x, _ = plt.hist(flatten_slopes, bins=250)
+    y, x, _ = plt.hist(flatten_slopes, bins=100)
     plt.ylim(0, y.max()*1.1)
     #plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
     #plt.savefig('%s/%s_%i_Histogram_Slopes.jpeg' % (path_name, date, wavelength))
@@ -1251,6 +1251,7 @@ def spec_fit(spectra_array):
                 M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
                 #M2_low = [-0.1, 0.1, -0.1, 0.00001, -6.5, 0.05]  # test on 193 - coronal hole
                 M2_high = [0.002, 4., 0.01, 0.2, -4.6, 0.8]
+                #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]  # see what happens if force middle of range above where slopes are
                 # change method to 'dogbox' and increase max number of function evaluations to 3000
                 nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000) # replaced #'s with arrays
                 
