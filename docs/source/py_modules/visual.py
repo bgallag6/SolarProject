@@ -1,13 +1,3 @@
-"""
-.. module:: visual
-
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jan 11 00:57:23 2017
-
-@author: Brendan
-"""
-
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import colors
@@ -57,21 +47,15 @@ def visual(dataset, date, wavelength, path_name):
         
 
 def other(who, what, when):
-    """Just a test example.
-    
-    who: 
-        Path of file containing visual image data. (String)
-        
-    what: 
-        Date of dataset in 'YYYYMMDD' format. (String)
-    
-    when:
-        Wavelength of dataset. (Integer)
-                        
-    Example:
-    ::
-        fm.visual(dataset='C:/Users/Brendan/Desktop/SDO/param_20120923_211_0_300_0_574_numpy.npy',
-          wavelength=211, path_name='C:/Users/Brendan/Desktop/PHYS 326') 
+    """This function does something.
+ 
+    :param name: The name to use.
+    :type name: str.
+    :param state: Current state to be in.
+    :type state: bool.
+    :returns:  int -- the return code.
+    :raises: AttributeError, KeyError
+ 
     """
 
     titles = ['Average', 'Middle-File']
