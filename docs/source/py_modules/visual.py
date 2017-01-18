@@ -24,8 +24,7 @@ def visual(dataset, date, wavelength, path_name):
       
     Example:
     ::
-        fm.get_data(wavelength=1600, time_begin='2016/09/23 00:00:00', time_end='2016/09/23 00:05:00', 
-          path_name='C:/Users/Brendan/Desktop/SDO_test')
+        fm.get_data(wavelength=1600, time_begin='2016/09/23 00:00:00', time_end='2016/09/23 00:05:00', path_name='C:/Users/Brendan/Desktop/SDO_test')
     """
 
     titles = ['Average', 'Middle-File']

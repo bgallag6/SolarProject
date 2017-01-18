@@ -972,6 +972,8 @@ def fft_avg(datacube, timeseries, num_seg):
                  ## perform Fast Fourier Transform on each segment       
                  sig = split[i]
                  sig_fft = fftpack.fft(sig)
+                 #sig_fft = accelerate.mkl.fftpack.fft(sig)  # possibly use this
+                 #sig_fft = accelerate.mkl.fftpack.rfft(sig)  # or this
                  powers = np.abs(sig_fft)[pidxs]
                  norm = len(sig)  # to normalize the power
                  powers = ((powers/norm)**2)*(1./(sig.std()**2))*2
