@@ -415,6 +415,11 @@ def get_data_fill(wavelength, cadence, time_begin, time_end, path_name):
 # included visual images in single function call
 # added pdf-save support for easy inclusion in latex documents
 
+# update 1/19:
+# added now generates histograms of all parameters
+# might want to set histogram range based on parameter bounds in curve_fit?
+# want them to be all the same ranges? -- or just using to pick out problems?
+
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import colors
@@ -447,9 +452,9 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         fm.heatmap(heatmap = HEATMAPS, visual = VISUAL, date = '20130815', wavelength=211, path_name='C:/Users/Brendan/Desktop/PHYS 326') 
     """
 
-    titles = ['Power Law Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location', 'Gaussian Width', '($/chi^2$)']
+    titles = ['Power Law Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location', 'Gaussian Width', '($\chi^2$)']
     names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'Chi2']
-    cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location (e^(Value))', 'Width', '($/chi^2$)']
+    cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location (e^(Value))', 'Width', '($\chi^2$)']
     #vmin = [10**-11, 0.5, 10**-6, 10**-6, -6.5, 0.1, 2.]  # think don't need anymore
     #vmax = [10**-6, 2.5, 0.003, 10**-2, -4.5, 0.8, 15.]  # think don't need anymore
     wavelength = wavelength
@@ -491,21 +496,20 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         plt.savefig('%s/%s_%i_heatmap_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
         
         
-    flatten_slopes = np.reshape(h_map[1], (h_map[1].shape[0]*h_map[1].shape[1]))
-
-    fig = plt.figure(figsize=(15,9))
-    plt.title('SDO AIA %i.0 Angstrom %s  [Histogram - Slopes]' % (wavelength, date_title), y = 1.01, fontsize=25)
-    plt.xlabel('Slope Value', fontsize=20, labelpad=10)
-    plt.ylabel('Bin Count', fontsize=20, labelpad=10)
-    plt.xticks(fontsize=17)
-    plt.yticks(fontsize=17)
-    plt.xlim(0.5, 3.)
-    plt.ylim(0, 25000)
-    y, x, _ = plt.hist(flatten_slopes, bins=100)
-    plt.ylim(0, y.max()*1.1)
-    #plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
-    #plt.savefig('%s/%s_%i_Histogram_Slopes.jpeg' % (path_name, date, wavelength))
-    plt.savefig('%s/%s_%i_Histogram_Slopes.pdf' % (path_name, date, wavelength), format='pdf')
+        flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
+    
+        fig = plt.figure(figsize=(15,9))
+        plt.title('SDO AIA %i.0 Angstrom %s  [Histogram - %s]' % (wavelength, date_title, titles[i]), y = 1.01, fontsize=25)
+        plt.xlabel('%s' % cbar_labels[i], fontsize=20, labelpad=10)
+        plt.ylabel('Bin Count', fontsize=20, labelpad=10)
+        plt.xticks(fontsize=17)
+        plt.yticks(fontsize=17)
+        plt.xlim(h_min, h_max)
+        y, x, _ = plt.hist(flat_param, bins=200, range=(h_min, h_max))
+        plt.ylim(0, y.max()*1.1)
+        #plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
+        #plt.savefig('%s/%s_%i_Histogram_Slopes.jpeg' % (path_name, date, wavelength))
+        plt.savefig('%s/%s_%i_Histogram_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
     
    
     titles_vis = ['Average', 'Middle-File']
@@ -867,7 +871,7 @@ import astropy.units as u
 import h5py
 #from scipy import fftpack  # not working with this called here???
 from timeit import default_timer as timer
-import accelerate
+#import accelerate
 
 
 def fft_avg(datacube, timeseries, num_seg):
@@ -974,11 +978,11 @@ def fft_avg(datacube, timeseries, num_seg):
                 
                  ## perform Fast Fourier Transform on each segment       
                  sig = split[i]
-                 #sig_fft = fftpack.fft(sig)
+                 sig_fft = fftpack.fft(sig)
                  #sig_fft = fftpack.rfft(sig)  # real
                  #sig_fft = np.fft.rfft(sig)  # significantly slower than scipy                 
                  #sig_fft = accelerate.mkl.fftpack.fft(sig)  # possibly use this
-                 sig_fft = accelerate.mkl.fftpack.rfft(sig)  # or this
+                 #sig_fft = accelerate.mkl.fftpack.rfft(sig)  # or this
                  powers = np.abs(sig_fft)[pidxs]
                  norm = len(sig)  # to normalize the power
                  powers = ((powers/norm)**2)*(1./(sig.std()**2))*2

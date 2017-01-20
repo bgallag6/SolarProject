@@ -33,8 +33,8 @@ import h5py
     
 #HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/param_20120923_304A_(528)_(132)x_(100)_100y_lowess_025.npy')
 #HEATMAPS = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/param_20120923_193A_(528)_(132)x_(100)_100y_numpy_dogbox.npy')
-#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20120923_304A_(528)_(132)x_(100)_100y_float.npy')
-#r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20120923', wavelength=304, path_name='C:/Users/Brendan/Desktop/PHYS 326/test')
+#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20120923_193A_(528)_(132)x_(100)_100y.npy')
+#r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20120923', wavelength=193, path_name='C:/Users/Brendan/Desktop/PHYS 326/test_temp')
 
 
 
