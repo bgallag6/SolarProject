@@ -1215,26 +1215,29 @@ def spec_fit(spectra_array):
             ## possibly use previous pixel's parameters as initial guesses for current pixel (issues creating wierd banding in images)
                             
             """
-            if m > 1:
-                P0 = [pl_A[l-1][m-2], slopes[l-1][m-2], pl_C[l-1][m-2], gauss[l-1][m-2], gauss_loc[l-1][m-2], gauss_wid[l-1][m-2]]
+            M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
+            #M2_low = [-0.1, 0.1, -0.1, 0.00001, -6.5, 0.05]  # test on 193 - coronal hole
+            M2_high = [0.002, 4., 0.01, 0.2, -4.6, 0.8]
+            if m > 0:
+                P0 = [params[0][l][m-1], params[1][l][m-1], params[2][l][m-1], params[3][l][m-1], params[4][l][m-1], params[5][l][m-1]]
                 #P0 = [0.0, 1.02, 0.001, 0.001, -4.68, 0.79]
                 try:
                     #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=([-4.34,0.5,-8.68,0.00001,-6.5,0.05], [2.,6.,2.,0.2,-4.6,0.8]), sigma=ds)
-                    nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=([-0.5,0.1,-0.5,0.00001,-8.5,0.05], [0.5,4.,0.5,0.2,-4.6,0.9]), sigma=ds)
-            
+                    #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=([-0.5,0.1,-0.5,0.00001,-8.5,0.05], [0.5,4.,0.5,0.2,-4.6,0.9]), sigma=ds)
+                    nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
                 except RuntimeError:
                     print("Error M2 - curve_fit failed")
                 
                 except ValueError:
                     print("Error M2 - inf/NaN - %i, %i" % (l,m))
                     
-            elif m == 1 and l > 1:
-                P0 = [pl_A[l-2][m-1], slopes[l-2][m-1], pl_C[l-2][m-1], gauss[l-2][m-1], gauss_loc[l-2][m-1], gauss_wid[l-2][m-1]]
+            elif m == 0 and l > 0:
+                P0 = [params[0][l-1][m], params[1][l-1][m], params[2][l-1][m], params[3][l-1][m], params[4][l-1][m], params[5][l-1][m]]
                 try:
                     #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=([-4.34,0.5,-8.68,0.00001,-6.5,0.05], [2.,6.,2.,0.2,-4.6,0.8]), sigma=ds)
                     #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=([-4.34,0.5,-8.68,0.00001,-6.5,0.05], [2.,6.,2.,0.2,-4.6,0.8]), sigma=ds)
-                    nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=([-0.5,0.1,-0.5,0.00001,-8.5,0.05], [0.5,4.,0.5,0.2,-4.6,0.9]), sigma=ds)
-            
+                    #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=([-0.5,0.1,-0.5,0.00001,-8.5,0.05], [0.5,4.,0.5,0.2,-4.6,0.9]), sigma=ds)
+                    nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
                 except RuntimeError:
                     print("Error M2 - curve_fit failed")
                 
@@ -1246,8 +1249,8 @@ def spec_fit(spectra_array):
                 try:
                     #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=([-4.34,0.5,-8.68,0.00001,-6.5,0.05], [2.,6.,2.,0.2,-4.6,0.8]), sigma=ds)
                     #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=([-4.34,0.5,-8.68,0.00001,-6.5,0.05], [2.,6.,2.,0.2,-4.6,0.8]), sigma=ds)
-                    nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=([-0.5,0.1,-0.5,0.00001,-8.5,0.05], [0.5,4.,0.5,0.2,-4.6,0.9]), sigma=ds)
-            
+                    #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=([-0.5,0.1,-0.5,0.00001,-8.5,0.05], [0.5,4.,0.5,0.2,-4.6,0.9]), sigma=ds)
+                    nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
                 except RuntimeError:
                     print("Error M2 - curve_fit failed")
                 

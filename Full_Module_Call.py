@@ -31,10 +31,10 @@ import h5py
     #VISUAL = np.array(f['visual'])
     #r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20141025', wavelength=1600, path_name='C:/Users/Brendan/Desktop/PDFs')
     
-#HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/param_20120923_304A_(528)_(132)x_(100)_100y_lowess_025.npy')
+#HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/param_20130815_193_1000_1600i_1950_2950j_rebin2_box_narrow.npy')
 #HEATMAPS = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/param_20120923_193A_(528)_(132)x_(100)_100y_numpy_dogbox.npy')
-#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20120923_193A_(528)_(132)x_(100)_100y.npy')
-#r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20120923', wavelength=193, path_name='C:/Users/Brendan/Desktop/PHYS 326/test_temp')
+#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20130815_193_1000_1600i_1950_2950j.npy')
+#r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130815', wavelength=193, path_name='C:/Users/Brendan/Desktop/PHYS 326/test_temp2')
 
 
 
@@ -81,7 +81,7 @@ import h5py
 #SPECTRA = spectra_array
 #params, M2_fit = fm.spec_fit(spectra_array = SPECTRA)
 
-#np.save('C:/Users/Brendan/Desktop/SDO/param_20120923_304A_(528)_(132)x_(100)_100y_lowess_025', params)
+#np.save('C:/Users/Brendan/Desktop/SDO/param_20130815_193_1000_1600i_1950_2950j_rebin2_box_narrow', params)
 #np.save('C:/Users/Brendan/Desktop/SDO/M2_20130530_1700_2300_2600i_2200_3000j', M2_fit)
 #np.save('C:/Users/Brendan/Desktop/SDO/uncertainties_20130815_193_1000_1600i_1950_2950j_rebin2', Uncertainties)  # if want to keep?
 #np.save('C:/Users/Brendan/Desktop/SDO/diffm1m2_20130815_193_1000_1600i_1950_2950j_rebin2', diffM1M2)  # if want to keep?
