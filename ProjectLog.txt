@@ -57,3 +57,6 @@ tried using seed parameters from neighboring pixel again, this time with dogbox 
 (3.73 vs 3.71) when using /10*[-5,5]
 
 - Numba strives to support as much of the Python language as possible, but some language features are not available inside Numba-compiled functions. The following Python language features are not currently supported: Function definition
+
+- full region finally finished on lab computer.  ended up taking 370,000 seconds = 103 hours.  I was pretty anxious to see the results, and they turned out glorious!
+- the only unfortunate thing is that the region is too big to be interacted with, either by the plotly contour scripts, or 3D scatterplots.  
