@@ -14,15 +14,18 @@ Created on Tue Dec 20 22:30:43 2016
 # document
 
 
-# so far have tested all and work
+# so far have tested all and work (except for masking tool)
 
-# maybe make separate function with whole program as one from get data to heatmaps?
+# maybe make separate function with whole program -- from get_data to heatmaps?
 
 # maybe put module imports inside function definitions (so not executing all for each)
 
 # update 1/14: deleted visual function since had put in heatmaps
 
 # maybe write script to compare results easier
+
+# update 1/21:
+# maybe make duplicate fft_avg function, one for computers that have accelerate, one for don't
 
 """
 ############################
@@ -157,10 +160,6 @@ def get_data(wavelength, time_begin, time_end, path_name):
     l = len(flist)
      
     l_fname = len(flist[0])
-    
-    #l_time = 
-    
-    #fname_trim = len()
    
     # find first file after 00:00:00 - set time base to that
     
@@ -185,13 +184,11 @@ def get_data(wavelength, time_begin, time_end, path_name):
     m3 = int(f_first[(l_fname-30):(l_fname-28)]) - 1 
     s3 = (60 +  (int(f_first[(l_fname-27):(l_fname-25)])) - (int(np.floor(60/cadence))*cadence))
     #t_first = ('%s''%02d'':''%02d'':''%02d' % (Y1,H1,(m_first - 1),s_first))
-    
-    
-    arr_all = []
+       
     
     # create array of all possible files
-    #for i in range(0,num_files):  # should change to this?
-    for i in range(0,l):
+    arr_all = []
+    for i in range(0,num_files):  # changed from range(0,l)
         t3 = ('%s''%02d'':''%02d'':''%02d' % (Y1,h3,m3,s3))
         arr_all.append(t3)
         s3 += cadence
@@ -203,11 +200,10 @@ def get_data(wavelength, time_begin, time_end, path_name):
                 h3 += 1 
     #print arr_all
     
-    arr_need = []
     
-    # compare array of 'have' to array of 'all' to determine array of 'need'
-    #for i in range(0,num_files):
-    for i in range(0,l):
+    # compare array_all to array_have to determine array_need
+    arr_need = []
+    for i in range(0,num_files):  # changed from range(0,l)
         z = arr_all[i] in arr_have    
         if z == False:
             arr_need.append(arr_all[i])
@@ -246,10 +242,9 @@ def get_data(wavelength, time_begin, time_end, path_name):
 # so that program doesn't get stuck on one file
 # he also mentioned that it would be better to use the ISO module for date/time
         
-""" 
-when redownloading - takes first and subtracts one - but if first had already been 
-downloaded - screws things up
-"""
+# when redownloading - takes first file and subtracts one - but if first had already been 
+# downloaded - screws things up
+
 
         
 from sunpy.net import vso
@@ -315,26 +310,23 @@ def get_data_fill(wavelength, cadence, time_begin, time_end, path_name):
     l = len(flist)
      
     l_fname = len(flist[0])
-    
-    #l_time = 
-    
-    #fname_trim = len()
    
     # find first file after 00:00:00 - set time base to that
     
     # loop through flist couple times until get all.
     
-    arr_have = []
     
+    # create searchable array of images that have already been downloaded
+        
     #adj = 5  # adjust 5 characters for 20130815 193 dataset (doesn't have extra '.fits')
     adj = 0  # for all other datasets
     
+    arr_have = []
     for i in range(0,l):
         x = flist[i]
         h = int(x[(l_fname-33+adj):(l_fname-31+adj)])
         m = int(x[(l_fname-30+adj):(l_fname-28+adj)])
-        s = int(x[(l_fname-27+adj):(l_fname-25+adj)])
-        
+        s = int(x[(l_fname-27+adj):(l_fname-25+adj)])        
         t = ('%s''%02d'':''%02d'':''%02d' % (Y1,h,m,s))
         arr_have.append(t)
     #print arr_have
@@ -347,11 +339,9 @@ def get_data_fill(wavelength, cadence, time_begin, time_end, path_name):
     s3 = (60 +  (int(f_first[(l_fname-27+adj):(l_fname-25+adj)])) - (int(np.floor(60/cadence))*cadence))
     #t_first = ('%s''%02d'':''%02d'':''%02d' % (Y1,H1,(m_first - 1),s_first))
     
-    
-    arr_all = []
-    
-    for i in range(0,num_files):
-    #for i in range(0,l):
+    # create array of all possible files
+    arr_all = []   
+    for i in range(0,num_files):  # changed from range(0,l)
         t3 = ('%s''%02d'':''%02d'':''%02d' % (Y1,h3,m3,s3))
         arr_all.append(t3)
         s3 += cadence
@@ -364,10 +354,10 @@ def get_data_fill(wavelength, cadence, time_begin, time_end, path_name):
     #print arr_all
     print len(arr_all)
     
-    arr_need = []
     
-    for i in range(0,num_files):
-    #for i in range(0,l):
+    # compare array_all to array_have to determine array_need
+    arr_need = []   
+    for i in range(0,num_files):  # changed from range(0,l)
         z = arr_all[i] in arr_have    
         if z == False:
             arr_need.append(arr_all[i])
@@ -376,7 +366,8 @@ def get_data_fill(wavelength, cadence, time_begin, time_end, path_name):
     
     print ""
     print "After the initial pass, still need %d files." % len(arr_need)
-            
+    
+    # loop through the array of needed files, requesting them one at a time         
     for i in range(0,len(arr_need)):
         qr=client.query(vso.attrs.Time(arr_need[i],arr_need[i]), vso.attrs.Instrument('aia'), vso.attrs.Wave(wavelength * u.AA, wavelength * u.AA))
         print qr
@@ -420,6 +411,11 @@ def get_data_fill(wavelength, cadence, time_begin, time_end, path_name):
 # might want to set histogram range based on parameter bounds in curve_fit?
 # want them to be all the same ranges? -- or just using to pick out problems?
 
+# got odd error when generating float32 heatmaps:
+#UserWarning: Attempting to set identical left==right results
+#in singular transformations; automatically expanding.
+#left=0.425, right=0.425 'left=%s, right=%s') % (left, right))
+
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import colors
@@ -451,12 +447,15 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
     ::
         fm.heatmap(heatmap = HEATMAPS, visual = VISUAL, date = '20130815', wavelength=211, path_name='C:/Users/Brendan/Desktop/PHYS 326') 
     """
-
+    
+    # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
     titles = ['Power Law Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location', 'Gaussian Width', '($\chi^2$)']
     names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'Chi2']
     cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location (e^(Value))', 'Width', '($\chi^2$)']
-    #vmin = [10**-11, 0.5, 10**-6, 10**-6, -6.5, 0.1, 2.]  # think don't need anymore
+    
+    #vmin = [10**-11, 0.5, 10**-6, 10**-6, -6.5, 0.1, 2.]  # think don't need anymore  (or option to set ranges for specific wavelengths?)
     #vmax = [10**-6, 2.5, 0.003, 10**-2, -4.5, 0.8, 15.]  # think don't need anymore
+    
     wavelength = wavelength
     year = date[0:4]
     month = date[4:6]
@@ -464,13 +463,13 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
     date_title = '%s-%s-%s' % (year,month,day)
     
     h_map = heatmaps
-    h_map = h_map[:,0:h_map.shape[1]-1,0:h_map.shape[2]-1]
+    h_map = h_map[:,0:h_map.shape[1]-1,0:h_map.shape[2]-1]  # trim last row and column from array (originally needed since went one past)
     
     
     for i in range(0,len(titles)):
         
         fig = plt.figure(figsize=(15,9))
-        ax = plt.gca()
+        ax = plt.gca()  # get current axis -- to set colorbar 
         plt.title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[i]), y = 1.01, fontsize=25)
         
         if i == 6:
@@ -486,7 +485,7 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
         plt.xticks(fontsize=17)
         plt.yticks(fontsize=17)
-        divider = make_axes_locatable(ax)
+        divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
         cax = divider.append_axes("right", size="3%", pad=0.07)
         cbar = plt.colorbar(im,cax=cax)
         cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
@@ -508,7 +507,7 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         y, x, _ = plt.hist(flat_param, bins=200, range=(h_min, h_max))
         plt.ylim(0, y.max()*1.1)
         #plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
-        #plt.savefig('%s/%s_%i_Histogram_Slopes.jpeg' % (path_name, date, wavelength))
+        #plt.savefig('%s/%s_%i_Histogram_%s.jpeg' % (path_name, date, wavelength, names[i]))
         plt.savefig('%s/%s_%i_Histogram_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
     
    
@@ -1075,6 +1074,19 @@ def fft_avg(datacube, timeseries, num_seg):
 
 # ran through fitting routine with one region - same results - great
 
+# update 1/21:
+# maybe try using float16/32 - save memory and make calculations quicker?
+
+# float32 looks like it would work.  maybe use full float64 up until fitting, then recast as float32
+# also possibly store datacube as float32 - strictly for size concerns.  (try on 304 [filament] to test)
+
+# when segmenting for parallelization - numpy.load(mmap-reads in only slice?)
+
+# tried float32 - reduced time by 2/3 (50 vs 150 sec)
+# for 20130530 1600 rebin 4 - results were mixed -- getting stuck completely on few parameters
+# as in every single pixel was same value
+# brought up some fit charts, and yeah, don't know why, but are getting stuck, causing others to be off
+
 import numpy as np
 import scipy.signal
 #matplotlib.use('TkAgg') 	# NOTE: This is a MAC/OSX thing. Probably REMOVE for linux/Win
@@ -1139,6 +1151,7 @@ def spec_fit(spectra_array):
     
     ## load in array of segment-averaged pixel FFTs
     SPECTRA = spectra_array
+    #spectra_array = spectra_array.astype(np.float32)  # possibly use this?
     
     print "The region size is %ii x %ij" % (SPECTRA.shape[0], SPECTRA.shape[1])
     print "%i frequencies were evaluated in the FFT" % SPECTRA.shape[2] 
@@ -1152,6 +1165,7 @@ def spec_fit(spectra_array):
     sample_freq = fftpack.fftfreq(freq_size, d=time_step)
     pidxs = np.where(sample_freq > 0)
     freqs = sample_freq[pidxs]
+    #freqs = freqs.astype(np.float32)  # possibly use this?
     
     
     # initialize arrays to hold parameter values, also each pixel's combined model fit - for tool
@@ -1170,14 +1184,15 @@ def spec_fit(spectra_array):
     ## 10^[(log(a) + log(b) + log(c) + ...) / 9] = [a*b*c*...]^(1/9)
     
     for l in range(0,SPECTRA.shape[0]):
-    #for l in range(0,2):
+    #for l in range(30,31):
         #print l
         for m in range(0,SPECTRA.shape[1]):
-        #for m in range(65,75):
+        #for m in range(65,70):
             
                                             
             f = freqs  # frequencies
             s = spectra_array[l][m]  # fourier power
+            #s = s.astype(np.float32)  # probably dont need since spectra_array already float32
             
             #ds = (1./f**2.2)/1000
             ds = s*0.1  # set the error / variance estimate to a constant percentage of the spectra power-values
@@ -1185,9 +1200,8 @@ def spec_fit(spectra_array):
             # create points to fit model with final parameters 
             #f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],(len(freqs)+1)/2)  # would save storage / memory space
             f_fit = freqs       
-        
-                    
-                    
+            
+                                                   
             ### fit data to models using SciPy's Levenberg-Marquart method
             
             try:

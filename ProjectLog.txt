@@ -60,3 +60,23 @@ tried using seed parameters from neighboring pixel again, this time with dogbox 
 
 - full region finally finished on lab computer.  ended up taking 370,000 seconds = 103 hours.  I was pretty anxious to see the results, and they turned out glorious!
 - the only unfortunate thing is that the region is too big to be interacted with, either by the plotly contour scripts, or 3D scatterplots.  
+
+
+1/21
+- tried changing curve_fit [ftol: changed from default (1e-8) to 1e-12] -- didnt change anything
+
+- if I derotate the full region for each - would that be all I needed - could always do sub-regions from that?
+
+- how many more results do we need?
+
+- what data-types can I reduce?  float 64 to 32?  would make calculations quicker?  
+
+tried float32 vs float64 on 20130530 1600 rebin4 
+- float32 chi^2 way higher (36 vs 15) - although map still looks decent
+- something went wrong with gaussian width - same value for all 0.425 (center of bounds?)
+- same with gaussian location
+- gaussian amplitude looks good (still not as detailed maybe as float64, but good)
+- gaussian amp has lower amplitudes (0.011 vs 0.016 for max values)
+- power-law tail horrible - none even negative like most of float64 were
+- power-law index - stuck at 2.15 for all
+- power-law slope coefficients - still can see structure (but opposite regions higher values - ?!?)
