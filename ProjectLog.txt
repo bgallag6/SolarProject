@@ -80,3 +80,10 @@ tried float32 vs float64 on 20130530 1600 rebin4
 - power-law tail horrible - none even negative like most of float64 were
 - power-law index - stuck at 2.15 for all
 - power-law slope coefficients - still can see structure (but opposite regions higher values - ?!?)
+
+1/23
+- for hdf5 of 20130530 193 full region - didn't use exact time array - should be same though
+
+- if made param file float32, would that help the scatter plots / contour maps? (probably not I guess)
+
+- need to get all files in same name structure (get rid of 'float' / 'dogbox'...)
