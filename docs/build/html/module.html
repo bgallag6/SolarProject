@@ -136,93 +136,63 @@
 <div class="section" id="documentation-for-the-code">
 <h2>Documentation for the Code<a class="headerlink" href="#documentation-for-the-code" title="Permalink to this headline">¶</a></h2>
 <p>Lets see if this works</p>
-<span class="target" id="module-Full_Module_Automated"></span><p>Created on Tue Dec 20 22:30:43 2016</p>
-<p>&#64;author: Brendan</p>
+<span class="target" id="module-SolSpec"></span><p>Created on Tue Dec 20 22:30:43 2016
+&#64;author: Brendan Gallagher</p>
+<p>This module can be used to:
+1. Download .fits image files
+2. Extract subregion and deroate datacube
+3. Calculate the time-segment-averaged FFT for each pixel in region
+4. Calculate a 3x3 pixel-box average for each pixel
+5. Fit the resulting FFT spectra to models M1 and M2
+6. Generate &#8216;heatmaps&#8217; for each of the parameters of M2</p>
 <dl class="function">
-<dt id="Full_Module_Automated.get_data">
-<code class="descclassname">Full_Module_Automated.</code><code class="descname">get_data</code><span class="sig-paren">(</span><em>wavelength</em>, <em>time_begin</em>, <em>time_end</em>, <em>path_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Full_Module_Automated.html#get_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Full_Module_Automated.get_data" title="Permalink to this definition">¶</a></dt>
+<dt id="SolSpec.get_data">
+<code class="descclassname">SolSpec.</code><code class="descname">get_data</code><span class="sig-paren">(</span><em>wavelength</em>, <em>time_begin</em>, <em>time_end</em>, <em>path_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SolSpec.html#get_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SolSpec.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads .fits image files from database.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>wavelength :</strong></p>
-<blockquote>
-<div><p>Wavelength to be downloaded. (Integer)</p>
-</div></blockquote>
-<p><strong>time_begin :</strong></p>
-<blockquote>
-<div><p>Beginning of time range in YYYY/MM/DD HH:MM:SS format. (String)</p>
-</div></blockquote>
-<p><strong>time_end :</strong></p>
-<blockquote>
-<div><p>Ending of time range in YYYY/MM/DD HH:MM:SS format. (String)</p>
-</div></blockquote>
-<p><strong>path_name :</strong></p>
-<blockquote>
-<div><p>The directory to which the files should be downloaded. (String)</p>
-</div></blockquote>
-<p><strong>Example:</strong></p>
-<p><strong>::</strong></p>
-<blockquote class="last">
-<div><dl class="docutils">
-<dt>fm.get_data(wavelength=1600, time_begin=&#8216;2016/09/23 00:00:00&#8217;, time_end=&#8216;2016/09/23 00:05:00&#8217;, </dt>
-<dd><p class="first last">path_name=&#8217;C:/Users/Brendan/Desktop/SDO_test&#8217;)</p>
-</dd>
+<dl class="docutils">
+<dt>wavelength</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>Wavelength to be downloaded. (Integer)</dd>
+<dt>time_begin</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>Beginning of time range in YYYY/MM/DD HH:MM:SS format. (String)</dd>
+<dt>time_end</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>Ending of time range in YYYY/MM/DD HH:MM:SS format. (String)</dd>
+<dt>path_name</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>The directory to which the files should be downloaded. (String)</dd>
 </dl>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ss</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mi">1600</span><span class="p">,</span> <span class="n">time_begin</span><span class="o">=</span><span class="s1">&#39;2016/09/23 00:00:00&#39;</span><span class="p">,</span> <span class="n">time_end</span><span class="o">=</span><span class="s1">&#39;2016/09/23 00:05:00&#39;</span><span class="p">,</span>
+   <span class="n">path_name</span><span class="o">=</span><span class="s1">&#39;C:/Users/Brendan/Desktop/SDO_test&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
-<dt id="Full_Module_Automated.get_data_fill">
-<code class="descclassname">Full_Module_Automated.</code><code class="descname">get_data_fill</code><span class="sig-paren">(</span><em>wavelength</em>, <em>cadence</em>, <em>time_begin</em>, <em>time_end</em>, <em>path_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Full_Module_Automated.html#get_data_fill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Full_Module_Automated.get_data_fill" title="Permalink to this definition">¶</a></dt>
+<dt id="SolSpec.get_data_fill">
+<code class="descclassname">SolSpec.</code><code class="descname">get_data_fill</code><span class="sig-paren">(</span><em>wavelength</em>, <em>cadence</em>, <em>time_begin</em>, <em>time_end</em>, <em>path_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SolSpec.html#get_data_fill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SolSpec.get_data_fill" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads .fits image files from database.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>wavelength :</strong></p>
-<blockquote>
-<div><p>Wavelength to be downloaded. (Integer)</p>
-</div></blockquote>
-<p><strong>time_begin :</strong></p>
-<blockquote>
-<div><p>Beginning of time range in YYYY/MM/DD HH:MM:SS format. (String)</p>
-</div></blockquote>
-<p><strong>time_end :</strong></p>
-<blockquote>
-<div><p>Ending of time range in YYYY/MM/DD HH:MM:SS format. (String)</p>
-</div></blockquote>
-<p><strong>path_name :</strong></p>
-<blockquote>
-<div><p>The directory to which the files should be downloaded. (String)</p>
-</div></blockquote>
-<p><strong>Example:</strong></p>
-<p><strong>::</strong></p>
-<blockquote class="last">
-<div><dl class="docutils">
-<dt>fm.get_data_fill(wavelength=171, cadence=12, time_begin=&#8216;2013/08/15 00:00:00&#8217;,</dt>
-<dd><p class="first last">time_end=&#8216;2013/08/15 12:00:00&#8217;, path_name=&#8217;F:/SDO/data/20130815/171&#8217;)</p>
-</dd>
+<dl class="docutils">
+<dt>wavelength</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>Wavelength to be downloaded. (Integer)</dd>
+<dt>time_begin</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>Beginning of time range in YYYY/MM/DD HH:MM:SS format. (String)</dd>
+<dt>time_end</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>Ending of time range in YYYY/MM/DD HH:MM:SS format. (String)</dd>
+<dt>path_name</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>The directory to which the files should be downloaded. (String)</dd>
 </dl>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ss</span><span class="o">.</span><span class="n">get_data_fill</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mi">171</span><span class="p">,</span> <span class="n">cadence</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">time_begin</span><span class="o">=</span><span class="s1">&#39;2013/08/15 00:00:00&#39;</span><span class="p">,</span>
+   <span class="n">time_end</span><span class="o">=</span><span class="s1">&#39;2013/08/15 12:00:00&#39;</span><span class="p">,</span> <span class="n">path_name</span><span class="o">=</span><span class="s1">&#39;F:/SDO/data/20130815/171&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
-<dt id="Full_Module_Automated.heatmap">
-<code class="descclassname">Full_Module_Automated.</code><code class="descname">heatmap</code><span class="sig-paren">(</span><em>heatmaps</em>, <em>visual</em>, <em>date</em>, <em>wavelength</em>, <em>path_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Full_Module_Automated.html#heatmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Full_Module_Automated.heatmap" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates heatmaps for each of the parameters:
+<dt id="SolSpec.heatmap">
+<code class="descclassname">SolSpec.</code><code class="descname">heatmap</code><span class="sig-paren">(</span><em>heatmaps</em>, <em>visual</em>, <em>date</em>, <em>wavelength</em>, <em>path_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SolSpec.html#heatmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SolSpec.heatmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates heatmaps and histograms for each of the parameters:
 Powerlaw Slope Coefficient, Powerlaw Index, Powerlaw Tail Value,
-Gaussian Amplitude, Gaussian Location, Gaussian Width, and Chi^2.
-Also generates a histogram of the slopes in the region.</p>
+Gaussian Amplitude, Gaussian Location, Gaussian Width, and Chi^2.</p>
 <dl class="docutils">
 <dt>heatmaps</dt>
  <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>Array of parameters from which heatmaps are generated. (array)</dd>
@@ -236,50 +206,51 @@ Also generates a histogram of the slopes in the region.</p>
  <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>The directory to which the files should be saved. (String)</dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fm</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">heatmap</span> <span class="o">=</span> <span class="n">HEATMAPS</span><span class="p">,</span> <span class="n">visual</span> <span class="o">=</span> <span class="n">VISUAL</span><span class="p">,</span> <span class="n">date</span> <span class="o">=</span> <span class="s1">&#39;20130815&#39;</span><span class="p">,</span> <span class="n">wavelength</span><span class="o">=</span><span class="mi">211</span><span class="p">,</span> <span class="n">path_name</span><span class="o">=</span><span class="s1">&#39;C:/Users/Brendan/Desktop/PHYS 326&#39;</span><span class="p">)</span> 
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ss</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">heatmap</span> <span class="o">=</span> <span class="n">HEATMAPS</span><span class="p">,</span> <span class="n">visual</span> <span class="o">=</span> <span class="n">VISUAL</span><span class="p">,</span> <span class="n">date</span> <span class="o">=</span> <span class="s1">&#39;20130815&#39;</span><span class="p">,</span>
+   <span class="n">wavelength</span><span class="o">=</span><span class="mi">211</span><span class="p">,</span> <span class="n">path_name</span><span class="o">=</span><span class="s1">&#39;C:/Users/Brendan/Desktop/PHYS 326&#39;</span><span class="p">)</span> 
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="function">
-<dt id="Full_Module_Automated.arc2pix">
-<code class="descclassname">Full_Module_Automated.</code><code class="descname">arc2pix</code><span class="sig-paren">(</span><em>x1</em>, <em>x2</em>, <em>y1</em>, <em>y2</em>, <em>image</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Full_Module_Automated.html#arc2pix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Full_Module_Automated.arc2pix" title="Permalink to this definition">¶</a></dt>
+<dt id="SolSpec.arc2pix">
+<code class="descclassname">SolSpec.</code><code class="descname">arc2pix</code><span class="sig-paren">(</span><em>x1</em>, <em>x2</em>, <em>y1</em>, <em>y2</em>, <em>image</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SolSpec.html#arc2pix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SolSpec.arc2pix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts arcsecond coordinates to pixel coordinates + generates subregion image.</p>
 <dl class="docutils">
 <dt>x1</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>arcsecond coordinate to be converted (int/float)</dd>
+ <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>Arcsecond coordinate to be converted (int/float)</dd>
 <dt>x2/y1/y2</dt>
  <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>Same as x1</dd>
 <dt>image</dt>
  <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>.fits file to generate subregion image from. (String)</dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fm</span><span class="o">.</span><span class="n">arc2pix</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span> <span class="n">image</span> <span class="o">=</span> <span class="s1">&#39;F:/SDO/data/20130815/171/aia_lev1_171a_2013_08_15t05_59_59_34z_image_lev1.fits.fits&#39;</span><span class="p">)</span> 
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ss</span><span class="o">.</span><span class="n">arc2pix</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span> <span class="n">image</span> <span class="o">=</span> <span class="s1">&#39;F:/SDO/data/20130815/171/aia_lev1_171a_2013_08_15t05_59_59_34z_image_lev1.fits.fits&#39;</span><span class="p">)</span> 
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="function">
-<dt id="Full_Module_Automated.pix2arc">
-<code class="descclassname">Full_Module_Automated.</code><code class="descname">pix2arc</code><span class="sig-paren">(</span><em>x1</em>, <em>x2</em>, <em>y1</em>, <em>y2</em>, <em>image</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Full_Module_Automated.html#pix2arc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Full_Module_Automated.pix2arc" title="Permalink to this definition">¶</a></dt>
+<dt id="SolSpec.pix2arc">
+<code class="descclassname">SolSpec.</code><code class="descname">pix2arc</code><span class="sig-paren">(</span><em>x1</em>, <em>x2</em>, <em>y1</em>, <em>y2</em>, <em>image</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SolSpec.html#pix2arc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SolSpec.pix2arc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts pixel coordinates to arcsecond coordinates + generates subregion image.</p>
 <dl class="docutils">
 <dt>x1</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>pixel coordinate to be converted (int/float)</dd>
+ <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>Pixel coordinate to be converted (int/float)</dd>
 <dt>x2/y1/y2</dt>
  <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>Same as x1</dd>
 <dt>image</dt>
  <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>.fits file to generate subregion image from. (String)</dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fm</span><span class="o">.</span><span class="n">pix2arc</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span> <span class="n">image</span> <span class="o">=</span> <span class="s1">&#39;F:/SDO/data/20130815/171/aia_lev1_171a_2013_08_15t05_59_59_34z_image_lev1.fits.fits&#39;</span><span class="p">)</span> 
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ss</span><span class="o">.</span><span class="n">pix2arc</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span> <span class="n">image</span> <span class="o">=</span> <span class="s1">&#39;F:/SDO/data/20130815/171/aia_lev1_171a_2013_08_15t05_59_59_34z_image_lev1.fits.fits&#39;</span><span class="p">)</span> 
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="function">
-<dt id="Full_Module_Automated.datacube">
-<code class="descclassname">Full_Module_Automated.</code><code class="descname">datacube</code><span class="sig-paren">(</span><em>directory</em>, <em>date</em>, <em>wavelength</em>, <em>sub_reg_coords</em>, <em>coords_type</em>, <em>bin_frac</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Full_Module_Automated.html#datacube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Full_Module_Automated.datacube" title="Permalink to this definition">¶</a></dt>
+<dt id="SolSpec.datacube">
+<code class="descclassname">SolSpec.</code><code class="descname">datacube</code><span class="sig-paren">(</span><em>directory</em>, <em>date</em>, <em>wavelength</em>, <em>sub_reg_coords</em>, <em>coords_type</em>, <em>bin_frac</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SolSpec.html#datacube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SolSpec.datacube" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates derotated datacube of subregion.</p>
 <dl class="docutils">
 <dt>directory</dt>
@@ -296,15 +267,15 @@ Also generates a histogram of the slopes in the region.</p>
  <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>The fraction by which the image should be rebinned by. (int)</dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fm</span><span class="o">.</span><span class="n">datacube</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s1">&#39;F:/SDO/data/20130530/1600&#39;</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="s1">&#39;20130530&#39;</span><span class="p">,</span> <span class="n">wavelength</span><span class="o">=</span><span class="mi">1600</span><span class="p">,</span>
-  <span class="n">sub_reg_coords</span><span class="o">=</span><span class="p">[</span><span class="mi">2200</span><span class="p">,</span><span class="mi">3000</span><span class="p">,</span><span class="mi">2300</span><span class="p">,</span><span class="mi">2600</span><span class="p">],</span> <span class="n">coords_type</span><span class="o">=</span><span class="s1">&#39;pix&#39;</span><span class="p">,</span> <span class="n">bin_frac</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> 
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ss</span><span class="o">.</span><span class="n">datacube</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s1">&#39;F:/SDO/data/20130530/1600&#39;</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="s1">&#39;20130530&#39;</span><span class="p">,</span> <span class="n">wavelength</span><span class="o">=</span><span class="mi">1600</span><span class="p">,</span>
+   <span class="n">sub_reg_coords</span><span class="o">=</span><span class="p">[</span><span class="mi">2200</span><span class="p">,</span><span class="mi">3000</span><span class="p">,</span><span class="mi">2300</span><span class="p">,</span><span class="mi">2600</span><span class="p">],</span> <span class="n">coords_type</span><span class="o">=</span><span class="s1">&#39;pix&#39;</span><span class="p">,</span> <span class="n">bin_frac</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> 
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="function">
-<dt id="Full_Module_Automated.fft_avg">
-<code class="descclassname">Full_Module_Automated.</code><code class="descname">fft_avg</code><span class="sig-paren">(</span><em>datacube</em>, <em>timeseries</em>, <em>num_seg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Full_Module_Automated.html#fft_avg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Full_Module_Automated.fft_avg" title="Permalink to this definition">¶</a></dt>
+<dt id="SolSpec.fft_avg">
+<code class="descclassname">SolSpec.</code><code class="descname">fft_avg</code><span class="sig-paren">(</span><em>datacube</em>, <em>timeseries</em>, <em>num_seg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SolSpec.html#fft_avg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SolSpec.fft_avg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates segment-averaged FFT for region, and 3x3 pixel-box average.</p>
 <dl class="docutils">
 <dt>datacube</dt>
@@ -317,14 +288,14 @@ Also generates a histogram of the slopes in the region.</p>
  <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>3D array of FFT-segment and 3x3-pixel-box averaged region</dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fm</span><span class="o">.</span><span class="n">fft_avg</span><span class="p">(</span><span class="n">datacube</span> <span class="o">=</span> <span class="n">DATA</span><span class="p">,</span> <span class="n">timeseries</span> <span class="o">=</span> <span class="n">TIME</span><span class="p">,</span> <span class="n">num_seg</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ss</span><span class="o">.</span><span class="n">fft_avg</span><span class="p">(</span><span class="n">datacube</span> <span class="o">=</span> <span class="n">DATA</span><span class="p">,</span> <span class="n">timeseries</span> <span class="o">=</span> <span class="n">TIME</span><span class="p">,</span> <span class="n">num_seg</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="function">
-<dt id="Full_Module_Automated.spec_fit">
-<code class="descclassname">Full_Module_Automated.</code><code class="descname">spec_fit</code><span class="sig-paren">(</span><em>spectra_array</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Full_Module_Automated.html#spec_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Full_Module_Automated.spec_fit" title="Permalink to this definition">¶</a></dt>
+<dt id="SolSpec.spec_fit">
+<code class="descclassname">SolSpec.</code><code class="descname">spec_fit</code><span class="sig-paren">(</span><em>spectra_array</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SolSpec.html#spec_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SolSpec.spec_fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates pixel-box averages and fits spectra.</p>
 <dl class="docutils">
 <dt>spectra_array</dt>
@@ -333,7 +304,7 @@ Also generates a histogram of the slopes in the region.</p>
  <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>Parameter and M2-fit arrays</dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fm</span><span class="o">.</span><span class="n">spec_fit</span><span class="p">(</span><span class="n">spectra_array</span> <span class="o">=</span> <span class="n">SPECTRA</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ss</span><span class="o">.</span><span class="n">spec_fit</span><span class="p">(</span><span class="n">spectra_array</span> <span class="o">=</span> <span class="n">SPECTRA</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
