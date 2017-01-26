@@ -87,3 +87,8 @@ tried float32 vs float64 on 20130530 1600 rebin4
 - if made param file float32, would that help the scatter plots / contour maps? (probably not I guess)
 
 - need to get all files in same name structure (get rid of 'float' / 'dogbox'...)
+
+1/26
+- "f-test sensitive to non-normality of variances"?
+- not liking the ds=0.1*s
+- f-test heatmap for 20130815 193 looks great - add in if above threshold, then black/white -- or maybe use black/grey/white gradient colormap
