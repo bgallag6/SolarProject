@@ -1,0 +1,12 @@
+Installation Notes
+==================
+
+Installing a python package (if not available through conda)
+------------------------------------------------------------
+
+Windows 10: 
+- download source [__tar.gz]
+- extract to Downloads folder
+- open command prompt
+- cd into extracted directory
+- python setup.py install
