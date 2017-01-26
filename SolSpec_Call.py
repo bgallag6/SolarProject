@@ -19,7 +19,7 @@ import h5py
 """
 ## download data (fill in missing)
 """
-r = ss.get_data_fill(wavelength=211, cadence=12, time_begin='2013/06/26 00:00:00', time_end='2013/06/26 12:00:00', path_name='F:/Users/Brendan/Desktop/SolarProject/data/20130626/211')
+#r = ss.get_data_fill(wavelength=211, cadence=12, time_begin='2013/06/26 00:00:00', time_end='2013/06/26 12:00:00', path_name='F:/Users/Brendan/Desktop/SolarProject/data/20130626/211')
 
 
 """
@@ -42,7 +42,7 @@ r = ss.get_data_fill(wavelength=211, cadence=12, time_begin='2013/06/26 00:00:00
 """
 ## create derotated region datacube
 """
-#ss.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20130530/1700', date='20130530', wavelength=1700, sub_reg_coords=[2200,3000,2300,2600], coords_type='pix', bin_frac=1)
+#ss.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20130530/1712', date='20130530', wavelength=171, sub_reg_coords=[-500,500,-500,500], coords_type='arc', bin_frac=2)
 
 
 
@@ -65,7 +65,7 @@ r = ss.get_data_fill(wavelength=211, cadence=12, time_begin='2013/06/26 00:00:00
 #SPECTRA = spectra_array
 #params, M2_fit = ss.spec_fit(spectra_array = SPECTRA)
 
-#np.save('C:/Users/Brendan/Desktop/SDO/param_20130530_1600_2300_2600i_2200_3000j_data_rebin4_float_32', params)
+#np.save('C:/Users/Brendan/Desktop/SDO/param_20130815_193_1000_1600i_1950_2950j_rebin2_ftest', params)
 #np.save('C:/Users/Brendan/Desktop/SDO/M2_20130530_1700_2300_2600i_2200_3000j', M2_fit)
 #np.save('C:/Users/Brendan/Desktop/SDO/uncertainties_20130815_193_1000_1600i_1950_2950j_rebin2', Uncertainties)  # if want to keep?
 #np.save('C:/Users/Brendan/Desktop/SDO/diffm1m2_20130815_193_1000_1600i_1950_2950j_rebin2', diffM1M2)  # if want to keep?
@@ -80,7 +80,7 @@ r = ss.get_data_fill(wavelength=211, cadence=12, time_begin='2013/06/26 00:00:00
     #VISUAL = np.array(f['visual'])
     #r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20141025', wavelength=1600, path_name='C:/Users/Brendan/Desktop/PDFs')
     
-#HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/param_20130530_1600_2300_2600i_2200_3000j_data_rebin4_float_32.npy')
+#HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/param_20130815_193_1000_1600i_1950_2950j_rebin2_ftest.npy')
 #HEATMAPS = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/param_20141025_304_-400_400i_-400_400j.npy')
-#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20141025_304_-400_400i_-400_400j.npy')
-#r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20141025', wavelength=304, path_name='C:/Users/Brendan/Desktop/PHYS 326/filament2')
+#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20130815_193_1000_1600i_1950_2950j.npy')
+#r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130815', wavelength=193, path_name='C:/Users/Brendan/Desktop/PHYS 326/f_test3')

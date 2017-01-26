@@ -391,6 +391,11 @@ def get_data_fill(wavelength, cadence, time_begin, time_end, path_name):
 # added percentiles to visual images 
 # changed gaussian location ticks to seconds 
 
+# update 1/26:
+# removing plt.tight_layout gives all same size plots
+# find way to possibly take aspect ratio of array and make figure size match that
+# allowing for the parameters that have more digits 
+
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import colors
@@ -424,10 +429,13 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
     """
     
     # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
-    titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location', 'Gaussian Width', '$\chi^2$']
-    names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'Chi2']
+    #titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', '$\chi^2$']
+    titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', 'F-Test']
+    #names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'Chi2']
+    names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'F_Test']
     #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location (e^(Value))', 'Width', '$\chi^2$']
-    cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', '$\chi^2$']
+    #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', '$\chi^2$']
+    cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', 'F-Test']
     
     #vmin = [10**-11, 0.5, 10**-6, 10**-6, -6.5, 0.1, 2.]  # think don't need anymore  (or option to set ranges for specific wavelengths?)
     #vmax = [10**-6, 2.5, 0.003, 10**-2, -4.5, 0.8, 15.]  # think don't need anymore
@@ -441,10 +449,22 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
     h_map = heatmaps
     h_map = h_map[:,0:h_map.shape[1]-1,0:h_map.shape[2]-1]  # trim last row and column from array (originally needed since went one past)
     
+    if h_map.shape[2] > h_map.shape[1]:
+        aspect_ratio = float(h_map.shape[2]) / float(h_map.shape[1])
+        fig_height = 10
+        fig_width = 10*aspect_ratio
+        
+    else:
+        aspect_ratio = float(h_map.shape[1]) / float(h_map.shape[2])
+        print aspect_ratio
+        fig_width = 10
+        fig_height = 10*aspect_ratio
+    
     
     for i in range(0,len(titles)):
         
-        fig = plt.figure(figsize=(12,9))
+        #fig = plt.figure(figsize=(13,9))
+        fig = plt.figure(figsize=(fig_width,fig_height))
         ax = plt.gca()  # get current axis -- to set colorbar 
         plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
         
@@ -471,9 +491,9 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
         cax = divider.append_axes("right", size="3%", pad=0.07)
         cbar = plt.colorbar(im,cax=cax)
-        cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
+        #cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
         cbar.ax.tick_params(labelsize=17, pad=5) 
-        plt.tight_layout()
+        #plt.tight_layout()
         #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
         plt.savefig('%s/%s_%i_heatmap_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
         
@@ -504,7 +524,9 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         v_min = np.percentile(vis[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         v_max = np.percentile(vis[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)     
         
-        fig = plt.figure(figsize=(12,9))
+        #fig = plt.figure(figsize=(12,9))
+        fig = plt.figure(figsize=(fig_width,fig_height))
+        
         ax = plt.gca()
         plt.title(r'%s: %i $\AA$  [Visual: %s]' % (date_title, wavelength, titles_vis[i]), y = 1.01, fontsize=25)
         #im = ax.imshow(h_map[i], vmin=vmin[i], vmax=vmax[i])
@@ -516,9 +538,9 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="3%", pad=0.07)
         cbar = plt.colorbar(im,cax=cax)
-        cbar.set_label('Intensity', size=20, labelpad=10)
+        #cbar.set_label('Intensity', size=20, labelpad=10)
         cbar.ax.tick_params(labelsize=17, pad=5) 
-        plt.tight_layout()
+        #plt.tight_layout()
         #plt.savefig('%s/%s_%i_visual_%s.jpeg' % (path_name, date, wavelength, names_vis[i]))
         plt.savefig('%s/%s_%i_visual_%s.pdf' % (path_name, date, wavelength, names_vis[i]), format='pdf')
 
@@ -775,8 +797,8 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
         TIME[p] = curr_time - base_time  # calculate running time of image
     
     # save the pixel-value and time-array datacubes as numpy files
-    np.save('%s/%s_%i_%i_%ii_%i_%ij_data_rebin%i.npy' % (directory, date, wavelength, y1, y2, x1, x2, bin_frac), DATA)
-    np.save('%s/%s_%i_%i_%ii_%i_%ij_time.npy' % (directory, date, wavelength, y1, y2, x1, x2), TIME)
+    #np.save('%s/%s_%i_%i_%ii_%i_%ij_data_rebin%i.npy' % (directory, date, wavelength, y1, y2, x1, x2, bin_frac), DATA)
+    #np.save('%s/%s_%i_%i_%ii_%i_%ij_time.npy' % (directory, date, wavelength, y1, y2, x1, x2), TIME)
     
     # calculate the average-intensity image of the timeseries 
     AVG = np.average(DATA,axis=0)
@@ -807,7 +829,7 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     plt.imshow(visual[1])
     
     # save visual-image array
-    np.save('%s/visual_%s_%i_%i_%ii_%i_%ij.npy' % (directory, date, wavelength, y1, y2, x1, x2), visual)
+    #np.save('%s/visual_%s_%i_%i_%ii_%i_%ij.npy' % (directory, date, wavelength, y1, y2, x1, x2), visual)
 
 
 
@@ -1032,6 +1054,8 @@ def fft_avg(datacube, timeseries, num_seg):
 
 # when segmenting for parallelization - numpy.load(mmap-reads in only slice?)
 
+# should revise the variable naming ('gp' --> 'M2', all the '2' variables?)
+
 import numpy as np
 import scipy.signal
 #matplotlib.use('TkAgg') 	# NOTE: This is a MAC/OSX thing. Probably REMOVE for linux/Win
@@ -1126,10 +1150,10 @@ def spec_fit(spectra_array):
     ## 10^[(log(a) + log(b) + log(c) + ...) / 9] = [a*b*c*...]^(1/9)
     
     for l in range(0,SPECTRA.shape[0]):
-    #for l in range(30,31):
+    #for l in range(145,146):
         
         for m in range(0,SPECTRA.shape[1]):
-        #for m in range(65,70):
+        #for m in range(185,195):
             
                                             
             f = freqs  # frequencies
@@ -1244,15 +1268,23 @@ def spec_fit(spectra_array):
             # create model functions from fitted parameters
             m1_fit = PowerLaw(f_fit, A, n, C)
             m2_fit = GaussPowerBase(f_fit, A2,n2,C2,P2,fp2,fw2)
-            s_fit_gp_full = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)
+            s_fit_gp_full = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)  # could get rid of this if not making smaller m2_fit
             m2P_fit = PowerLaw(f_fit, A2, n2, C2)
             m2G_fit = Gauss(f_fit, P2, fp2, fw2)
             
             diffM1M2_temp = (m2_fit - m1_fit)**2  # differences squared
             diffM1M2[l][m] = np.sum(diffM1M2_temp)  # sum of squared differences 
+                                   
             
-            residsgp = (s - s_fit_gp_full)
-            redchisqrgp = ((residsgp/ds)**2).sum()/float(f.size-6)
+            residsM2 = (s - s_fit_gp_full)
+            chisqrM2 = ((residsM2/ds)**2).sum()
+            redchisqrM2 = ((residsM2/ds)**2).sum()/float(f.size-6)
+            
+            residsM1 = (s - m1_fit)
+            chisqrM1 =  ((residsM1/ds)**2).sum()
+            redchisqrM1 = ((residsM1/ds)**2).sum()/float(f.size-3)       
+            
+            f_test = ((chisqrM1-chisqrM2)/(6-3))/((chisqrM2)/(f.size-6))
             
             # populate array with parameters
             params[0][l][m] = A2
@@ -1261,7 +1293,8 @@ def spec_fit(spectra_array):
             params[3][l][m] = P2
             params[4][l][m] = fp2
             params[5][l][m] = fw2
-            params[6][l][m] = redchisqrgp
+            #params[6][l][m] = redchisqrM2
+            params[6][l][m] = f_test
             
             # populate array holding model fits
             M2_fit[l][m] = m2_fit
@@ -1290,6 +1323,7 @@ def spec_fit(spectra_array):
             plt.text(0.01, 10**-0.9, 'P = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[3], uncertainties[3]), fontsize=15)
             plt.text(0.01, 10**-1.2, 'fp = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[4], uncertainties[4]), fontsize=15)
             plt.text(0.01, 10**-1.5, 'fw = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[5], uncertainties[5]), fontsize=15)
+            plt.text(0.01, 10**-1.8, 'f_test = {0:0.3f}'.format(f_test), fontsize=15)
             plt.legend(loc='upper left', prop={'size':15})
             plt.show()
             #plt.savefig('C:/Users/Brendan/Desktop/PHYS 326/dogbox_test1/20130530_193A_3x3_6seg_%ii_%ij.jpeg' % (l,m))
