@@ -456,7 +456,7 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         
     else:
         aspect_ratio = float(h_map.shape[1]) / float(h_map.shape[2])
-        print aspect_ratio
+        #print aspect_ratio
         fig_width = 10
         fig_height = 10*aspect_ratio
     
