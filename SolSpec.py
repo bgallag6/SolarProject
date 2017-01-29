@@ -797,8 +797,8 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
         TIME[p] = curr_time - base_time  # calculate running time of image
     
     # save the pixel-value and time-array datacubes as numpy files
-    #np.save('%s/%s_%i_%i_%ii_%i_%ij_data_rebin%i.npy' % (directory, date, wavelength, y1, y2, x1, x2, bin_frac), DATA)
-    #np.save('%s/%s_%i_%i_%ii_%i_%ij_time.npy' % (directory, date, wavelength, y1, y2, x1, x2), TIME)
+    np.save('%s/%s_%i_%i_%ii_%i_%ij_data_rebin%i.npy' % (directory, date, wavelength, y1, y2, x1, x2, bin_frac), DATA)
+    np.save('%s/%s_%i_%i_%ii_%i_%ij_time.npy' % (directory, date, wavelength, y1, y2, x1, x2), TIME)
     
     # calculate the average-intensity image of the timeseries 
     AVG = np.average(DATA,axis=0)
@@ -829,7 +829,7 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     plt.imshow(visual[1])
     
     # save visual-image array
-    #np.save('%s/visual_%s_%i_%i_%ii_%i_%ij.npy' % (directory, date, wavelength, y1, y2, x1, x2), visual)
+    np.save('%s/visual_%s_%i_%i_%ii_%i_%ij.npy' % (directory, date, wavelength, y1, y2, x1, x2), visual)
 
 
 

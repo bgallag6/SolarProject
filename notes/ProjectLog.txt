@@ -92,3 +92,20 @@ tried float32 vs float64 on 20130530 1600 rebin4
 - "f-test sensitive to non-normality of variances"?
 - not liking the ds=0.1*s
 - f-test heatmap for 20130815 193 looks great - add in if above threshold, then black/white -- or maybe use black/grey/white gradient colormap
+
+1/29
+- datacube size is obstacle right now - looking for way to keep only size necessary.  
+- .fits images appear to be int16, and are being saved in the datacube as float64, because they are being divided by the exposure time, which is float64
+- probably should save datacube as int16, reducing size by 4x, and also save exposure time array.
+- in fft_avg function, when extracting pixel intensity values, put exposure time in that loop - shouldn't take significant time (never need huge array size)
+
+- to free up some space, delete either datacubes or data off lab computer
+
+- was concerned with how MPI would handle an array where the remainder of the chunk size wasn't 0, but it handled it perfectly.  (18,18,18,17)
+- MPI: when one processor is done, the threads still in process are shared onto those 
+
+- ran spec_fit using MPI -n 4, for 20120923 211 327x572 region, took 1170 seconds.  The results looked good, except possibly the power-law tail values were
+  maybe off by 1/2.  Same structure, but were 0.002 instead of 0.003 on the high end.  I don't know if the last time I ran it I used the same parameters though.  
+
+- should I build in a quick 1-row regular spec_fit, just to get an estimated time until completion?  Probably could just get average for a pixel and multiply by
+  region size 
