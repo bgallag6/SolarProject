@@ -67,7 +67,7 @@ from numpy.random import rand
 
 #def heatmap_spectra_tool(dataset, date, wavelength, num_segments):
 #with h5py.File("%s" % dataset,'r') as f:    
-with h5py.File("F:/Users/Brendan/Desktop/SolarProject/hdf5/20130530_1600_2300_2600i_2200_3000j_rebin4_mpi.hdf5",'r') as f:
+with h5py.File("F:/Users/Brendan/Desktop/SolarProject/hdf5/20140902_211_2000_2900i_1850_3050j_rebin2.hdf5",'r') as f:
    
     def find_nearest(array,value):
         idx = (np.abs(array-value)).argmin()

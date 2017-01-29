@@ -60,7 +60,7 @@ import h5py
 """
 ## spectra fitting
 """
-#SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/spectra_20130530_1600_2300_2600i_2200_3000j_data_rebin4.npy')
+#SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/spectra_20120923_211A_(528)_(132)x_(100)_100y.npy')
 #SPECTRA = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/spectra_20130815_193_1000_1600i_1950_2950j_rebin2.npy')
 #SPECTRA = spectra_array
 #params, M2_fit = ss.spec_fit(spectra_array = SPECTRA)
