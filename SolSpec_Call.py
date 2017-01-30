@@ -42,8 +42,13 @@ import h5py
 """
 ## create derotated region datacube
 """
-#ss.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20130530/1712', date='20130530', wavelength=171, sub_reg_coords=[-500,500,-500,500], coords_type='arc', bin_frac=2)
+#ss.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20130530/193', date='20130530', wavelength=193, sub_reg_coords=[2200,3000,2300,2600], coords_type='pix', bin_frac=1)
 
+
+"""
+## create derotated region datacube (int)
+"""
+#ss.datacube_int(directory='F:/Users/Brendan/Desktop/SolarProject/data/20130530/193', date='20130530', wavelength=193, sub_reg_coords=[2200,3000,2300,2600], coords_type='pix', bin_frac=1)
 
 
 """
@@ -80,7 +85,7 @@ import h5py
     #VISUAL = np.array(f['visual'])
     #r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20141025', wavelength=1600, path_name='C:/Users/Brendan/Desktop/PDFs')
     
-#HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/param_20120923_211A_(528)_(132)x_(100)_100y_mpi.npy')
+#HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/20130530_1600_2300_2600i_2200_3000j_params_rebin4.npy')
 #HEATMAPS = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/param_20130530_171_1300_2800i_1300_2800j_10hrs.npy')
-#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20120923_211A_(528)_(132)x_(100)_100y.npy')
-#r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20120923', wavelength=211, path_name='C:/Users/Brendan/Desktop/PHYS 326/')
+#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20130530_1600_2300_2600i_2200_3000j_data_rebin4.npy')
+#r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130530', wavelength=1600, path_name='C:/Users/Brendan/Desktop/PHYS 326/')

@@ -110,3 +110,12 @@ tried float32 vs float64 on 20130530 1600 rebin4
 
 - should I build in a quick 1-row regular spec_fit, just to get an estimated time until completion?  Probably could just get average for a pixel and multiply by
   region size 
+
+- changed datacube to int16 and worked as expected.  size reduced by 4x, and no speed penalty normalizing by exposure time in loop where extract pixel intensity.
+- verified that datacubes were identical - originally saving as float, and after saving as int and dividing by exposure time later. 4GB -- 1GB 300x600
+
+- using MPI built into fft_avg (before 3x3 averaging), and spec_fit - for 75x150 1600 rebin4 region:
+- fft_avg: 7 seconds (vs ~ 25)
+- spec_fit: 66 seconds (vs ~ 148)
+- checked heatmaps - identical 
+- was NOT using (int) datacube + exposure array, still need to do that

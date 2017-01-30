@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jan 27 16:14:36 2017
+Created on Sat Jan 28 12:15:32 2017
 
 @author: Brendan
 """
@@ -8,9 +8,21 @@ Created on Fri Jan 27 16:14:36 2017
 """
 ######################
 # run with:
-# $ mpiexec -n 8 python mpi_testing.py    (8 = number of processors)
+# $ mpiexec -n 8 python Spec_fit_mpi.py    (8 = number of processors)
 ######################
 """
+
+# dont absolutely need M2_fit
+# can get rid of M2_gauss, M2_powerlaw, s_fit_gp
+
+# param + m2_fit both generated perfectly
+
+# 1/29:
+# took out f_fit, replaced with f, since were the same
+
+# maybe print param bounds?
+
+# maybe save results to text file - param bounds, region, fail-count... 
 
 from timeit import default_timer as timer
 
@@ -43,8 +55,7 @@ import matplotlib.colors as colors
 from matplotlib.mlab import bivariate_normal
 from matplotlib.ticker import LogFormatterMathtext
 from timeit import default_timer as timer
-
-
+from mpi4py import MPI
 
 from scipy import fftpack    
 
@@ -61,9 +72,9 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
 
 # this function receives a 3D cube and sums over the z axis, returning the [x,y] sum array
-def do_something( some_input ):
+def spec_fit( subcube ):
     
-  SPECTRA = some_input
+  SPECTRA = subcube
   spectra_array = SPECTRA
   print SPECTRA.shape[0], SPECTRA.shape[1]
   num_freq = SPECTRA.shape[2]  # determine nubmer of frequencies that are used
@@ -78,12 +89,13 @@ def do_something( some_input ):
 
 
   # initialize arrays to hold parameter values, also each pixel's combined model fit - for tool
-  diffM1M2 = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1]))  # dont really use - get rid of?
+  # diffM1M2 = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1]))  # not using right now
   params = np.zeros((7, SPECTRA.shape[0], SPECTRA.shape[1]))
-  #M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], (len(freqs)+1)/2))  # would save storage / memory space
+  # M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], (len(freqs)+1)/2))  # would save storage / memory space
   M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], SPECTRA.shape[2]))
 
-  Uncertainties = np.zeros((6, SPECTRA.shape[0], SPECTRA.shape[1]))
+  # Uncertainties = np.zeros((6, SPECTRA.shape[0], SPECTRA.shape[1]))  # not using right now
+  
   
   ### calculate 3x3 pixel-box geometric average.  start at 1 and end 1 before to deal with edges.
   ## 10^[(log(a) + log(b) + log(c) + ...) / 9] = [a*b*c*...]^(1/9)
@@ -103,7 +115,7 @@ def do_something( some_input ):
         
         # create points to fit model with final parameters 
         #f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],(len(freqs)+1)/2)  # would save storage / memory space?
-        f_fit = freqs       
+        #f_fit = freqs       
         
                                                
         ### fit data to models using SciPy's Levenberg-Marquart method
@@ -116,10 +128,12 @@ def do_something( some_input ):
            
         
         except RuntimeError:
-            print("Error M1 - curve_fit failed - %i, %i" % (l,m))
+            #print("Error M1 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            pass
         
         except ValueError:
-            print("Error M1 - inf/NaN - %i, %i" % (l,m))
+            #print("Error M1 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            pass
 
       
         A, n, C = nlfit_l  # unpack fitting parameters
@@ -138,10 +152,12 @@ def do_something( some_input ):
             nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000) # replaced #'s with arrays
             
         except RuntimeError:
-            print("Error M2 - curve_fit failed - %i, %i" % (l,m))
+            #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            pass
         
         except ValueError:
-            print("Error M2 - inf/NaN - %i, %i" % (l,m))
+            #print("Error M2 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            pass
         #"""
         
         A2, n2, C2, P2, fp2, fw2 = nlfit_gp  # unpack fitting parameters
@@ -151,17 +167,20 @@ def do_something( some_input ):
         
                    
         # create model functions from fitted parameters
-        m1_fit = PowerLaw(f_fit, A, n, C)
-        m2_fit = GaussPowerBase(f_fit, A2,n2,C2,P2,fp2,fw2)
-        s_fit_gp_full = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)  # could get rid of this if not making smaller m2_fit
-        m2P_fit = PowerLaw(f_fit, A2, n2, C2)
-        m2G_fit = Gauss(f_fit, P2, fp2, fw2)
+        #m1_fit = PowerLaw(f_fit, A, n, C)
+        m1_fit = PowerLaw(f, A, n, C)
+        #m2_fit = GaussPowerBase(f_fit, A2,n2,C2,P2,fp2,fw2)
+        m2_fit = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)
+        #s_fit_gp_full = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)  # could get rid of this if not making smaller m2_fit
+        # m2P_fit = PowerLaw(f_fit, A2, n2, C2)  # only need if plotting
+        # m2G_fit = Gauss(f_fit, P2, fp2, fw2)  # only need if plotting 
         
-        diffM1M2_temp = (m2_fit - m1_fit)**2  # differences squared
-        diffM1M2[l][m] = np.sum(diffM1M2_temp)  # sum of squared differences 
+        #diffM1M2_temp = (m2_fit - m1_fit)**2  # differences squared
+        #diffM1M2[l][m] = np.sum(diffM1M2_temp)  # sum of squared differences 
                                
         
-        residsM2 = (s - s_fit_gp_full)
+        #residsM2 = (s - s_fit_gp_full)
+        residsM2 = (s - m2_fit)
         chisqrM2 = ((residsM2/ds)**2).sum()
         redchisqrM2 = ((residsM2/ds)**2).sum()/float(f.size-6)
         
@@ -183,30 +202,19 @@ def do_something( some_input ):
         
         # populate array holding model fits
         M2_fit[l][m] = m2_fit
-    
-
-  # print estimated and total program time to screen        
-  #print "Beginning Estimated time = %i sec" % T_est
-  #T_act = timer() - start
-  #print "Actual total time = %i sec" % T_act          
-	
 			
-  return params
+  return params, M2_fit
 	
-	
-import numpy as np
-from mpi4py import MPI
 
-# generate some data
-cube = np.load('C:/Users/Brendan/Desktop/SDO/spectra_20130530_1600_2300_2600i_2200_3000j_data_rebin4.npy')
+# load data
+cube = np.load('C:/Users/Brendan/Desktop/SDO/20130530_1600_2300_2600i_2200_3000j_rebin4_spectra_mpi.npy')
 
 
-
-#cube = np.ones((100,1000,1000))
 start = timer()
+
 comm = MPI.COMM_WORLD 	# set up comms
 rank = comm.Get_rank()	# Each processor gets its own "rank"
-#print "Hello World from process ", rank		# DEBUG/VALIDATE
+#print "Hello World from process ", rank  # DEBUG/VALIDATE
 
 
 # Rank0 is the first processor. Use that to do the main chores
@@ -214,23 +222,29 @@ if rank == 0:
   size = MPI.COMM_WORLD.Get_size()		# How many processors do we have?
   chunks = np.array_split(cube, size)		# Split the data based on no. of processors
 else:
-  chunks = None			# Prepare a variable on the other nodes
+  chunks = None  # Prepare a variable on the other nodes
 
 # Distribute the data to all nodes, defining the root node (rank=0) as distributor
 subcube = comm.scatter(chunks, root=0)
-ss = np.shape(subcube)												# Validation	
-print "Processor", rank, "received an array with dimensions", ss		# Validation
+ss = np.shape(subcube)  # Validation	
+print "Processor", rank, "received an array with dimensions", ss  # Validation
+print "Height = %i, Width = %i, Total pixels = %i" % (subcube.shape[0], subcube.shape[1], subcube.shape[0]*subcube.shape[1])
+print "Estimated time remaining... "
 
-just_a_test = do_something( subcube )		# Do something with the array
-newData = comm.gather(just_a_test,root=0)	# Gather all the results
+params_T, M2_fit_T = spec_fit( subcube )		# Do something with the array
+newData_p = comm.gather(params_T, root=0)	# Gather all the results
+newData_m = comm.gather(M2_fit_T, root=0)	# Gather all the results
 
 # Again, just have one node do the last bit
 if rank == 0:
   #stack = np.vstack(newData) 	# stack the 2-d arrays together and we're done!
-  stack = np.hstack(newData)
-  print stack.shape			# Verify we have a summed version of the input cube
+  stack_p = np.hstack(newData_p)
+  #stack_m = np.vstack(newData_m)
+  print stack_p.shape			# Verify we have a summed version of the input cube
+  #print stack_m.shape			# Verify we have a summed version of the input cube
  
 T_act = timer() - start
-print "Actual total time = %i sec" % T_act     
+print "Program time = %i sec" % T_act     
 
-#np.save('C:/Users/Brendan/Desktop/SDO/param_20120923_211A_(528)_(132)x_(100)_100y_mpi', stack)
+np.save('C:/Users/Brendan/Desktop/SDO/20130530_1600_2300_2600i_2200_3000j_params_rebin4B', stack_p)
+#np.save('C:/Users/Brendan/Desktop/SDO/M2_20130530_1600_2300_2600i_2200_3000j_data_rebin4_mpi_tool', stack_m)
