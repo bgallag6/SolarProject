@@ -28,6 +28,15 @@ Created on Sun Jan 29 18:38:48 2017
 
 # not working, seems slower than usual somehow, when should be 4x quicker
 
+# including exposure normalization in loop cause time to go nuts??
+
+# ran through revised version, program time down from ~235 seconds to 70 seconds
+# check if identical results... ugh, not exactly the same, not sure how
+# off by max of 0.02, which is actually significant, not sure how happened?
+# check heatmaps to see if is significant
+
+# not sure if I did it correctly, but percent difference in some values was showing 50-70%?!?
+# !! oh, possibly because I deleted two files that were odd sizes -- damn, can't compare
 
 import numpy as np
 import scipy.signal
@@ -49,8 +58,8 @@ from timeit import default_timer as timer
 #import accelerate  # switch on if computer has installed
 from mpi4py import MPI
 
-#def fft_avg(subcube, timeseries, exposure_array, num_seg):
-def fft_avg(subcube, timeseries, num_seg):
+def fft_avg(subcube, timeseries, exposure_array, num_seg):
+#def fft_avg(subcube, timeseries, num_seg):
     
     from scipy import fftpack
     
@@ -58,7 +67,7 @@ def fft_avg(subcube, timeseries, num_seg):
     
     TIME = timeseries
     
-    #Ex = exposure_array
+    Ex = exposure_array
     
     #print DATA.shape 
     
@@ -100,11 +109,12 @@ def fft_avg(subcube, timeseries, num_seg):
             #y2_box = 2+jj  # if want to use median of more than 1x1 pixel box
             
             for k in range(0,DATA.shape[0]):
-              #im=DATA[k]/(Ex[k])	  # get image + normalize by exposure time
-              im=DATA[k]	  # get image + normalize by exposure time
+              #im=DATA[k]/(Ex[k])	  # get image + normalize by exposure time  (time went nuts?)
+              im=DATA[k]	  # get image
               #pixmed[k]=np.median(im[x1_box:x2_box,y1_box:y2_box])  # finds pixel-box median
               pixmed[k]= im[x1_box,y1_box]	# median  <-- use this
-                        
+            
+            pixmed = pixmed/Ex  # normalize by exposure time                
                         
             # The derotation introduces some bad data towards the end of the sequence. This trims that off
             bad = np.argmax(pixmed <= 0.)		# Look for values <= zero
@@ -150,9 +160,9 @@ def fft_avg(subcube, timeseries, num_seg):
     return spectra_seg
     
 # load data
-cube = np.load('F:/Users/Brendan/Desktop/SolarProject/datacubes/20130530_1600_2300_2600i_2200_3000j_data_rebin4.npy')
-time = np.load('F:/Users/Brendan/Desktop/SolarProject/time_arrays/SDO_20130530_1600A_2300_2600i_2200_3000j_float_time.npy')
-#exposure = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/193/20130530_193_2300_2600i_2200_3000j_exposure.npy')
+cube = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/193/20130530_193_2300_2600i_2200_3000j_data_rebin1.npy')
+time = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/193/20130530_193_2300_2600i_2200_3000j_time.npy')
+exposure = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/193/20130530_193_2300_2600i_2200_3000j_exposure.npy')
 num_seg = 6
 
 
@@ -177,8 +187,8 @@ print "Processor", rank, "received an array with dimensions", ss  # Validation
 print "Height = %i, Width = %i, Total pixels = %i" % (subcube.shape[0], subcube.shape[1], subcube.shape[0]*subcube.shape[1])
 print "Estimated time remaining... "
 
-#spectra_seg_part = fft_avg(subcube, time, exposure, num_seg)		# Do something with the array
-spectra_seg_part = fft_avg(subcube, time, num_seg)		# Do something with the array
+spectra_seg_part = fft_avg(subcube, time, exposure, num_seg)		# Do something with the array
+#spectra_seg_part = fft_avg(subcube, time, num_seg)		# Do something with the array
 newData_s = comm.gather(spectra_seg_part, root=0)	# Gather all the results
 
 # Again, just have one node do the last bit
@@ -220,4 +230,4 @@ for l in range(1,spectra_seg.shape[0]-1):
         p_geometric = temp9 / 9.
         spectra_array[l-1][m-1] = np.power(10,p_geometric)
 
-np.save('C:/Users/Brendan/Desktop/SDO/20130530_1600_2300_2600i_2200_3000j_rebin4_spectra_mpi', spectra_array)
+np.save('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_spectra_mpi', spectra_array)

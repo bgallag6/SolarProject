@@ -207,7 +207,7 @@ def spec_fit( subcube ):
 	
 
 # load data
-cube = np.load('C:/Users/Brendan/Desktop/SDO/20130530_1600_2300_2600i_2200_3000j_rebin4_spectra_mpi.npy')
+cube = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_spectra_mpi.npy')
 
 
 start = timer()
@@ -246,5 +246,5 @@ if rank == 0:
 T_act = timer() - start
 print "Program time = %i sec" % T_act     
 
-np.save('C:/Users/Brendan/Desktop/SDO/20130530_1600_2300_2600i_2200_3000j_params_rebin4B', stack_p)
+np.save('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_params_mpi', stack_p)
 #np.save('C:/Users/Brendan/Desktop/SDO/M2_20130530_1600_2300_2600i_2200_3000j_data_rebin4_mpi_tool', stack_m)

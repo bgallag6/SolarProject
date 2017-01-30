@@ -63,12 +63,24 @@ import h5py
 
 
 """
+## fft-averaging + 3x3 averaging
+"""
+#DATA = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/193/20130530_193_2300_2600i_2200_3000j_data_rebin1.npy')
+#TIME = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/193/20130530_193_2300_2600i_2200_3000j_time.npy')
+#EXPOSURE = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/193/20130530_193_2300_2600i_2200_3000j_exposure.npy')
+
+#spectra_array = ss.fft_avg_int(datacube = DATA, timeseries = TIME, exposure_array = EXPOSURE, num_seg = 6)
+#np.save('C:/Users/Brendan/Desktop/SDO/spectra_20130530_1700_2300_2600i_2200_3000j', spectra_array)
+#np.save('C:/Users/Brendan/Desktop/SDO/spectra_20130530_193_2300_2600_2200_3000', spectra)  # now this
+
+
+"""
 ## spectra fitting
 """
-#SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/spectra_20120923_211A_(528)_(132)x_(100)_100y.npy')
+SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_spectra_mpi.npy')
 #SPECTRA = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/spectra_20130815_193_1000_1600i_1950_2950j_rebin2.npy')
 #SPECTRA = spectra_array
-#params, M2_fit = ss.spec_fit(spectra_array = SPECTRA)
+params, M2_fit = ss.spec_fit(spectra_array = SPECTRA)
 
 #np.save('C:/Users/Brendan/Desktop/SDO/param_20130815_193_1000_1600i_1950_2950j_rebin2_ftest', params)
 #np.save('C:/Users/Brendan/Desktop/SDO/M2_20130530_1700_2300_2600i_2200_3000j', M2_fit)

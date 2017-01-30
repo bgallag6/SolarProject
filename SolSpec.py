@@ -1556,6 +1556,8 @@ def datacube_int(directory, date, wavelength, sub_reg_coords, coords_type, bin_f
 # this normalizes by exposure time when extracting pixel-intensity values
 # should reduce datacube array size by 4x, and not cost much time here
 
+# including exposure normalization in loop cause time to go nuts??
+
 
 import numpy as np
 import scipy.signal
@@ -1647,10 +1649,10 @@ def fft_avg_int(datacube, timeseries, exposure_array, num_seg):
     T1 = 0
     
     for ii in range(0,spectra_seg.shape[0]):
-    #for ii in range(142,160):
+    #for ii in range(0,5):
     
         for jj in range(0,spectra_seg.shape[1]):
-        #for jj in range(0,574):        
+        #for jj in range(0,5):        
         
             x1_box = 0+ii
             #x2_box = 2+ii  # if want to use median of more than 1x1 pixel box
@@ -1658,11 +1660,13 @@ def fft_avg_int(datacube, timeseries, exposure_array, num_seg):
             #y2_box = 2+jj  # if want to use median of more than 1x1 pixel box
             
             for k in range(0,DATA.shape[0]):
-              im=DATA[k]/(Ex[k])	  # get image + normalize by exposure time
+              #im=DATA[k]/(Ex[k])	  # get image + normalize by exposure time  (time went nuts?)
+              im=DATA[k]
               #pixmed[k]=np.median(im[x1_box:x2_box,y1_box:y2_box])  # finds pixel-box median
               pixmed[k]= im[x1_box,y1_box]	# median  <-- use this
-                        
-                        
+
+            pixmed = pixmed/Ex  # normalize by exposure time    
+            
             # The derotation introduces some bad data towards the end of the sequence. This trims that off
             bad = np.argmax(pixmed <= 0.)		# Look for values <= zero
             last_good_pos = bad - 1			# retain only data before the <=zero
