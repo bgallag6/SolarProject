@@ -134,3 +134,10 @@ tried float32 vs float64 on 20130530 1600 rebin4
 	    top quarter: total shift=89, dimensions = 413x1518
 	    top half: total shift=96, dimensions = 830x1507
 	    full: total shift=101, dimensions = 1664x1499
+
+1/31
+parallelization reading:
+- http://stackoverflow.com/questions/5338338/performance-gain-using-mpi (memory bandwith issues?)
+- https://rc.fas.harvard.edu/wp-content/uploads/2013/03/MPI_Plamen_Krastev.pdf (allocate specific memory for each MPI process)
+
+- for 20130815_193 spec_fit, 4 cores = 886 seconds

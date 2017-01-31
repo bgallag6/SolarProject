@@ -24,6 +24,9 @@ Created on Sat Jan 28 12:15:32 2017
 
 # maybe save results to text file - param bounds, region, fail-count... 
 
+# commenting-out the M2_fits.  for large regions they become way to big.  
+# include back when need them?
+
 from timeit import default_timer as timer
 
 import numpy as np
@@ -92,7 +95,7 @@ def spec_fit( subcube ):
   # diffM1M2 = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1]))  # not using right now
   params = np.zeros((7, SPECTRA.shape[0], SPECTRA.shape[1]))
   # M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], (len(freqs)+1)/2))  # would save storage / memory space
-  M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], SPECTRA.shape[2]))
+  #M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], SPECTRA.shape[2]))
 
   # Uncertainties = np.zeros((6, SPECTRA.shape[0], SPECTRA.shape[1]))  # not using right now
   
@@ -201,13 +204,15 @@ def spec_fit( subcube ):
         params[6][l][m] = f_test
         
         # populate array holding model fits
-        M2_fit[l][m] = m2_fit
+        #M2_fit[l][m] = m2_fit
 			
-  return params, M2_fit
+  #return params, M2_fit
+  return params
 	
 
 # load data
-cube = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_spectra_mpi.npy')
+#cube = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_spectra_mpi.npy')
+cube = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/spectra_20130815_193_1000_1600i_1950_2950j_rebin2.npy')
 
 
 start = timer()
@@ -231,9 +236,10 @@ print "Processor", rank, "received an array with dimensions", ss  # Validation
 print "Height = %i, Width = %i, Total pixels = %i" % (subcube.shape[0], subcube.shape[1], subcube.shape[0]*subcube.shape[1])
 print "Estimated time remaining... "
 
-params_T, M2_fit_T = spec_fit( subcube )		# Do something with the array
+#params_T, M2_fit_T = spec_fit( subcube )		# Do something with the array
+params_T = spec_fit( subcube )		# Do something with the array
 newData_p = comm.gather(params_T, root=0)	# Gather all the results
-newData_m = comm.gather(M2_fit_T, root=0)	# Gather all the results
+#newData_m = comm.gather(M2_fit_T, root=0)	# Gather all the results
 
 # Again, just have one node do the last bit
 if rank == 0:
@@ -246,5 +252,5 @@ if rank == 0:
 T_act = timer() - start
 print "Program time = %i sec" % T_act     
 
-np.save('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_params_mpi', stack_p)
+np.save('C:/Users/Brendan/Desktop/SDO/20130815_193_1000_1600i_1950_2950j_rebin2_params_mpi', stack_p)
 #np.save('C:/Users/Brendan/Desktop/SDO/M2_20130530_1600_2300_2600i_2200_3000j_data_rebin4_mpi_tool', stack_m)
