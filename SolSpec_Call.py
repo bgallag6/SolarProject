@@ -77,10 +77,10 @@ import h5py
 """
 ## spectra fitting
 """
-SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_spectra_mpi.npy')
+#SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_spectra_mpi.npy')
 #SPECTRA = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/spectra_20130815_193_1000_1600i_1950_2950j_rebin2.npy')
 #SPECTRA = spectra_array
-params, M2_fit = ss.spec_fit(spectra_array = SPECTRA)
+#params, M2_fit = ss.spec_fit(spectra_array = SPECTRA)
 
 #np.save('C:/Users/Brendan/Desktop/SDO/param_20130815_193_1000_1600i_1950_2950j_rebin2_ftest', params)
 #np.save('C:/Users/Brendan/Desktop/SDO/M2_20130530_1700_2300_2600i_2200_3000j', M2_fit)
@@ -97,7 +97,7 @@ params, M2_fit = ss.spec_fit(spectra_array = SPECTRA)
     #VISUAL = np.array(f['visual'])
     #r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20141025', wavelength=1600, path_name='C:/Users/Brendan/Desktop/PDFs')
     
-#HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/20130530_1600_2300_2600i_2200_3000j_params_rebin4.npy')
+#HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_params_mpi.npy')
 #HEATMAPS = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/param_20130530_171_1300_2800i_1300_2800j_10hrs.npy')
-#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20130530_1600_2300_2600i_2200_3000j_data_rebin4.npy')
-#r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130530', wavelength=1600, path_name='C:/Users/Brendan/Desktop/PHYS 326/')
+#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20130530_193A_2300_2600i_2200_3000j_float.npy')
+#r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130530', wavelength=193, path_name='C:/Users/Brendan/Desktop/PHYS 326/')

@@ -119,3 +119,18 @@ tried float32 vs float64 on 20130530 1600 rebin4
 - spec_fit: 66 seconds (vs ~ 148)
 - checked heatmaps - identical 
 - was NOT using (int) datacube + exposure array, still need to do that
+
+1/30
+- ran 193 region through whole program, with int datacube, results were visually identical (might have been slightly off due to deleting 2 files)
+- spec_fit using MPI with 4-cores took 5650 seconds.   
+
+1/30
+- ugh, solar derotation: differential rotation might be issue 
+- derotation function derotates based on center latitude in mapcube
+- for latitudes near equator that rotate faster, they are shifted more, latitudes near poles rotate slower, should be shifted less
+
+- test - 12 images (12 hours) 20130530_171, [-500,500]x[-500,500] arcsecond region
+- layer=0:  top eigth: total shift=85, dimensions = 205x1525
+	    top quarter: total shift=89, dimensions = 413x1518
+	    top half: total shift=96, dimensions = 830x1507
+	    full: total shift=101, dimensions = 1664x1499
