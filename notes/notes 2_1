@@ -1,0 +1,24 @@
+probably why Jack was fitting positive risiduals from M1 - didn't want the huge gaussian that allowed for slope to shift down and be made up by all gaussian.  
+
+save / plot M1 model parameters.  first 3 shouldnt really change, only want a gaussian that better fits the data, not a new model.  
+
+plot A, n, C - should be near identical to M2 params
+
+maybe use them as initial guesses for M2 - thought I did that and due to the local minima they stuck there?  not sure - try again.  
+
+clicking through the spectra tool on 20130815_193 rebin2 - alot looked good, some didn't 
+- some showed huge gaussian amp that I couldnt see.  Might have been the ones at high width or centered off to the left, but checked and some high amp had small width, so defitely should have been seen, unless possibly cenered all the way to the left.  
+
+constrain the location bounds more?  
+constrain the minimum width bound to 0.1?  see what 0.05 can be.
+lower max gauss amp from 0.2?  
+add other models - broken power law, same model with additional gaussian, 2/3 degree polynomial?
+just for a try
+
+currently running for that same region - saving M1, M2, M2G fits, so can see them all on spectra tool
+- save all as hdf5, so can just load that one file
+
+- ask karl about the mkl threads (1) thing, because it keeps trying to load each set separately into RAM
+for me
+
+
