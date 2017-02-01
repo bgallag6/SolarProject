@@ -21,6 +21,8 @@ login as brendan (or user) + enter password
 
 $ cd Desktop
 
+** for Linux Mint, said didn't have libc headers, had to [$ sudo apt-get install libc6-dev] **
+
 $ sudo bash NVIDIA_..._.run  # execute NVIDIA driver runfile
 
 * "pre-install script failed: continue?" -- yes
@@ -128,3 +130,47 @@ https://docs.continuum.io/numbapro/quickstart
 
 % for some reason, now attempting to run [$ anaconda-navigator] raises qt-type error messages
 % however, everything else still works 
+
+
+
+Other things that I tried?
+==========================
+follow installation instructions:
+
+% lspci | grep -i nvidia
+
+2.2. Verify You Have a Supported Version of Linux
+
+The CUDA Development Tools are only supported on some specific distributions of Linux. These are listed in the CUDA Toolkit release notes.
+
+To determine which distribution and release number you're running, type the following at the command line:
+
+$ uname -m && cat /etc/*release
+
+
+$ gcc --version
+
+$ sudo apt-get install linux-headers-$(uname -r)
+
+
+4.3.5. Ubuntu
+
+Create a file at /etc/modprobe.d/blacklist-nouveau.conf with the following contents:
+
+    blacklist nouveau
+    options nouveau modeset=0
+
+Regenerate the kernel initramfs:
+
+$ sudo update-initramfs -u
+
+
+Read more at: http://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ixzz4VgwVnMr1
+Follow us: @GPUComputing on Twitter | NVIDIA on Facebook
+
+$ export PATH=/usr/local/cuda-8.0/bin${PATH:+:${PATH}}
+
+$ export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64\
+                         ${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+
+
