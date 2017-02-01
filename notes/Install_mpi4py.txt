@@ -18,3 +18,14 @@ either / both (don't remember)
 - $ python setup.py install
 
 - pip install mpi4py
+
+
+Linux Mint 18:
+
+- $ conda install mpi4py
+
+# worked perfectly??
+
+for whatever reason, that didn't work on the lab computer
+
+- i had to install MPI from MPICH, and then install mpi4py?
