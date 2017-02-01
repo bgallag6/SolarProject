@@ -93,7 +93,7 @@ def spec_fit( subcube ):
 
   # initialize arrays to hold parameter values, also each pixel's combined model fit - for tool
   # diffM1M2 = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1]))  # not using right now
-  params = np.zeros((7, SPECTRA.shape[0], SPECTRA.shape[1]))
+  params = np.zeros((8, SPECTRA.shape[0], SPECTRA.shape[1]))
   # M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], (len(freqs)+1)/2))  # would save storage / memory space
   #M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], SPECTRA.shape[2]))
 
@@ -172,6 +172,7 @@ def spec_fit( subcube ):
         # create model functions from fitted parameters
         #m1_fit = PowerLaw(f_fit, A, n, C)
         m1_fit = PowerLaw(f, A, n, C)
+        amp_scale = PowerLaw(np.exp(fp2), A, n, C)  # to extract the gaussian-amplitude scaling factor
         #m2_fit = GaussPowerBase(f_fit, A2,n2,C2,P2,fp2,fw2)
         m2_fit = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)
         #s_fit_gp_full = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)  # could get rid of this if not making smaller m2_fit
@@ -202,6 +203,7 @@ def spec_fit( subcube ):
         params[5][l][m] = fw2
         #params[6][l][m] = redchisqrM2
         params[6][l][m] = f_test
+        params[7][l][m] = P2 / amp_scale
         
         # populate array holding model fits
         #M2_fit[l][m] = m2_fit
@@ -212,7 +214,7 @@ def spec_fit( subcube ):
 
 # load data
 #cube = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_spectra_mpi.npy')
-cube = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/spectra_20130815_193_1000_1600i_1950_2950j_rebin2.npy')
+cube = np.load('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/spectra_20130815_193_1000_1600i_1950_2950j_rebin2.npy')
 
 
 start = timer()
@@ -252,5 +254,5 @@ if rank == 0:
 T_act = timer() - start
 print "Program time = %i sec" % T_act     
 
-np.save('C:/Users/Brendan/Desktop/SDO/20130815_193_1000_1600i_1950_2950j_rebin2_params_mpi', stack_p)
+np.save('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/spectra_20130815_193_1000_1600i_1950_2950j_rebin2_params_mpi', stack_p)
 #np.save('C:/Users/Brendan/Desktop/SDO/M2_20130530_1600_2300_2600i_2200_3000j_data_rebin4_mpi_tool', stack_m)

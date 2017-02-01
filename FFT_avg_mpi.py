@@ -51,15 +51,15 @@ from sunpy.map import Map
 from scipy.interpolate import interp1d
 from scipy import signal
 import scipy.misc
-import astropy.units as u
+#import astropy.units as u
 import h5py
 #from scipy import fftpack  # not working with this called here???
 from timeit import default_timer as timer
-#import accelerate  # switch on if computer has installed
+import accelerate  # switch on if computer has installed
 from mpi4py import MPI
 
-def fft_avg(subcube, timeseries, exposure_array, num_seg):
-#def fft_avg(subcube, timeseries, num_seg):
+#def fft_avg(subcube, timeseries, exposure_array, num_seg):
+def fft_avg(subcube, timeseries, num_seg):
     
     from scipy import fftpack
     
@@ -67,7 +67,7 @@ def fft_avg(subcube, timeseries, exposure_array, num_seg):
     
     TIME = timeseries
     
-    Ex = exposure_array
+    #Ex = exposure_array
     
     #print DATA.shape 
     
@@ -114,7 +114,7 @@ def fft_avg(subcube, timeseries, exposure_array, num_seg):
               #pixmed[k]=np.median(im[x1_box:x2_box,y1_box:y2_box])  # finds pixel-box median
               pixmed[k]= im[x1_box,y1_box]	# median  <-- use this
             
-            pixmed = pixmed/Ex  # normalize by exposure time                
+            #pixmed = pixmed/Ex  # normalize by exposure time                
                         
             # The derotation introduces some bad data towards the end of the sequence. This trims that off
             bad = np.argmax(pixmed <= 0.)		# Look for values <= zero
@@ -140,10 +140,10 @@ def fft_avg(subcube, timeseries, exposure_array, num_seg):
                 
               ## perform Fast Fourier Transform on each segment       
               sig = split[i]
-              sig_fft = fftpack.fft(sig)
+              #sig_fft = fftpack.fft(sig)
               #sig_fft = fftpack.rfft(sig)  # real-FFT
               #sig_fft = np.fft.rfft(sig)  # numpy significantly slower than scipy                 
-              #sig_fft = accelerate.mkl.fftpack.fft(sig)  # MKL-accelerated is (2x) faster
+              sig_fft = accelerate.mkl.fftpack.fft(sig)  # MKL-accelerated is (2x) faster
               #sig_fft = accelerate.mkl.fftpack.rfft(sig)  # this is slightly faster
               powers = np.abs(sig_fft)[pidxs]
               norm = len(sig)  # to normalize the power
@@ -160,9 +160,9 @@ def fft_avg(subcube, timeseries, exposure_array, num_seg):
     return spectra_seg
     
 # load data
-cube = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/193/20130530_193_2300_2600i_2200_3000j_data_rebin1.npy')
-time = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/193/20130530_193_2300_2600i_2200_3000j_time.npy')
-exposure = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/193/20130530_193_2300_2600i_2200_3000j_exposure.npy')
+cube = np.load('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/datacubes/20130530_1600_2300_2600i_2200_3000j_data_rebin2.npy')
+time = np.load('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/time_arrays/SDO_20130530_1600A_2300_2600i_2200_3000j_float_time.npy')
+exposure = np.load('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/data/20130530/193/20130530_193_2300_2600i_2200_3000j_exposure.npy')
 num_seg = 6
 
 
@@ -187,8 +187,8 @@ print "Processor", rank, "received an array with dimensions", ss  # Validation
 print "Height = %i, Width = %i, Total pixels = %i" % (subcube.shape[0], subcube.shape[1], subcube.shape[0]*subcube.shape[1])
 print "Estimated time remaining... "
 
-spectra_seg_part = fft_avg(subcube, time, exposure, num_seg)		# Do something with the array
-#spectra_seg_part = fft_avg(subcube, time, num_seg)		# Do something with the array
+#spectra_seg_part = fft_avg(subcube, time, exposure, num_seg)		# Do something with the array
+spectra_seg_part = fft_avg(subcube, time, num_seg)		# Do something with the array
 newData_s = comm.gather(spectra_seg_part, root=0)	# Gather all the results
 
 # Again, just have one node do the last bit
@@ -230,4 +230,4 @@ for l in range(1,spectra_seg.shape[0]-1):
         p_geometric = temp9 / 9.
         spectra_array[l-1][m-1] = np.power(10,p_geometric)
 
-np.save('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_spectra_mpi', spectra_array)
+np.save('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/data/20130530/1600_2300_2600i_2200_3000j_data_rebin2_spectra_mpi', spectra_array)
