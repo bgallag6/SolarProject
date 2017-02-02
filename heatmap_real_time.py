@@ -28,9 +28,12 @@ from matplotlib.mlab import bivariate_normal
 from matplotlib.ticker import LogFormatterMathtext
 from timeit import default_timer as timer
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import sunpy
+from sunpy.map import Map
 
 
-SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/spectra_20120923_211A_(528)_(132)x_(100)_100y.npy')
+#SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/spectra_20130815_193_1000_1600i_1950_2950j_rebin2.npy')
+SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/spectra_20130530_1600_2300_2600i_2200_3000j_data_rebin4.npy')
 
 from scipy import fftpack    
 
@@ -67,23 +70,73 @@ freqs = sample_freq[pidxs]
 
 # initialize arrays to hold parameter values, also each pixel's combined model fit - for tool
 diffM1M2 = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1]))  # dont really use - get rid of?
-params = np.zeros((7, SPECTRA.shape[0], SPECTRA.shape[1]))
+#params = np.zeros((7, SPECTRA.shape[0], SPECTRA.shape[1]))
+
 #M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], (len(freqs)+1)/2))  # would save storage / memory space
 M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], SPECTRA.shape[2]))
 
 Uncertainties = np.zeros((6, SPECTRA.shape[0], SPECTRA.shape[1]))
 
+
+#20130815_193_rebin2
+#x1 = 250
+#x2 = 350
+#y1 = 140
+#y2 = 240
+#bound_min = [0.1e-7, 1.5, 0.0001, 0.0005, -6.5, 0.08]
+#bound_max = [2.5e-7, 2.35, 0.0015, 0.0055, -4.6, 0.8]   
+
+#20130530_1600_rebin4
+x1 = 90
+x2 = 115
+y1 = 45
+y2 = 70
+bound_min = [0.1e-7, 1.5, -0.000015, 0.008, -6.1, 0.34]
+bound_max = [1.6e-7, 2.1, 0.0000025, 0.017, -5.5, 0.47]   
+
+params = np.zeros((7, (y2-y1), (x2-x1)))  # just for real-time demo
+
+#vis = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20130815_193_1000_1600i_1950_2950j.npy')
+vis = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20130530_1600_2300_2600i_2200_3000j_data_rebin4.npy')
+visual = vis[0]
+visual = visual[y1:y2,x1:x2]
+#visual = visual[x1:x2,y1:y2]
+
+titles = ['Power Law Slope Coeff.', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location', 'Gaussian Width', '$/chi^2$', 'Visual Image - Averaged']
+   
+date = '2013/05/30'
+wavelength = 1600
+par = 1
+    
+        
+v_min = np.percentile(visual,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+v_max = np.percentile(visual,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)     
+
+fig = plt.figure(figsize=(20,10))
+#fig, ax = plt.subplots(1, 1, figsize=(20,15))
+ax = plt.subplot2grid((1,11),(0, 0), colspan=5, rowspan=1)
+ax = plt.gca()
+plt.title(r'%s: %i $\AA$ -- Visual: Average' % (date, wavelength), y = 1.01, fontsize=25)
+#im = ax.imshow(h_map[i], vmin=vmin[i], vmax=vmax[i])
+im = ax.imshow(visual, cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
+divider = make_axes_locatable(ax)
+cax = divider.append_axes("right", size="3%", pad=0.07)
+cbar = plt.colorbar(im,cax=cax)
+#cbar.set_label('Intensity', size=20, labelpad=10)
+cbar.ax.tick_params(labelsize=13, pad=3) 
+
+
 start = timer()
 T1 = 0
 
-date = '2012/09/23'
-wavelength = 211
 
-fig, ax1 = plt.subplots(1, 1, figsize=(20,15))
+
+#fig, ax1 = plt.subplots(1, 1, figsize=(20,15))
+ax1 = plt.subplot2grid((1,11),(0, 6), colspan=5, rowspan=1)
 ax1 = plt.gca()
 canvas = ax1.figure.canvas#
-ax1.set_title('%s : %i $\AA$ -- Power Law Index' % (date, wavelength), y = 1.01, fontsize=23)
-im = ax1.imshow(params[1], vmin=0.5, vmax=2.5)
+ax1.set_title('%s : %i $\AA$ -- %s' % (date, wavelength, titles[par]), y = 1.01, fontsize=23)
+im = ax1.imshow(params[par], vmin=bound_min[par], vmax=bound_max[par])
 divider = make_axes_locatable(ax1)
 cax = divider.append_axes("right", size="3%", pad=0.07)
 cbar = plt.colorbar(im,cax=cax)
@@ -102,10 +155,10 @@ fig.canvas.draw()
 ## 10^[(log(a) + log(b) + log(c) + ...) / 9] = [a*b*c*...]^(1/9)
 
 #for l in range(0,SPECTRA.shape[0]):
-for l in range(0,25):
+for l in range(y1,y2):
     
     #for m in range(0,SPECTRA.shape[1]):
-    for m in range(0,50):
+    for m in range(x1,x2):
         
                                         
         f = freqs  # frequencies
@@ -238,6 +291,7 @@ for l in range(0,25):
         
         f_test = ((chisqrM1-chisqrM2)/(6-3))/((chisqrM2)/(f.size-6))
         
+        """
         # populate array with parameters
         params[0][l][m] = A2
         params[1][l][m] = n2
@@ -247,6 +301,16 @@ for l in range(0,25):
         params[5][l][m] = fw2
         #params[6][l][m] = redchisqrM2
         params[6][l][m] = f_test
+        """
+        
+        params[0][l-y1][m-x1] = A2
+        params[1][l-y1][m-x1] = n2
+        params[2][l-y1][m-x1] = C2
+        params[3][l-y1][m-x1] = P2
+        params[4][l-y1][m-x1] = fp2
+        params[5][l-y1][m-x1]= fw2
+        #params[6][l][m] = redchisqrM2
+        params[6][l-y1][m-x1] = f_test
         
         # populate array holding model fits
         M2_fit[l][m] = m2_fit
@@ -288,7 +352,7 @@ for l in range(0,25):
         # restore background
         canvas.restore_region(background)
         # redraw just the points
-        im.set_data(params[1])
+        im.set_data(params[par])
         # fill in the figure
         canvas.blit(ax1.bbox)
         plt.pause(0.0001)
@@ -297,7 +361,7 @@ for l in range(0,25):
     # restore background
     #canvas.restore_region(background)
     # redraw just the points
-    #im.set_data(params[1])
+    #im.set_data(params[par])
     # fill in the figure
     #canvas.blit(ax1.bbox)
     #plt.pause(0.0001)
