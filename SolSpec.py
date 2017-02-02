@@ -483,7 +483,7 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
             h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
             cmap = 'jet'
         
-        im = ax.imshow(h_map[i], cmap = cmap, vmin=h_min, vmax=h_max)
+        im = ax.imshow(np.flipud(h_map[i]), cmap = cmap, vmin=h_min, vmax=h_max)
         plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
         plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
         plt.xticks(fontsize=17)
@@ -530,7 +530,7 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         ax = plt.gca()
         plt.title(r'%s: %i $\AA$  [Visual: %s]' % (date_title, wavelength, titles_vis[i]), y = 1.01, fontsize=25)
         #im = ax.imshow(h_map[i], vmin=vmin[i], vmax=vmax[i])
-        im = ax.imshow(vis[i], cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
+        im = ax.imshow(np.flipud(vis[i]), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
         plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
         plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
         plt.xticks(fontsize=17)

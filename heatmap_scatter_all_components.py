@@ -174,9 +174,9 @@ with h5py.File("F:/Users/Brendan/Desktop/SolarProject/20130815_193_1000_1600i_19
         for i in range(0,cpy_arr_gaussian.shape[2]):
             g[i] = cpy_arr_gaussian[iy][ix][i]
         ax2.loglog(f_fit_full,s)
-        ax2.loglog(f_fit,m)
-        ax2.loglog(f_fit,p)
-        ax2.loglog(f_fit,g)
+        ax2.loglog(f_fit,m, label='Combined M2', color='r', linestyle='solid')
+        ax2.loglog(f_fit,p, label='Power Law', color='g', linestyle='solid')
+        ax2.loglog(f_fit,g, label='Gaussian', color='g', linestyle='dashed')
 
         ax2.set_xlim(10**-4.5, 10**-1.3)
         ax2.set_ylim(10**-5, 10**0)  

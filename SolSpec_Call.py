@@ -98,6 +98,6 @@ import h5py
     #r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20141025', wavelength=1600, path_name='C:/Users/Brendan/Desktop/PDFs')
     
 #HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_params_mpi.npy')
-HEATMAPS = np.load('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/spectra_20130815_193_1000_1600i_1950_2950j_rebin2_params_mpi.npy')
-VISUAL = np.load('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/visual/visual_20130815_193_1000_1600i_1950_2950j.npy')
-r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130815', wavelength=193, path_name='/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/')
+HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_params_mpi.npy')
+VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20130530_193A_2300_2600i_2200_3000j_float.npy')
+r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130530', wavelength=193, path_name='C:/Users/Brendan/Desktop/')
