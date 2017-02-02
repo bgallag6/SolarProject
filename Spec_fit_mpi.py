@@ -33,16 +33,8 @@ import numpy as np
 import numpy as np
 import scipy.signal
 #matplotlib.use('TkAgg') 	# NOTE: This is a MAC/OSX thing. Probably REMOVE for linux/Win
-from matplotlib.widgets import  RectangleSelector
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-from matplotlib.widgets import Cursor
 from pylab import *
-import glob
-import sunpy
-from sunpy.map import Map
-from sunpy.image.coalignment import mapcube_coalign_by_match_template
-from sunpy.physics.transforms.solar_rotation import mapcube_solar_derotate
 from scipy.interpolate import interp1d
 from scipy import signal
 import scipy.misc
@@ -99,15 +91,17 @@ def spec_fit( subcube ):
 
   # Uncertainties = np.zeros((6, SPECTRA.shape[0], SPECTRA.shape[1]))  # not using right now
   
+  start = timer()
+  T1 = 0
   
   ### calculate 3x3 pixel-box geometric average.  start at 1 and end 1 before to deal with edges.
   ## 10^[(log(a) + log(b) + log(c) + ...) / 9] = [a*b*c*...]^(1/9)
     
-  for l in range(0,SPECTRA.shape[0]):
-  #for l in range(0,15):
+  #for l in range(0,SPECTRA.shape[0]):
+  for l in range(0,15):
     
-    for m in range(0,SPECTRA.shape[1]):
-    #for m in range(0,20):
+    #for m in range(0,SPECTRA.shape[1]):
+    for m in range(0,20):
         
                                         
         f = freqs  # frequencies
@@ -153,7 +147,7 @@ def spec_fit( subcube ):
             
             # change method to 'dogbox' and increase max number of function evaluations to 3000
             nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000) # replaced #'s with arrays
-            
+            #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A,n,C,0.1,-5.55,0.425], bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000) # replaced #'s with arrays
         except RuntimeError:
             #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
             pass
@@ -207,6 +201,23 @@ def spec_fit( subcube ):
         
         # populate array holding model fits
         #M2_fit[l][m] = m2_fit
+        
+    # estimate time remaining and print to screen  (looks to be much better - not sure why had above?)
+    T = timer()
+    T2 = T - T1
+    if l == 0:
+        T_init = T - start
+        T_est = T_init*(SPECTRA.shape[0])  
+        print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est)
+    else:
+        T_est2 = T2*((SPECTRA.shape[0])-l)
+        print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est2)
+    T1 = T
+
+  # print estimated and total program time to screen        
+  print "Beginning Estimated time = %i sec" % T_est
+  T_act = timer() - start
+  print "Actual total time = %i sec" % T_act  
 			
   #return params, M2_fit
   return params
@@ -214,7 +225,8 @@ def spec_fit( subcube ):
 
 # load data
 #cube = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_spectra_mpi.npy')
-cube = np.load('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/spectra_20130815_193_1000_1600i_1950_2950j_rebin2.npy')
+#cube = np.load('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/spectra_20130815_193_1000_1600i_1950_2950j_rebin2.npy')
+cube = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/spectra_20130815_193_1000_1600i_1950_2950j_rebin2.npy')
 
 
 start = timer()
@@ -236,7 +248,6 @@ subcube = comm.scatter(chunks, root=0)
 ss = np.shape(subcube)  # Validation	
 print "Processor", rank, "received an array with dimensions", ss  # Validation
 print "Height = %i, Width = %i, Total pixels = %i" % (subcube.shape[0], subcube.shape[1], subcube.shape[0]*subcube.shape[1])
-print "Estimated time remaining... "
 
 #params_T, M2_fit_T = spec_fit( subcube )		# Do something with the array
 params_T = spec_fit( subcube )		# Do something with the array
@@ -254,5 +265,5 @@ if rank == 0:
 T_act = timer() - start
 print "Program time = %i sec" % T_act     
 
-np.save('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/spectra_20130815_193_1000_1600i_1950_2950j_rebin2_params_mpi', stack_p)
+#np.save('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/spectra_20130815_193_1000_1600i_1950_2950j_rebin2_params_mpi', stack_p)
 #np.save('C:/Users/Brendan/Desktop/SDO/M2_20130530_1600_2300_2600i_2200_3000j_data_rebin4_mpi_tool', stack_m)

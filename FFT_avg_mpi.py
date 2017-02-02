@@ -26,8 +26,6 @@ Created on Sun Jan 29 18:38:48 2017
 # this normalizes by exposure time when extracting pixel-intensity values
 # should reduce datacube array size by 4x, and not cost much time here
 
-# not working, seems slower than usual somehow, when should be 4x quicker
-
 # including exposure normalization in loop cause time to go nuts??
 
 # ran through revised version, program time down from ~235 seconds to 70 seconds
@@ -38,53 +36,36 @@ Created on Sun Jan 29 18:38:48 2017
 # not sure if I did it correctly, but percent difference in some values was showing 50-70%?!?
 # !! oh, possibly because I deleted two files that were odd sizes -- damn, can't compare
 
+# update 2/1:
+# took time, exposure, freqs out of loop, since same for all.
+
+# time for 300x600 20130530 193 region w/accelerate = 82 seconds 
+# scaled to 1500x1500, should take max of 1025 seconds = 17 minutes w/ 4 cores
+
+# for file naming / calling : put all in folder - glob fname list.  
+# if certain year, certain wavelength, if last letters are spectra, pull that...(handle non-exact region sizes)
+# specify path, date, wavelength - thats it.  
+
 import numpy as np
 import scipy.signal
 #matplotlib.use('TkAgg') 	# NOTE: This is a MAC/OSX thing. Probably REMOVE for linux/Win
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-from matplotlib.widgets import Cursor
 from pylab import *
-import glob
-import sunpy
-from sunpy.map import Map
 from scipy.interpolate import interp1d
 from scipy import signal
 import scipy.misc
-#import astropy.units as u
+import astropy.units as u
 import h5py
-#from scipy import fftpack  # not working with this called here???
 from timeit import default_timer as timer
 import accelerate  # switch on if computer has installed
 from mpi4py import MPI
+from scipy import fftpack
 
-#def fft_avg(subcube, timeseries, exposure_array, num_seg):
-def fft_avg(subcube, timeseries, num_seg):
+def fft_avg(subcube):
     
     from scipy import fftpack
     
     DATA = subcube
-    
-    TIME = timeseries
-    
-    #Ex = exposure_array
-    
-    #print DATA.shape 
-    
-    #print "Number of seconds in timeseries = %i" % (TIME[len(TIME)-1] - TIME[0])
-    
-    t_interp = np.linspace(0, TIME[len(TIME)-1], (TIME[len(TIME)-1]/12)+1)  #  <-- use this (might be correct method) - not sure if matters
-    
-    n_segments = num_seg  # break data into 12 segments of equal length
-    n = len(t_interp)
-    rem = n % n_segments
-    freq_size = (n - rem) / n_segments
-    
-    ## determine frequency values that FFT will evaluate
-    time_step = 12  # add as argument in function call, or leave in as constant?
-    sample_freq = fftpack.fftfreq(freq_size, d=time_step)
-    pidxs = np.where(sample_freq > 0)
-    freqs = sample_freq[pidxs]
     
     reslt = (DATA.shape[0] == TIME.shape[0])
     print "DATA and TIME array sizes match: %s" % reslt
@@ -92,16 +73,18 @@ def fft_avg(subcube, timeseries, num_seg):
     pixmed=np.empty(DATA.shape[0])  # Initialize array to hold median pixel values
     spectra_seg = np.zeros((DATA.shape[1],DATA.shape[2],len(freqs)))
     
-    #print "length time-interp array = %i" % n
-    #print "size for FFT to consider = %i" % freq_size
-    #print "length of sample freq array = %i" % len(sample_freq)
-    #print "length of freqs array = %i (should be 1/2 of two above rows)" % len(freqs)
+    print "length time-interp array = %i" % n
+    print "length of sample freq array = %i" % len(sample_freq)
+    print "length of freqs array = %i (should be 1/2 of row above)" % len(freqs)
+    
+    start_sub = timer()
+    T1 = 0    
     
     for ii in range(0,spectra_seg.shape[0]):
-    #for ii in range(142,160):
+    #for ii in range(0,50):
     
         for jj in range(0,spectra_seg.shape[1]):
-        #for jj in range(0,574):        
+        #for jj in range(0,200):        
         
             x1_box = 0+ii
             #x2_box = 2+ii  # if want to use median of more than 1x1 pixel box
@@ -114,7 +97,7 @@ def fft_avg(subcube, timeseries, num_seg):
               #pixmed[k]=np.median(im[x1_box:x2_box,y1_box:y2_box])  # finds pixel-box median
               pixmed[k]= im[x1_box,y1_box]	# median  <-- use this
             
-            #pixmed = pixmed/Ex  # normalize by exposure time                
+            pixmed = pixmed/exposure  # normalize by exposure time                
                         
             # The derotation introduces some bad data towards the end of the sequence. This trims that off
             bad = np.argmax(pixmed <= 0.)		# Look for values <= zero
@@ -155,23 +138,60 @@ def fft_avg(subcube, timeseries, num_seg):
             avg_array = np.transpose(avg_array)  # take transpose of array to fit more cleanly in 3D array
                        
             spectra_seg[ii][jj] = avg_array  # construct 3D array with averaged FFTs from each pixel
-        
             
+        # estimate time remaining and print to screen
+        T = timer()
+        T2 = T - T1
+        if ii == 0:
+            T_init = T - start_sub
+            T_est = T_init*(spectra_seg.shape[0])  
+            print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_seg.shape[0], T_est)
+        else:
+            T_est2 = T2*(spectra_seg.shape[0]-ii)
+            print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_seg.shape[0], T_est2)
+        T1 = T
+        
+        
+    # print estimated and total program time to screen 
+    print "Beginning Estimated time = %i sec" % T_est
+    T_act = timer() - start_sub
+    print "Actual total time = %i sec" % T_act 
+                    
     return spectra_seg
-    
-# load data
-cube = np.load('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/datacubes/20130530_1600_2300_2600i_2200_3000j_data_rebin2.npy')
-time = np.load('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/time_arrays/SDO_20130530_1600A_2300_2600i_2200_3000j_float_time.npy')
-exposure = np.load('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/data/20130530/193/20130530_193_2300_2600i_2200_3000j_exposure.npy')
+
+ 
+ 
+"""
+# Load datacube plus time and exposure arrays
+"""   
+cube = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/193/20130530_193_2300_2600i_2200_3000j_data_rebin1.npy')
+TIME = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/193/20130530_193_2300_2600i_2200_3000j_time.npy')
+exposure = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/193/20130530_193_2300_2600i_2200_3000j_exposure.npy')
 num_seg = 6
 
+t_interp = np.linspace(0, TIME[len(TIME)-1], (TIME[len(TIME)-1]/12)+1)  # interpolate time array onto uniform 12-second grid
+    
+n_segments = num_seg  # break data into # segments of equal length
+n = len(t_interp)
+rem = n % n_segments
+freq_size = (n - rem) / n_segments
 
+# determine frequency values that FFT will evaluate
+time_step = 12  # add as argument in function call, or leave in as constant?
+sample_freq = fftpack.fftfreq(freq_size, d=time_step)
+pidxs = np.where(sample_freq > 0)
+freqs = sample_freq[pidxs]
+
+
+
+"""
+### MPI Part
+"""
 start = timer()
 
 comm = MPI.COMM_WORLD 	# set up comms
 rank = comm.Get_rank()	# Each processor gets its own "rank"
 #print "Hello World from process ", rank  # DEBUG/VALIDATE
-
 
 # Rank0 is the first processor. Use that to do the main chores
 if rank == 0:
@@ -184,23 +204,21 @@ else:
 subcube = comm.scatter(chunks, root=0)
 ss = np.shape(subcube)  # Validation	
 print "Processor", rank, "received an array with dimensions", ss  # Validation
-print "Height = %i, Width = %i, Total pixels = %i" % (subcube.shape[0], subcube.shape[1], subcube.shape[0]*subcube.shape[1])
-print "Estimated time remaining... "
+print "Height = %i, Width = %i, Total pixels = %i" % (subcube.shape[1], subcube.shape[2], subcube.shape[1]*subcube.shape[2])
 
-#spectra_seg_part = fft_avg(subcube, time, exposure, num_seg)		# Do something with the array
-spectra_seg_part = fft_avg(subcube, time, num_seg)		# Do something with the array
+spectra_seg_part = fft_avg(subcube)		# Do something with the array
 newData_s = comm.gather(spectra_seg_part, root=0)	# Gather all the results
 
 # Again, just have one node do the last bit
 if rank == 0:
-  #stack = np.vstack(newData) 	# stack the 2-d arrays together and we're done!
   spectra_seg = np.vstack(newData_s)  # should be vstack?
   print spectra_seg.shape			# Verify we have a summed version of the input cube
  
-T_act = timer() - start
-print "Program time = %i sec" % T_act     
 
 
+"""
+### 3x3 Averaging
+"""
 # initialize arrays to hold temporary results for calculating geometric average
 temp = np.zeros((9,spectra_seg.shape[2]))  # maybe have 3x3 to be generalized   
 p_geometric = np.zeros((spectra_seg.shape[2]))  # would pre-allocating help? (seems to)
@@ -230,4 +248,7 @@ for l in range(1,spectra_seg.shape[0]-1):
         p_geometric = temp9 / 9.
         spectra_array[l-1][m-1] = np.power(10,p_geometric)
 
-np.save('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/data/20130530/1600_2300_2600i_2200_3000j_data_rebin2_spectra_mpi', spectra_array)
+T_act = timer() - start
+print "Total program time = %i sec" % T_act   
+
+np.save('C:/Users/Brendan/Desktop/20130530_193_2300_2600i_2200_3000j_spectra_mpi_final', spectra_array)

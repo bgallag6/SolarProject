@@ -1059,20 +1059,11 @@ def fft_avg(datacube, timeseries, num_seg):
 import numpy as np
 import scipy.signal
 #matplotlib.use('TkAgg') 	# NOTE: This is a MAC/OSX thing. Probably REMOVE for linux/Win
-from matplotlib.widgets import  RectangleSelector
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-from matplotlib.widgets import Cursor
 from pylab import *
-import glob
-import sunpy
-from sunpy.map import Map
-from sunpy.image.coalignment import mapcube_coalign_by_match_template
-from sunpy.physics.transforms.solar_rotation import mapcube_solar_derotate
 from scipy.interpolate import interp1d
 from scipy import signal
 import scipy.misc
-import astropy.units as u
 import h5py
 from scipy import fftpack  # doesnt work in module when called here???
 import matplotlib.pylab as plt
