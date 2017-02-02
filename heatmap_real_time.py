@@ -372,14 +372,12 @@ for l in range(y1,y2):
     if l == 0:
         T_init = T - start
         T_est = T_init*(SPECTRA.shape[0])  
-        print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est)
     else:
         T_est2 = T2*((SPECTRA.shape[0])-l)
         print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est2)
     T1 = T
 
 # print estimated and total program time to screen        
-print "Beginning Estimated time = %i sec" % T_est
 T_act = timer() - start
 print "Actual total time = %i sec" % T_act           
 

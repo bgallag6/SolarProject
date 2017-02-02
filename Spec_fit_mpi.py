@@ -237,6 +237,7 @@ rank = comm.Get_rank()	# Each processor gets its own "rank"
 
 
 # Rank0 is the first processor. Use that to do the main chores
+# possibly put cube load in rank == 0?, so only loaded once?
 if rank == 0:
   size = MPI.COMM_WORLD.Get_size()		# How many processors do we have?
   chunks = np.array_split(cube, size)		# Split the data based on no. of processors
