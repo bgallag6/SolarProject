@@ -195,50 +195,6 @@ for l in range(y1,y2):
         
         
         ## possibly use previous pixel's parameters as initial guesses for current pixel (issues creating wierd banding in images)
-                        
-        """
-        M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
-        #M2_low = [-0.1, 0.1, -0.1, 0.00001, -6.5, 0.05]  # test on 193 - coronal hole
-        M2_high = [0.002, 4., 0.01, 0.2, -4.6, 0.8]
-        if m > 0:
-            P0 = [params[0][l][m-1], params[1][l][m-1], params[2][l][m-1], params[3][l][m-1], params[4][l][m-1], params[5][l][m-1]]
-            #P0 = [0.0, 1.02, 0.001, 0.001, -4.68, 0.79]
-            try:
-                #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=([-4.34,0.5,-8.68,0.00001,-6.5,0.05], [2.,6.,2.,0.2,-4.6,0.8]), sigma=ds)
-                #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=([-0.5,0.1,-0.5,0.00001,-8.5,0.05], [0.5,4.,0.5,0.2,-4.6,0.9]), sigma=ds)
-                nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
-            except RuntimeError:
-                print("Error M2 - curve_fit failed")
-            
-            except ValueError:
-                print("Error M2 - inf/NaN - %i, %i" % (l,m))
-                
-        elif m == 0 and l > 0:
-            P0 = [params[0][l-1][m], params[1][l-1][m], params[2][l-1][m], params[3][l-1][m], params[4][l-1][m], params[5][l-1][m]]
-            try:
-                #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=([-4.34,0.5,-8.68,0.00001,-6.5,0.05], [2.,6.,2.,0.2,-4.6,0.8]), sigma=ds)
-                #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=([-4.34,0.5,-8.68,0.00001,-6.5,0.05], [2.,6.,2.,0.2,-4.6,0.8]), sigma=ds)
-                #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=([-0.5,0.1,-0.5,0.00001,-8.5,0.05], [0.5,4.,0.5,0.2,-4.6,0.9]), sigma=ds)
-                nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
-            except RuntimeError:
-                print("Error M2 - curve_fit failed")
-            
-            except ValueError:
-                print("Error M2 - inf/NaN - %i, %i" % (l,m))
-                
-        else:        
-        #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0=[nlfit_l[0], nlfit_l[1], nlfit_l[2], nlfit_g[0], nlfit_g[1], nlfit_g[2]], sigma=ds)
-            try:
-                #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = P0, bounds=([-4.34,0.5,-8.68,0.00001,-6.5,0.05], [2.,6.,2.,0.2,-4.6,0.8]), sigma=ds)
-                #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=([-4.34,0.5,-8.68,0.00001,-6.5,0.05], [2.,6.,2.,0.2,-4.6,0.8]), sigma=ds)
-                #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=([-0.5,0.1,-0.5,0.00001,-8.5,0.05], [0.5,4.,0.5,0.2,-4.6,0.9]), sigma=ds)
-                nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
-            except RuntimeError:
-                print("Error M2 - curve_fit failed")
-            
-            except ValueError:
-                print("Error M2 - inf/NaN - %i, %i" % (l,m))
-        """     
         
         ## fit data to combined power law plus gaussian component model
         #"""        
@@ -315,56 +271,23 @@ for l in range(y1,y2):
         # populate array holding model fits
         M2_fit[l][m] = m2_fit
         
-        
-        
-        
-        
-        # Plot models + display combined-model parameters + uncertainties
-        """
-        fig = plt.figure(figsize=(20,15))
-        plt.title('SDO AIA 304.0 Angstrom 20120923 - 3 Segments, 3x3 Pixel-Box Averaging 598 interp', y = 1.01, fontsize=25)
-        plt.ylim((10**-8,10**1))
-        plt.xlim((10**-5,10**-1))
-        plt.loglog(f,s,'k')
-        plt.loglog(f_fit, m1_fit, label='Power Law - M1')
-        plt.loglog(f_fit, m2P_fit, 'g', label='Power Law - M2')
-        plt.loglog(f_fit, m2G_fit, 'g--', label='Gaussian - M2')
-        plt.loglog(f_fit, m2_fit, 'r', label='Combined - M2')
-        plt.xlabel('Frequency (Hz)', fontsize=20, labelpad=10)
-        plt.ylabel('Power', fontsize=20, labelpad=10)
-        plt.vlines((1.0/300.),10**-8,10**1, linestyles='dashed', label='5 minutes')
-        plt.vlines((1.0/180.),10**-8,10**1, linestyles='dotted', label='3 minutes')
-        plt.vlines((1.0/24.),10**-8,10**1, linestyles='solid', label='24 seconds')
-        plt.text(0.01, 10**0., 'A = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[0], uncertainties[0]), fontsize=15)
-        plt.text(0.01, 10**-0.3, 'n = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[1], uncertainties[1]), fontsize=15)
-        plt.text(0.01, 10**-0.6, 'C = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[2], uncertainties[2]), fontsize=15)
-        plt.text(0.01, 10**-0.9, 'P = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[3], uncertainties[3]), fontsize=15)
-        plt.text(0.01, 10**-1.2, 'fp = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[4], uncertainties[4]), fontsize=15)
-        plt.text(0.01, 10**-1.5, 'fw = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[5], uncertainties[5]), fontsize=15)
-        plt.text(0.01, 10**-1.8, 'f_test = {0:0.3f}'.format(f_test), fontsize=15)
-        plt.legend(loc='upper left', prop={'size':15})
-        plt.show()
-        #plt.savefig('C:/Users/Brendan/Desktop/PHYS 326/dogbox_test1/20130530_193A_3x3_6seg_%ii_%ij.jpeg' % (l,m))
-        #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))
-        #plt.close()
-        """
-        
+        ### plot only updates (pixel by pixel)
         # restore background
-        #canvas.restore_region(background)
+        canvas.restore_region(background)
         # redraw just the points
-        #im.set_data(params[par])
+        im.set_data(params[par])
         # fill in the figure
-        #canvas.blit(ax1.bbox)
-        #plt.pause(0.0001)
+        canvas.blit(ax1.bbox)
+        plt.pause(0.0001)
         
-        
+    ### plot only updates (row by row)    
     # restore background
-    canvas.restore_region(background)
+    #canvas.restore_region(background)
     # redraw just the points
-    im.set_data(params[par])
+    #im.set_data(params[par])
     # fill in the figure
-    canvas.blit(ax1.bbox)
-    plt.pause(0.0001)
+    #canvas.blit(ax1.bbox)
+    #plt.pause(0.0001)
 
     # estimate time remaining and print to screen  (looks to be much better - not sure why had above?)
     T = timer()

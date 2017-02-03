@@ -27,9 +27,6 @@ Created on Sat Jan 28 12:15:32 2017
 # commenting-out the M2_fits.  for large regions they become way to big.  
 # include back when need them?
 
-# 2/3:
-# manually assign chunks to processors - to overcome 'Overflow error'
-
 from timeit import default_timer as timer
 
 import numpy as np
@@ -227,24 +224,31 @@ def spec_fit( subcube ):
   return params
 	
 
-comm = MPI.COMM_WORLD  # set up comms
-rank = comm.Get_rank()  # Each processor gets its own "rank"
-	
+# load data
+#cube = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_spectra_mpi.npy')
+#cube = np.load('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/spectra_20130815_193_1000_1600i_1950_2950j_rebin2.npy')
+cube = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/20130530_193_2300_2600i_2200_3000j_data_rebin1.npy')  # works, (all load full array)
+
+
 start = timer()
 
-size = MPI.COMM_WORLD.Get_size()  # How many processors do we have? (pulls from "-n 4" specified in terminal execution command)
+comm = MPI.COMM_WORLD 	# set up comms
+rank = comm.Get_rank()	# Each processor gets its own "rank"
+#print "Hello World from process ", rank  # DEBUG/VALIDATE
 
-# load memory-mapped array as read-only
-cube = np.memmap('C:/Users/Brendan/Desktop/20130530_1600_2300_2600i_2200_3000j_data_rebin4_mmap.npy', dtype='float64', mode='r', shape=(72,156,299))
 
-chunks = np.array_split(cube, size)  # Split the data based on no. of processors
+# Rank0 is the first processor. Use that to do the main chores
+# possibly put cube load in rank == 0?, so only loaded once?
+if rank == 0:
+  size = MPI.COMM_WORLD.Get_size()		# How many processors do we have?
+  #cube = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/spectra_20141025_304_-400_400i_-400_400j.npy')
+  #cube = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/20130530_193_2300_2600i_2200_3000j_data_rebin1.npy') # works (1 array load)
+  chunks = np.array_split(cube, size)		# Split the data based on no. of processors
+else:
+  chunks = None  # Prepare a variable on the other nodes
 
-# specify which chunks should be handled by each processor
-for i in range(size):
-    if rank == i:
-        subcube = chunks[i]
-
-# verify each processor received subcube with correct dimensions
+# Distribute the data to all nodes, defining the root node (rank=0) as distributor
+subcube = comm.scatter(chunks, root=0)
 ss = np.shape(subcube)  # Validation	
 print "Processor", rank, "received an array with dimensions", ss  # Validation
 print "Height = %i, Width = %i, Total pixels = %i" % (subcube.shape[0], subcube.shape[1], subcube.shape[0]*subcube.shape[1])
