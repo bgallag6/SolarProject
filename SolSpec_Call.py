@@ -19,7 +19,7 @@ import h5py
 """
 ## download data (fill in missing)
 """
-r = ss.get_data_fill(wavelength=171, cadence=12, time_begin='2013/06/26 00:00:00', time_end='2013/06/26 12:00:00', path_name='F:/Users/Brendan/Desktop/SolarProject/data/20130626/171')
+#r = ss.get_data_fill(wavelength=171, cadence=12, time_begin='2013/06/26 00:00:00', time_end='2013/06/26 12:00:00', path_name='F:/Users/Brendan/Desktop/SolarProject/data/20130626/171')
 
 
 """
@@ -98,6 +98,6 @@ r = ss.get_data_fill(wavelength=171, cadence=12, time_begin='2013/06/26 00:00:00
     #r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20141025', wavelength=1600, path_name='C:/Users/Brendan/Desktop/PDFs')
     
 #HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_params_mpi.npy')
-#HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_params_mpi.npy')
-#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20130530_193A_2300_2600i_2200_3000j_float.npy')
-#r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130530', wavelength=193, path_name='C:/Users/Brendan/Desktop/')
+#HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/20130815_193_1000_1600i_1950_2950j_rebin2_params_mpi_partM2.npy')
+#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20130815_193_1000_1600i_1950_2950j.npy')
+#r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130815', wavelength=193, path_name='C:/Users/Brendan/Desktop/testt/')

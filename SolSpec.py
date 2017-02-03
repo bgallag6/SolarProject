@@ -400,6 +400,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from scipy.stats import f as ff
 
 def heatmap(heatmaps, visual, date, wavelength, path_name):
     """
@@ -430,9 +431,9 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
     
     # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
     #titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', '$\chi^2$']
-    titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', 'F-Test']
+    titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', 'F-Test', 'Gaussian Amplitude Scaled', 'P-Value']
     #names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'Chi2']
-    names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'F_Test']
+    names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'F_Test', 'Gauss_Amp_Scaled', 'P_Value']
     #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location (e^(Value))', 'Width', '$\chi^2$']
     #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', '$\chi^2$']
     cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', 'F-Test']
@@ -478,6 +479,12 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
             h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
             cmap = 'jet_r'  # reverse color-scale for Gaussian Location, because of flipped frequencies to seconds
+        elif i == 8:
+            df1, df2 = 3, 6
+            h_map[6] = ff.sf(h_map[6], df1, df2)
+            h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+            h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+            cmap = 'jet_r'  # reverse color-scale for Gaussian Location, because of flipped frequencies to seconds                       
         else:
             h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
@@ -1075,6 +1082,7 @@ import matplotlib.colors as colors
 from matplotlib.mlab import bivariate_normal
 from matplotlib.ticker import LogFormatterMathtext
 from timeit import default_timer as timer
+from scipy.stats import f
 
 
 def spec_fit(spectra_array):
@@ -1126,12 +1134,12 @@ def spec_fit(spectra_array):
     
     
     # initialize arrays to hold parameter values, also each pixel's combined model fit - for tool
-    diffM1M2 = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1]))  # dont really use - get rid of?
-    params = np.zeros((7, SPECTRA.shape[0], SPECTRA.shape[1]))
+    #diffM1M2 = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1]))  # dont really use - get rid of?
+    params = np.zeros((8, SPECTRA.shape[0], SPECTRA.shape[1]))
     #M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], (len(freqs)+1)/2))  # would save storage / memory space
     M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], SPECTRA.shape[2]))
     
-    Uncertainties = np.zeros((6, SPECTRA.shape[0], SPECTRA.shape[1]))
+    #Uncertainties = np.zeros((6, SPECTRA.shape[0], SPECTRA.shape[1]))
     
     start = timer()
     T1 = 0
@@ -1155,7 +1163,7 @@ def spec_fit(spectra_array):
             
             # create points to fit model with final parameters 
             #f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],(len(freqs)+1)/2)  # would save storage / memory space?
-            f_fit = freqs       
+            #f_fit = freqs       
             
                                                    
             ### fit data to models using SciPy's Levenberg-Marquart method
@@ -1252,22 +1260,26 @@ def spec_fit(spectra_array):
             uncertainties = dA2, dn2, dC2, dP2, dfp2, dfw2  # do we want to keep a global array of uncertainties?  
             
             
-            uncertainties_arr = [dA2, dn2, dC2, dP2, dfp2, dfw2]  # not sure if want to keep these
-            Uncertainties[:, l, m] = uncertainties_arr
+            #uncertainties_arr = [dA2, dn2, dC2, dP2, dfp2, dfw2]  # not sure if want to keep these
+            #Uncertainties[:, l, m] = uncertainties_arr
             
             
             # create model functions from fitted parameters
-            m1_fit = PowerLaw(f_fit, A, n, C)
-            m2_fit = GaussPowerBase(f_fit, A2,n2,C2,P2,fp2,fw2)
-            s_fit_gp_full = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)  # could get rid of this if not making smaller m2_fit
-            m2P_fit = PowerLaw(f_fit, A2, n2, C2)
-            m2G_fit = Gauss(f_fit, P2, fp2, fw2)
+            #m1_fit = PowerLaw(f_fit, A, n, C)
+            m1_fit = PowerLaw(f, A, n, C)
+            amp_scale = PowerLaw(np.exp(fp2), A, n, C)  # to extract the gaussian-amplitude scaling factor
+            #m2_fit = GaussPowerBase(f_fit, A2,n2,C2,P2,fp2,fw2)
+            m2_fit = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)
+            #s_fit_gp_full = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)  # could get rid of this if not making smaller m2_fit
+            #m2P_fit = PowerLaw(f_fit, A2, n2, C2)  # only need if plotting
+            #m2G_fit = Gauss(f_fit, P2, fp2, fw2)  # only need if plotting
             
-            diffM1M2_temp = (m2_fit - m1_fit)**2  # differences squared
-            diffM1M2[l][m] = np.sum(diffM1M2_temp)  # sum of squared differences 
+            #diffM1M2_temp = (m2_fit - m1_fit)**2  # differences squared
+            #diffM1M2[l][m] = np.sum(diffM1M2_temp)  # sum of squared differences 
                                    
             
-            residsM2 = (s - s_fit_gp_full)
+            #residsM2 = (s - s_fit_gp_full)
+            residsM2 = (s - m2_fit)
             chisqrM2 = ((residsM2/ds)**2).sum()
             redchisqrM2 = ((residsM2/ds)**2).sum()/float(f.size-6)
             
@@ -1286,6 +1298,8 @@ def spec_fit(spectra_array):
             params[5][l][m] = fw2
             #params[6][l][m] = redchisqrM2
             params[6][l][m] = f_test
+            params[7][l][m] = P2 / amp_scale
+            
             
             # populate array holding model fits
             M2_fit[l][m] = m2_fit

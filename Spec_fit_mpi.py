@@ -198,6 +198,7 @@ def spec_fit( subcube ):
         #params[6][l][m] = redchisqrM2
         params[6][l][m] = f_test
         params[7][l][m] = P2 / amp_scale
+        #params[8][l][m] = 
         
         # populate array holding model fits
         #M2_fit[l][m] = m2_fit
@@ -226,7 +227,7 @@ def spec_fit( subcube ):
 # load data
 #cube = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_spectra_mpi.npy')
 #cube = np.load('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/spectra_20130815_193_1000_1600i_1950_2950j_rebin2.npy')
-cube = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/spectra_20130815_193_1000_1600i_1950_2950j_rebin2.npy')
+cube = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/20130530_193_2300_2600i_2200_3000j_data_rebin1.npy')  # works
 
 
 start = timer()
@@ -240,6 +241,7 @@ rank = comm.Get_rank()	# Each processor gets its own "rank"
 # possibly put cube load in rank == 0?, so only loaded once?
 if rank == 0:
   size = MPI.COMM_WORLD.Get_size()		# How many processors do we have?
+  #cube = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/spectra_20141025_304_-400_400i_-400_400j.npy')
   chunks = np.array_split(cube, size)		# Split the data based on no. of processors
 else:
   chunks = None  # Prepare a variable on the other nodes

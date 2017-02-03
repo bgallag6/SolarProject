@@ -350,21 +350,21 @@ for l in range(y1,y2):
         """
         
         # restore background
-        canvas.restore_region(background)
+        #canvas.restore_region(background)
         # redraw just the points
-        im.set_data(params[par])
+        #im.set_data(params[par])
         # fill in the figure
-        canvas.blit(ax1.bbox)
-        plt.pause(0.0001)
+        #canvas.blit(ax1.bbox)
+        #plt.pause(0.0001)
         
         
     # restore background
-    #canvas.restore_region(background)
+    canvas.restore_region(background)
     # redraw just the points
-    #im.set_data(params[par])
+    im.set_data(params[par])
     # fill in the figure
-    #canvas.blit(ax1.bbox)
-    #plt.pause(0.0001)
+    canvas.blit(ax1.bbox)
+    plt.pause(0.0001)
 
     # estimate time remaining and print to screen  (looks to be much better - not sure why had above?)
     T = timer()

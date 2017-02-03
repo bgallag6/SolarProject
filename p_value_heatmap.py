@@ -19,7 +19,11 @@ flat_param = np.reshape(h_map[6], (h_map[6].shape[0]*h_map[6].shape[1]))
 
 p_value = f.cdf(h_map[6], df1, df2)
 
+
 y = f.sf(h_map[6], df1, df2) # equals 1-p_value
+
+yy = f.sf(15, df1, df2)
+
 
 mask_arr = np.copy(y)
 
