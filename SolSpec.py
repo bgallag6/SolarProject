@@ -458,11 +458,14 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
     else:
         aspect_ratio = float(h_map.shape[1]) / float(h_map.shape[2])
         #print aspect_ratio
-        fig_width = 10
-        fig_height = 10*aspect_ratio
+        #fig_width = 10
+        fig_width = 10+1  # works better for 20130626
+        #fig_height = 10*aspect_ratio
+        fig_height = 10*aspect_ratio  # works better for 20130626
     
     
     for i in range(0,len(titles)-1):
+    #for i in range(0,1):
         
         #fig = plt.figure(figsize=(13,9))
         fig = plt.figure(figsize=(fig_width,fig_height))
@@ -484,7 +487,7 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
             h_map[6] = ff.sf(h_map[6], df1, df2)
             h_min = np.percentile(h_map[6],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(h_map[6],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
-            cmap = 'jet_r'  # reverse color-scale for Gaussian Location, because of flipped frequencies to seconds                       
+            cmap = 'jet'                     
         else:
             h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
@@ -520,7 +523,34 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         #plt.savefig('%s/%s_%i_Histogram_%s.jpeg' % (path_name, date, wavelength, names[i]))
         plt.savefig('%s/%s_%i_Histogram_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
     
+    
+    # generate p-value heatmap
+    fig = plt.figure(figsize=(fig_width,fig_height))
+    ax = plt.gca()  # get current axis -- to set colorbar 
+    plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[8]), y = 1.01, fontsize=25)
+    
+    df1, df2 = 3, 6
+    h_map[6] = ff.sf(h_map[6], df1, df2)
+    h_min = np.percentile(h_map[6],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+    h_max = np.percentile(h_map[6],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+    cmap = 'jet'                     
+    
+    im = ax.imshow(np.flipud(h_map[6]), cmap = cmap, vmin=h_min, vmax=h_max)
+    plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
+    plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
+    plt.xticks(fontsize=17)
+    plt.yticks(fontsize=17)
+    divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
+    cax = divider.append_axes("right", size="3%", pad=0.07)
+    cbar = plt.colorbar(im,cax=cax)
+    #cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
+    cbar.ax.tick_params(labelsize=17, pad=5) 
+    #plt.tight_layout()
+    #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
+    plt.savefig('%s/%s_%i_heatmap_%s.pdf' % (path_name, date, wavelength, names[8]), format='pdf')
    
+   
+    # generate visual images
     titles_vis = ['Average', 'Middle-File']
     names_vis = ['average', 'mid']
     
