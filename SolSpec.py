@@ -436,7 +436,7 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
     names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'F_Test', 'Gauss_Amp_Scaled', 'P_Value']
     #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location (e^(Value))', 'Width', '$\chi^2$']
     #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', '$\chi^2$']
-    cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', 'F-Test']
+    cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', 'F-Test', 'Amplitude Scaled', 'P-Value']
     
     #vmin = [10**-11, 0.5, 10**-6, 10**-6, -6.5, 0.1, 2.]  # think don't need anymore  (or option to set ranges for specific wavelengths?)
     #vmax = [10**-6, 2.5, 0.003, 10**-2, -4.5, 0.8, 15.]  # think don't need anymore
@@ -462,7 +462,7 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         fig_height = 10*aspect_ratio
     
     
-    for i in range(0,len(titles)):
+    for i in range(0,len(titles)-1):
         
         #fig = plt.figure(figsize=(13,9))
         fig = plt.figure(figsize=(fig_width,fig_height))
@@ -482,8 +482,8 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         elif i == 8:
             df1, df2 = 3, 6
             h_map[6] = ff.sf(h_map[6], df1, df2)
-            h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-            h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+            h_min = np.percentile(h_map[6],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+            h_max = np.percentile(h_map[6],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
             cmap = 'jet_r'  # reverse color-scale for Gaussian Location, because of flipped frequencies to seconds                       
         else:
             h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
