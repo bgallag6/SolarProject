@@ -459,7 +459,7 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         aspect_ratio = float(h_map.shape[1]) / float(h_map.shape[2])
         #print aspect_ratio
         #fig_width = 10
-        fig_width = 10+1  # works better for 20130626
+        fig_width = 10+1  # works better for 20130626 (with no x/y labels)
         #fig_height = 10*aspect_ratio
         fig_height = 10*aspect_ratio  # works better for 20130626
     
@@ -494,13 +494,16 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
             cmap = 'jet'
         
         im = ax.imshow(np.flipud(h_map[i]), cmap = cmap, vmin=h_min, vmax=h_max)
-        plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
-        plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
+        #plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
+        #plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
         plt.xticks(fontsize=17)
         plt.yticks(fontsize=17)
         divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
         cax = divider.append_axes("right", size="3%", pad=0.07)
-        cbar = plt.colorbar(im,cax=cax)
+        if i == 0:
+            cbar = plt.colorbar(im,cax=cax, format='%0.2e')
+        else:
+            cbar = plt.colorbar(im,cax=cax)
         #cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
         cbar.ax.tick_params(labelsize=17, pad=5) 
         #plt.tight_layout()
@@ -536,8 +539,8 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
     cmap = 'jet'                     
     
     im = ax.imshow(np.flipud(h_map[6]), cmap = cmap, vmin=h_min, vmax=h_max)
-    plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
-    plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
+    #plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
+    #plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
     plt.xticks(fontsize=17)
     plt.yticks(fontsize=17)
     divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
@@ -568,8 +571,8 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         plt.title(r'%s: %i $\AA$  [Visual: %s]' % (date_title, wavelength, titles_vis[i]), y = 1.01, fontsize=25)
         #im = ax.imshow(h_map[i], vmin=vmin[i], vmax=vmax[i])
         im = ax.imshow(np.flipud(vis[i]), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
-        plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
-        plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
+        #plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
+        #plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
         plt.xticks(fontsize=17)
         plt.yticks(fontsize=17)
         divider = make_axes_locatable(ax)
@@ -1709,6 +1712,8 @@ def fft_avg_int(datacube, timeseries, exposure_array, num_seg):
             # Get time and pixel values
             v=pixmed[0:last_good_pos]		
             t=TIME[0:last_good_pos]
+            #v=pixmed  # use for 335/131/094 -- can't get rid of negative values for those
+            #t=TIME
             
             #plt.plot(t,v)
         
@@ -1749,17 +1754,25 @@ def fft_avg_int(datacube, timeseries, exposure_array, num_seg):
         if ii == 0:
             T_init = T - start
             T_est = T_init*(spectra_seg.shape[0])  
-            print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_seg.shape[0], T_est)
+            T_min, T_sec = divmod(T_est, 60)
+            T_hr, T_min = divmod(T_min, 60)
+            #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_seg.shape[0], T_est)
+            print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spectra_seg.shape[0], T_hr, T_min, T_sec)
         else:
             T_est2 = T2*(spectra_seg.shape[0]-ii)
-            print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_seg.shape[0], T_est2)
+            T_min2, T_sec2 = divmod(T_est2, 60)
+            T_hr2, T_min2 = divmod(T_min2, 60)
+            #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_seg.shape[0], T_est2)
+            print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spectra_seg.shape[0], T_hr2, T_min2, T_sec2)
         T1 = T
         
         
     # print estimated and total program time to screen 
-    print "Beginning Estimated time = %i sec" % T_est
+    print "Beginning Estimated time = %i:%.2i:%.2i" % (T_hr, T_min, T_sec)
     T_act = timer() - start
-    print "Actual total time = %i sec" % T_act 
+    T_min3, T_sec3 = divmod(T_act, 60)
+    T_hr3, T_min3 = divmod(T_min3, 60)
+    print "Actual total time = %i:%.2i:%.2i" % (T_hr3, T_min3, T_sec3) 
     
     
     # initialize arrays to hold temporary results for calculating geometric average
