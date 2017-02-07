@@ -97,7 +97,7 @@ bound_max = [1.6e-7, 2.1, 0.0000025, 0.017, -5.5, 0.47]
 params = np.zeros((7, (y2-y1), (x2-x1)))  # just for real-time demo
 
 #vis = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20130815_193_1000_1600i_1950_2950j.npy')
-vis = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20130530_1600_2300_2600i_2200_3000j_data_rebin4.npy')
+vis = np.load('E:/Users/Brendan/Desktop/SolarProject/visual/visual_20130530_1600_2300_2600i_2200_3000j_data_rebin4.npy')
 visual = vis[0]
 visual = visual[y1:y2,x1:x2]
 #visual = visual[x1:x2,y1:y2]
