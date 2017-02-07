@@ -431,12 +431,12 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
     
     # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
     #titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', '$\chi^2$']
-    titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', 'F-Test', 'Gaussian Amplitude Scaled', 'P-Value']
+    titles = ['Power Law Slope-Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [Seconds]', 'Gaussian Width', 'F-Statistic', 'Gaussian Amplitude Scaled', 'P-Value']
     #names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'Chi2']
     names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'F_Test', 'Gauss_Amp_Scaled', 'P_Value']
     #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location (e^(Value))', 'Width', '$\chi^2$']
     #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', '$\chi^2$']
-    cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', 'F-Test', 'Amplitude Scaled', 'P-Value']
+    cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', 'F-Statistic', 'Amplitude Scaled', 'P-Value']
     
     #vmin = [10**-11, 0.5, 10**-6, 10**-6, -6.5, 0.1, 2.]  # think don't need anymore  (or option to set ranges for specific wavelengths?)
     #vmax = [10**-6, 2.5, 0.003, 10**-2, -4.5, 0.8, 15.]  # think don't need anymore
@@ -470,7 +470,8 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         #fig = plt.figure(figsize=(13,9))
         fig = plt.figure(figsize=(fig_width,fig_height))
         ax = plt.gca()  # get current axis -- to set colorbar 
-        plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
+        #plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
+        plt.title('%s' % (titles[i]), y = 1.01, fontsize=25)  # no date / wavelength
         
         if i == 6:
             NaN_replace = np.nan_to_num(h_map[i])  # NaN's in chi^2 heatmap were causing issue, replace with 0?
@@ -510,7 +511,7 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
         plt.savefig('%s/%s_%i_heatmap_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
         
-        
+        """
         flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
     
         fig = plt.figure(figsize=(12,9))
@@ -525,34 +526,68 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         #plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
         #plt.savefig('%s/%s_%i_Histogram_%s.jpeg' % (path_name, date, wavelength, names[i]))
         plt.savefig('%s/%s_%i_Histogram_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
-    
+        """
     
     # generate p-value heatmap
-    fig = plt.figure(figsize=(fig_width,fig_height))
-    ax = plt.gca()  # get current axis -- to set colorbar 
-    plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[8]), y = 1.01, fontsize=25)
-    
     df1, df2 = 3, 6
-    h_map[6] = ff.sf(h_map[6], df1, df2)
-    h_min = np.percentile(h_map[6],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-    h_max = np.percentile(h_map[6],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
-    cmap = 'jet'                     
+    p_val = ff.sf(h_map[6], df1, df2)
+
+    p_mask = np.copy(p_val)
     
-    im = ax.imshow(np.flipud(h_map[6]), cmap = cmap, vmin=h_min, vmax=h_max)
-    #plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
-    #plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
-    plt.xticks(fontsize=17)
-    plt.yticks(fontsize=17)
-    divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
-    cax = divider.append_axes("right", size="3%", pad=0.07)
-    cbar = plt.colorbar(im,cax=cax)
-    #cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
-    cbar.ax.tick_params(labelsize=17, pad=5) 
-    #plt.tight_layout()
-    #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
-    plt.savefig('%s/%s_%i_heatmap_%s.pdf' % (path_name, date, wavelength, names[8]), format='pdf')
-   
-   
+    mask_thresh = 0.005    
+       
+    p_mask = np.copy(p_val)
+    amp_mask = np.copy(h_map[3])
+    loc_mask = np.copy(h_map[4])
+    wid_mask = np.copy(h_map[5])
+    
+    h_min_amp = np.percentile(h_map[3],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+    h_max_amp = np.percentile(h_map[3],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+    
+    for i in range(p_val.shape[0]):
+            for j in range(p_val.shape[1]):
+                if p_val[i][j] > mask_thresh:
+                    p_mask[i][j] = np.NaN
+                    amp_mask[i][j] = np.NaN
+                    loc_mask[i][j] = np.NaN
+                    wid_mask[i][j] = np.NaN
+                    
+    plots = [p_mask, amp_mask, loc_mask, wid_mask]
+    names_f = ['P-Value Mask', 'Gaussian Amplitude', 'Gaussian Location', 'Gaussian Width']
+    names_m = ['p_mask', 'amp', 'loc', 'wid']
+    
+    for k in range(4):           
+    
+        fig = plt.figure(figsize=(fig_width,fig_height))
+        ax = plt.gca()  # get current axis -- to set colorbar 
+        if k == 0:
+            plt.title('P-Value < %0.3f' % (mask_thresh), y = 1.01, fontsize=25)
+        else:
+            plt.title('%s: P-Value < %0.3f' % (names_f[k], mask_thresh), y = 1.01, fontsize=25)
+        if k == 2:
+            cmap = 'jet_r'
+        else:
+            cmap = 'jet'
+        if k == 1:
+            im = ax.imshow(np.flipud(plots[k]), cmap = cmap, vmin = h_min_amp, vmax = h_max_amp)
+        else:
+            im = ax.imshow(np.flipud(plots[k]), cmap = cmap)
+        #plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
+        #plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
+        plt.xticks(fontsize=17)
+        plt.yticks(fontsize=17)
+        divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
+        cax = divider.append_axes("right", size="3%", pad=0.07)
+        cbar = plt.colorbar(im,cax=cax)
+        #cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
+        cbar.ax.tick_params(labelsize=17, pad=5) 
+        #plt.tight_layout()
+        #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
+        plt.savefig('%s/%s_%i_%s_mask_%i.pdf' % (path_name, date, wavelength, names_m[k], (1./mask_thresh)), format='pdf')
+        
+    
+
+  
     # generate visual images
     titles_vis = ['Average', 'Middle-File']
     names_vis = ['average', 'mid']
@@ -568,7 +603,8 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         fig = plt.figure(figsize=(fig_width,fig_height))
         
         ax = plt.gca()
-        plt.title(r'%s: %i $\AA$  [Visual: %s]' % (date_title, wavelength, titles_vis[i]), y = 1.01, fontsize=25)
+        #plt.title(r'%s: %i $\AA$  [Visual: %s]' % (date_title, wavelength, titles_vis[i]), y = 1.01, fontsize=25)
+        plt.title('Visual: %s' % (titles_vis[i]), y = 1.01, fontsize=25)  # no date / wavelength
         #im = ax.imshow(h_map[i], vmin=vmin[i], vmax=vmax[i])
         im = ax.imshow(np.flipud(vis[i]), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
         #plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
