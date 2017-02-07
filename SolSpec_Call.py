@@ -19,7 +19,7 @@ import h5py
 """
 ## download data (fill in missing)
 """
-#r = ss.get_data_fill(wavelength=335, cadence=12, time_begin='2013/06/26 00:00:00', time_end='2013/06/26 12:00:00', path_name='F:/Users/Brendan/Desktop/SolarProject/data/20130626/335')
+#r = ss.get_data_fill(wavelength=94, cadence=12, time_begin='2013/06/26 00:00:00', time_end='2013/06/26 12:00:00', path_name='F:/Users/Brendan/Desktop/SolarProject/data/20130626/094')
 
 
 """

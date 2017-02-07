@@ -212,16 +212,24 @@ def spec_fit( subcube ):
     if l == 0:
         T_init = T - start
         T_est = T_init*(SPECTRA.shape[0])  
-        print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est)
+        T_min, T_sec = divmod(T_est, 60)
+        T_hr, T_min = divmod(T_min, 60)
+        #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est)
+        print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (l, SPECTRA.shape[0], T_hr, T_min, T_sec)
     else:
         T_est2 = T2*((SPECTRA.shape[0])-l)
-        print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est2)
+        T_min2, T_sec2 = divmod(T_est2, 60)
+        T_hr2, T_min2 = divmod(T_min2, 60)
+        #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est2)
+        print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (l, SPECTRA.shape[0], T_hr2, T_min2, T_sec2)
     T1 = T
 
   # print estimated and total program time to screen        
-  print "Beginning Estimated time = %i sec" % T_est
+  print "Beginning Estimated time = %i:%.2i:%.2i" % (T_hr, T_min, T_sec)
   T_act = timer() - start
-  print "Actual total time = %i sec" % T_act  
+  T_min3, T_sec3 = divmod(T_act, 60)
+  T_hr3, T_min3 = divmod(T_min3, 60)
+  print "Actual total time = %i:%.2i:%.2i" % (T_hr3, T_min3, T_sec3) 
 			
   #return params, M2_fit
   return params
@@ -249,21 +257,23 @@ ss = np.shape(subcube)  # Validation
 print "Processor", rank, "received an array with dimensions", ss  # Validation
 print "Height = %i, Width = %i, Total pixels = %i" % (subcube.shape[0], subcube.shape[1], subcube.shape[0]*subcube.shape[1])
 
-#params_T, M2_fit_T = spec_fit( subcube )		# Do something with the array
-params_T = spec_fit( subcube )		# Do something with the array
-newData_p = comm.gather(params_T, root=0)	# Gather all the results
-#newData_m = comm.gather(M2_fit_T, root=0)	# Gather all the results
+#params_T, M2_fit_T = spec_fit( subcube )  # Do something with the array
+params_T = spec_fit( subcube )  # Do something with the array
+newData_p = comm.gather(params_T, root=0)  # Gather all the results
+#newData_m = comm.gather(M2_fit_T, root=0)  # Gather all the results
 
 # Again, just have one node do the last bit
 if rank == 0:
-  #stack = np.vstack(newData) 	# stack the 2-d arrays together and we're done!
   stack_p = np.hstack(newData_p)
   #stack_m = np.vstack(newData_m)
   print stack_p.shape			# Verify we have a summed version of the input cube
   #print stack_m.shape			# Verify we have a summed version of the input cube
  
-T_act = timer() - start
-print "Program time = %i sec" % T_act     
+
+T_final = timer() - start
+T_min_final, T_sec_final = divmod(T_final, 60)
+T_hr_final, T_min_final = divmod(T_min_final, 60)
+print "Total program time = %i sec" % T_final   
 
 #np.save('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/spectra_20130815_193_1000_1600i_1950_2950j_rebin2_params_mpi', stack_p)
-np.save('F:/Users/Brendan/Desktop/SolarProject/data/20130626/211/20130626_211_-500_500i_-500_500j_param_mmap', stack_p)
+#np.save('F:/Users/Brendan/Desktop/SolarProject/data/20130626/211/20130626_211_-500_500i_-500_500j_param_mmap', stack_p)

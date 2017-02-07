@@ -167,27 +167,13 @@ def fft_avg(subcube):
                     
     return spectra_seg
 
-
+ 
+ 
 """
-# Setup MPI and load datacube, time, and exposure arrays
-"""  
-comm = MPI.COMM_WORLD  # set up comms
-rank = comm.Get_rank()  # Each processor gets its own "rank"
-	
-start = timer()
-
-size = MPI.COMM_WORLD.Get_size()  # How many processors do we have? (pulls from "-n 4" specified in terminal execution command) 
-  
+# Load datacube plus time and exposure arrays
+"""   
 cube = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/20130530_193_2300_2600i_2200_3000j_data_rebin1.npy')
 #cube = np.memmap('F:/Users/Brendan/Desktop/SolarProject/data/20130530/20130530_193_2300_2600i_2200_3000j_data_rebin1_mmap.npy', dtype='int16', mode='r', shape=(2926,297,630))
-
-chunks = np.array_split(cube, size, axis=1)  # Split the data based on no. of processors
-
-# specify which chunks should be handled by each processor
-for i in range(size):
-    if rank == i:
-        subcube = chunks[i]
-
 TIME = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/20130530_193_2300_2600i_2200_3000j_time.npy')
 exposure = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/20130530_193_2300_2600i_2200_3000j_exposure.npy')
 num_seg = 6
@@ -206,21 +192,36 @@ pidxs = np.where(sample_freq > 0)
 freqs = sample_freq[pidxs]
 
 
+
 """
-### Each processor runs function on subcube, results are gathered when finished
+### MPI Part
 """
-# verify each processor received subcube with correct dimensions
+start = timer()
+
+comm = MPI.COMM_WORLD 	# set up comms
+rank = comm.Get_rank()	# Each processor gets its own "rank"
+#print "Hello World from process ", rank  # DEBUG/VALIDATE
+
+# Rank0 is the first processor. Use that to do the main chores
+if rank == 0:
+  size = MPI.COMM_WORLD.Get_size()		# How many processors do we have?
+  chunks = np.array_split(cube, size, axis=1)		# Split the data based on no. of processors
+else:
+  chunks = None  # Prepare a variable on the other nodes
+
+# Distribute the data to all nodes, defining the root node (rank=0) as distributor
+subcube = comm.scatter(chunks, root=0)
 ss = np.shape(subcube)  # Validation	
 print "Processor", rank, "received an array with dimensions", ss  # Validation
 print "Height = %i, Width = %i, Total pixels = %i" % (subcube.shape[1], subcube.shape[2], subcube.shape[1]*subcube.shape[2])
 
-spectra_seg_part = fft_avg(subcube)  # Do something with the array
-newData_s = comm.gather(spectra_seg_part, root=0)  # Gather all the results
+spectra_seg_part = fft_avg(subcube)		# Do something with the array
+newData_s = comm.gather(spectra_seg_part, root=0)	# Gather all the results
 
 # Again, just have one node do the last bit
 if rank == 0:
   spectra_seg = np.vstack(newData_s)  # should be vstack?
-  print spectra_seg.shape  # Verify we have a summed version of the input cube
+  print spectra_seg.shape			# Verify we have a summed version of the input cube
  
 
 
@@ -256,9 +257,7 @@ for l in range(1,spectra_seg.shape[0]-1):
         p_geometric = temp9 / 9.
         spectra_array[l-1][m-1] = np.power(10,p_geometric)
 
-T_final = timer() - start
-T_min_final, T_sec_final = divmod(T_final, 60)
-T_hr_final, T_min_final = divmod(T_min_final, 60)
-print "Total program time = %i sec" % T_final
+T_act = timer() - start
+print "Total program time = %i sec" % T_act   
 
 #np.save('C:/Users/Brendan/Desktop/20130530_193_2300_2600i_2200_3000j_spectra_mpi_final', spectra_array)
