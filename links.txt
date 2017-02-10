@@ -1,0 +1,15 @@
+https://pythonhosted.org/pyfft/
+
+https://devblogs.nvidia.com/parallelforall/numbapro-high-performance-python-cuda-acceleration/
+
+https://docs.continuum.io/numbapro/cudalib#cufft
+
+http://deeplearning.net/software/theano/
+
+http://deeplearning.net/software/theano_versions/dev/library/gpuarray/fft.html
+
+http://deeplearning.net/software/theano_versions/dev/install_windows.html
+
+http://deeplearning.net/software/libgpuarray/installation.html
+
+http://scikit-cuda.readthedocs.io/en/latest/install.html
