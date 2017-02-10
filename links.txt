@@ -13,3 +13,5 @@ http://deeplearning.net/software/theano_versions/dev/install_windows.html
 http://deeplearning.net/software/libgpuarray/installation.html
 
 http://scikit-cuda.readthedocs.io/en/latest/install.html
+
+http://www.johnwittenauer.net/configuring-theano-for-high-performance-deep-learning/
