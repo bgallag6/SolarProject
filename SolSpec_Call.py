@@ -25,17 +25,17 @@ import h5py
 """
 ## arcsecond to pixel + subregion
 """
-#x1 = -100
-#x2 = 100
-#y1 = -100
-#y2 = 100
+#x1 = -200
+#x2 = 200
+#y1 = -450
+#y2 = -200
 
 #x1 = 1850
 #x2 = 3050
 #y1 = 2000
 #y2 = 2900
 
-#ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data/20130626/304/aia_lev1_304a_2013_06_26t00_00_07_12z_image_lev1.fits.fits')
+#ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data/20130626/193/aia_lev1_193a_2013_06_26t00_00_54_84z_image_lev1.fits.fits')
 #ss.pix2arc(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data/20140902/193/aia_lev1_193a_2014_09_02t05_59_54_84z_image_lev1.fits.fits')
 
 
@@ -48,7 +48,7 @@ import h5py
 """
 ## create derotated region datacube (int - new)
 """
-#ss.datacube_int(directory='F:/Users/Brendan/Desktop/SolarProject/data/20130626/335', date='20130626', wavelength=335, sub_reg_coords=[-180,0,170,375], coords_type='arc', bin_frac=1)
+ss.datacube_int(directory='F:/Users/Brendan/Desktop/SolarProject/data/20130626/193', date='20130626', wavelength=193, sub_reg_coords=[-200,200,-450,-200], coords_type='arc', bin_frac=1)
 
 
 """
