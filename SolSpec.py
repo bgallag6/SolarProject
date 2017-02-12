@@ -477,22 +477,26 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
             NaN_replace = np.nan_to_num(h_map[i])  # NaN's in chi^2 heatmap were causing issue, replace with 0?
             h_min = np.percentile(NaN_replace,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(NaN_replace,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
-            cmap = 'jet'
+            #cmap = 'jet'
+            cmap = cm.get_cmap('jet', 10)
         elif i == 4:
             h_map[i] = 1./(np.exp(h_map[i]))
             h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
-            cmap = 'jet_r'  # reverse color-scale for Gaussian Location, because of flipped frequencies to seconds
+            #cmap = 'jet_r'  # reverse color-scale for Gaussian Location, because of flipped frequencies to seconds
+            cmap = cm.get_cmap('jet_r', 10)
         elif i == 8:
             df1, df2 = 3, 6
             h_map[6] = ff.sf(h_map[6], df1, df2)
             h_min = np.percentile(h_map[6],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(h_map[6],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
-            cmap = 'jet'                     
+            #cmap = 'jet'      
+            cmap = cm.get_cmap('jet', 10)               
         else:
             h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
-            cmap = 'jet'
+            #cmap = 'jet'
+            cmap = cm.get_cmap('jet', 10)
         
         im = ax.imshow(np.flipud(h_map[i]), cmap = cmap, vmin=h_min, vmax=h_max)
         #plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
@@ -565,9 +569,11 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         else:
             plt.title('%s: P-Value < %0.3f' % (names_f[k], mask_thresh), y = 1.01, fontsize=25)
         if k == 2:
-            cmap = 'jet_r'
+            #cmap = 'jet_r'
+            cmap = cm.get_cmap('jet_r', 10)
         else:
-            cmap = 'jet'
+            #cmap = 'jet'
+            cmap = cm.get_cmap('jet', 10)
         if k == 1:
             im = ax.imshow(np.flipud(plots[k]), cmap = cmap, vmin = h_min_amp, vmax = h_max_amp)
         else:
