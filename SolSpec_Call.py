@@ -97,7 +97,8 @@ import h5py
     #VISUAL = np.array(f['visual'])
     #r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20141025', wavelength=1600, path_name='C:/Users/Brendan/Desktop/PDFs')
     
-#HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_params_mpi.npy')
-HEATMAPS = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/171/20130626_171_-500_500i_-500_500j_param.npy')
-VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/171/20130626_171_-500_500i_-500_500j_visual.npy')
-r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130626', wavelength=171, path_name='C:/Users/Brendan/Desktop/20130626/171_roll/')
+HEATMAPS = np.load('C:/Users/Brendan/Desktop/20130626_171_-500_500i_-500_500j_param_3seg.npy')
+#HEATMAPS = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/171/20130626_171_-500_500i_-500_500j_param.npy')
+VISUAL = np.load('C:/Users/Brendan/Desktop/20130626_171_-500_500i_-500_500j_visual.npy')
+#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/171/20130626_171_-500_500i_-500_500j_visual.npy')
+r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130626', wavelength=171, path_name='C:/Users/Brendan/Desktop/20130626/171_3seg/')
