@@ -592,7 +592,35 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         plt.savefig('%s/%s_%i_%s_mask_%i.pdf' % (path_name, date, wavelength, names_m[k], (1./mask_thresh)), format='pdf')
         
     
-
+    # generate 'rollover frequency' heatmap
+    roll_freq = (h_map[2] / h_map[0])**(-1./ h_map[1])
+    roll_freq = 1./roll_freq
+    fig = plt.figure(figsize=(fig_width,fig_height))
+    ax = plt.gca()  # get current axis -- to set colorbar 
+    #plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
+    plt.title(r'Rollover Period [Seconds] -- [(C/A)^(-1/n)]', y = 1.01, fontsize=25)  # no date / wavelength
+    roll_freq = np.nan_to_num(roll_freq)  # deal with NaN's causing issues
+    h_min = np.percentile(roll_freq,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+    h_max = np.percentile(roll_freq,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+    #cmap = 'jet'      
+    cmap = cm.get_cmap('jet', 10)    
+    
+    im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=h_min, vmax=h_max)
+    #im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=(1./10**-1.), vmax=(1./10**-3.5))  # should bounds be set at frequency range
+    #plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
+    #plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
+    plt.xticks(fontsize=17)
+    plt.yticks(fontsize=17)
+    divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
+    cax = divider.append_axes("right", size="3%", pad=0.07)
+    cbar = plt.colorbar(im,cax=cax)
+    #cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
+    cbar.ax.tick_params(labelsize=17, pad=5) 
+    #plt.tight_layout()
+    #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
+    plt.savefig('%s/%s_%i_heatmap_rollover_frequency.pdf' % (path_name, date, wavelength), format='pdf')
+    
+    
   
     # generate visual images
     titles_vis = ['Average', 'Middle-File']
