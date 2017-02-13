@@ -30,6 +30,9 @@ Created on Sat Jan 28 12:15:32 2017
 # 2/3:
 # manually assign chunks to processors - to overcome 'Overflow error'
 
+# 2/12
+# changed ds from 0.1*s to new method
+
 from timeit import default_timer as timer
 
 import numpy as np
@@ -111,7 +114,14 @@ def spec_fit( subcube ):
         s = spectra_array[l][m]  # fourier power
         
         #ds = (1./f**2.2)/1000
-        ds = s*0.1  # set the error / variance estimate to a constant percentage of the spectra power-values
+        #ds = s*0.1  # set the error / variance estimate to a constant percentage of the spectra power-values
+        
+        # assign equal weights to all parts of the curve
+        df = np.log10(f[1:len(f)]) - np.log10(f[0:len(f)-1])
+        df2 = np.zeros_like(f)
+        df2[0:len(df)] = df
+        df2[len(df2)-1] = df2[len(df2)-2]
+        ds = df2
         
         # create points to fit model with final parameters 
         #f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],(len(freqs)+1)/2)  # would save storage / memory space?
