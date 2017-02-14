@@ -67,8 +67,9 @@ from numpy.random import rand
 
 #def heatmap_spectra_tool(dataset, date, wavelength, num_segments):
 #with h5py.File("%s" % dataset,'r') as f:    
-with h5py.File("F:/Users/Brendan/Desktop/SolarProject/hdf5/20140902_211_2000_2900i_1850_3050j_rebin2.hdf5",'r') as f:
-   
+#with h5py.File("F:/Users/Brendan/Desktop/SolarProject/hdf5/20130626_193_-450_-200i_-200_200j_3seg_loc8.hdf5",'r') as f:
+with h5py.File("F:/Users/Brendan/Desktop/SolarProject/data/20130626/193/20130626_193_-450_-200i_-200_200j_hdf5.hdf5",'r') as f:
+    
     def find_nearest(array,value):
         idx = (np.abs(array-value)).argmin()
         return array[idx]
@@ -119,7 +120,7 @@ with h5py.File("F:/Users/Brendan/Desktop/SolarProject/hdf5/20140902_211_2000_290
             plt.draw()
             
         def gauss_loc(self, event):
-            param = h_map[4]
+            param = 1./(np.exp(h_map[4]))
             h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
             im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
@@ -267,7 +268,7 @@ with h5py.File("F:/Users/Brendan/Desktop/SolarProject/hdf5/20140902_211_2000_290
         """
         
         #"""
-        wavelength = 211
+        wavelength = 193
         year = 2012
         month = 9
         day = 23
