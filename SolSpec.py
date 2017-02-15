@@ -1583,7 +1583,8 @@ def datacube_int(directory, date, wavelength, sub_reg_coords, coords_type, bin_f
     print "Please wait..."
     
     # Perform the derotation of the submaps. This take a while too.
-    dr = mapcube_solar_derotate(new_mapcube)
+    #dr = mapcube_solar_derotate(new_mapcube)
+    dr = mapcube_solar_derotate(new_mapcube, layer_index=mid_file)
     
     print "done derotating"
     

@@ -48,7 +48,8 @@ import h5py
 """
 ## create derotated region datacube (int - new)
 """
-ss.datacube_int(directory='F:/Users/Brendan/Desktop/SolarProject/data/20130626/1600', date='20130626', wavelength=1600, sub_reg_coords=[-200,200,-450,-200], coords_type='arc', bin_frac=1)
+#ss.datacube_int(directory='F:/Users/Brendan/Desktop/SolarProject/data/20130626/1600', date='20130626', wavelength=1600, sub_reg_coords=[-200,200,-450,-200], coords_type='arc', bin_frac=1)
+ss.datacube_int(directory='F:/Users/Brendan/Desktop/SolarProject/data/20130530/193', date='20130626', wavelength=193, sub_reg_coords=[2200,3000,2300,2600], coords_type='pix', bin_frac=1)
 
 
 """
