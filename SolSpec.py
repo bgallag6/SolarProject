@@ -433,7 +433,7 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
     #titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', '$\chi^2$']
     titles = [r'Power Law Slope-Coefficient -- [$A$]', r'Power Law Index -- [$n$]', r'Power Law Tail -- [$C$]', r'Gaussian Amplitude -- [$\alpha$]', r'Gaussian Location [Seconds] -- [$\beta$]', r'Gaussian Width -- [$\sigma$]', 'F-Statistic', r'Gaussian Amplitude Scaled -- [$\alpha$]', 'P-Value']
     #names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'Chi2']
-    names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'F_Test', 'Gauss_Amp_Scaled', 'P_Value']
+    names = ['slope_coeff', 'index', 'tail', 'gauss_amp', 'gauss_loc', 'gauss_wid', 'f_test', 'gauss_amp_scaled', 'p_value']
     #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location (e^(Value))', 'Width', '$\chi^2$']
     #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', '$\chi^2$']
     cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', 'F-Statistic', 'Amplitude Scaled', 'P-Value']
@@ -513,7 +513,7 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
         cbar.ax.tick_params(labelsize=17, pad=5) 
         #plt.tight_layout()
         #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
-        plt.savefig('%s/%s_%i_heatmap_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
+        plt.savefig('%s/%s_%i_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
         
         """
         flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
@@ -618,7 +618,7 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
     cbar.ax.tick_params(labelsize=17, pad=5) 
     #plt.tight_layout()
     #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
-    plt.savefig('%s/%s_%i_heatmap_rollover_frequency.pdf' % (path_name, date, wavelength), format='pdf')
+    plt.savefig('%s/%s_%i_roll_freq.pdf' % (path_name, date, wavelength), format='pdf')
     
     
   
