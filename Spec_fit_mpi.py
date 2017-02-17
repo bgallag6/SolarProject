@@ -253,7 +253,8 @@ start = timer()
 size = MPI.COMM_WORLD.Get_size()  # How many processors do we have? (pulls from "-n 4" specified in terminal execution command)
 
 # load memory-mapped array as read-only
-cube = np.memmap('F:/Users/Brendan/Desktop/SolarProject/data/20130626/211/20130626_211_-500_500i_-500_500j_spectra_mmap.npy', dtype='float64', mode='r', shape=(1658,1481,299))
+#cube = np.memmap('F:/Users/Brendan/Desktop/SolarProject/data/20130626/211/20130626_211_-500_500i_-500_500j_spectra_mmap.npy', dtype='float64', mode='r', shape=(1658,1481,299))
+cube = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_spectra.npy')
 
 chunks = np.array_split(cube, size)  # Split the data based on no. of processors
 
@@ -286,4 +287,4 @@ T_hr_final, T_min_final = divmod(T_min_final, 60)
 print "Total program time = %i sec" % T_final   
 
 #np.save('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/spectra_20130815_193_1000_1600i_1950_2950j_rebin2_params_mpi', stack_p)
-#np.save('F:/Users/Brendan/Desktop/SolarProject/data/20130626/211/20130626_211_-500_500i_-500_500j_param_mmap', stack_p)
+np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_param', stack_p)
