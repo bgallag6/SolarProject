@@ -98,8 +98,8 @@ import h5py
     #VISUAL = np.array(f['visual'])
     #r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20141025', wavelength=1600, path_name='C:/Users/Brendan/Desktop/PDFs')
     
-#HEATMAPS = np.load('C:/Users/Brendan/Desktop/20130626_171_-500_500i_-500_500j_param_3seg.npy')
+HEATMAPS = np.load('C:/Users/Brendan/Desktop/1600/param_24sec.npy')
 #HEATMAPS = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_param.npy')
-#VISUAL = np.load('C:/Users/Brendan/Desktop/20130626_171_-500_500i_-500_500j_visual.npy')
+VISUAL = np.load('C:/Users/Brendan/Desktop/1600/visual.npy')
 #VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_visual.npy')
-#r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20120923', wavelength=171, path_name='C:/Users/Brendan/Desktop/20120923/171/')
+r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130626', wavelength=1600, path_name='C:/Users/Brendan/Desktop/1600/')
