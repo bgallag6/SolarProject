@@ -25,17 +25,17 @@ import h5py
 """
 ## arcsecond to pixel + subregion
 """
-#x1 = -200
-#x2 = 200
-#y1 = -450
-#y2 = -200
+x1 = -450
+x2 = 550
+y1 = -500
+y2 = 500
 
 #x1 = 1850
 #x2 = 3050
 #y1 = 2000
 #y2 = 2900
 
-#ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data/20130626/193/aia_lev1_193a_2013_06_26t00_00_54_84z_image_lev1.fits.fits')
+ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data/20130626/171/aia_lev1_171a_2013_06_26t00_00_11_34z_image_lev1.fits.fits')
 #ss.pix2arc(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data/20140902/193/aia_lev1_193a_2014_09_02t05_59_54_84z_image_lev1.fits.fits')
 
 
@@ -98,8 +98,8 @@ import h5py
     #VISUAL = np.array(f['visual'])
     #r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20141025', wavelength=1600, path_name='C:/Users/Brendan/Desktop/PDFs')
     
-HEATMAPS = np.load('C:/Users/Brendan/Desktop/1600/param_24sec.npy')
+#HEATMAPS = np.load('C:/Users/Brendan/Desktop/1600/param_24sec.npy')
 #HEATMAPS = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_param.npy')
-VISUAL = np.load('C:/Users/Brendan/Desktop/1600/visual.npy')
+#VISUAL = np.load('C:/Users/Brendan/Desktop/1600/visual.npy')
 #VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_visual.npy')
-r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130626', wavelength=1600, path_name='C:/Users/Brendan/Desktop/1600/')
+#r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130626', wavelength=1600, path_name='C:/Users/Brendan/Desktop/1600/')
