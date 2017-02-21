@@ -598,7 +598,7 @@ def heatmap(heatmaps, visual, date, wavelength, path_name):
     fig = plt.figure(figsize=(fig_width,fig_height))
     ax = plt.gca()  # get current axis -- to set colorbar 
     #plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
-    plt.title(r'Rollover Period [Seconds] -- [$(C/A)^{(-1/n)}$]', y = 1.01, fontsize=25)  # no date / wavelength
+    plt.title(r'Rollover Period [Seconds] -- [$(C/A)^{-\frac{1}{n}}$]', y = 1.01, fontsize=25)  # no date / wavelength
     roll_freq = np.nan_to_num(roll_freq)  # deal with NaN's causing issues
     h_min = np.percentile(roll_freq,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
     h_max = np.percentile(roll_freq,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)

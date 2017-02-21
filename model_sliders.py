@@ -15,13 +15,15 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     
 
     
-SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/spectra_20120923_211A_(528)_(132)x_(100)_100y.npy')
+#SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/spectra_20120923_211A_(528)_(132)x_(100)_100y.npy')
     
 ## load in array of segment-averaged pixel FFTs
-spectra_array = SPECTRA
+#spectra_array = SPECTRA
 
-num_freq = SPECTRA.shape[2]  # determine nubmer of frequencies that are used
-    
+#num_freq = SPECTRA.shape[2]  # determine nubmer of frequencies that are used
+
+num_freq = 299
+   
 # determine frequency values that FFT will evaluate
 freq_size = ((num_freq)*2) + 1  # determined from FFT-averaging script
 time_step = 12  # add as argument, or leave in as constant?
@@ -33,8 +35,7 @@ freqs = sample_freq[pidxs]
 fit = GaussPowerBase(freqs, 0.0001, 2., 0.0001, 0.0001, -5.5, 0.2)
 
 #plt.loglog(freqs, fit)
-
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(15,10))
 plt.subplots_adjust(bottom=0.4)
 f = freqs
 a0 = 0.0001
