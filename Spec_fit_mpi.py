@@ -133,7 +133,7 @@ def spec_fit( subcube ):
         try:
             # initial guesses for fitting parameters
             M1_low = [-0.002, 0.3, -0.01]
-            M1_high = [0.002, 4., 0.01]
+            M1_high = [0.002, 6., 0.01]
             nlfit_l, nlpcov_l = scipy.optimize.curve_fit(PowerLaw, f, s, bounds=(M1_low, M1_high), sigma=ds, method='dogbox')  # replaced #'s with arrays
            
         
@@ -155,7 +155,7 @@ def spec_fit( subcube ):
         #"""        
         try:                                 
             M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
-            M2_high = [0.002, 4., 0.01, 0.2, -4.6, 0.8]
+            M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
             #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]  # see what happens if force middle of range above where slopes are
             
             # change method to 'dogbox' and increase max number of function evaluations to 3000
@@ -286,5 +286,5 @@ T_min_final, T_sec_final = divmod(T_final, 60)
 T_hr_final, T_min_final = divmod(T_min_final, 60)
 print "Total program time = %i sec" % T_final   
 
-#np.save('/media/brendan/My Passport/Users/Brendan/Desktop/SolarProject/spectra_20130815_193_1000_1600i_1950_2950j_rebin2_params_mpi', stack_p)
-np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_param', stack_p)
+np.save('/mnt/data/Gallagher/DATA/Output/20130626/193/20130626_193_-500_500i_-500_600j_param_slope6_arthm', stack_p)
+#np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_param', stack_p)

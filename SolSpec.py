@@ -1281,7 +1281,7 @@ def spec_fit(spectra_array):
             try:
                 # initial guesses for fitting parameters
                 M1_low = [-0.002, 0.3, -0.01]
-                M1_high = [0.002, 4., 0.01]
+                M1_high = [0.002, 6., 0.01]
                 nlfit_l, nlpcov_l = scipy.optimize.curve_fit(PowerLaw, f, s, bounds=(M1_low, M1_high), sigma=ds, method='dogbox')  # replaced #'s with arrays
                
             
@@ -1348,7 +1348,7 @@ def spec_fit(spectra_array):
             #"""        
             try:                                 
                 M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
-                M2_high = [0.002, 4., 0.01, 0.2, -4.6, 0.8]
+                M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
                 #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]  # see what happens if force middle of range above where slopes are
                 
                 # change method to 'dogbox' and increase max number of function evaluations to 3000
@@ -1583,8 +1583,8 @@ def datacube_int(directory, date, wavelength, sub_reg_coords, coords_type, bin_f
     print "Please wait..."
     
     # Perform the derotation of the submaps. This take a while too.
-    dr = mapcube_solar_derotate(new_mapcube)
-    #dr = mapcube_solar_derotate(new_mapcube, layer_index=mid_file)
+    #dr = mapcube_solar_derotate(new_mapcube)
+    dr = mapcube_solar_derotate(new_mapcube, layer_index=mid_file)
     
     print "done derotating"
     
@@ -1647,14 +1647,14 @@ def datacube_int(directory, date, wavelength, sub_reg_coords, coords_type, bin_f
     
     print visual.shape  # check array size agrees with expected
     
+    # save visual-image array
+    np.save('%s/%s_%i_%i_%ii_%i_%ij_visual.npy' % (directory, date, wavelength, y1, y2, x1, x2), visual)
+    
     # generate images of each visual region, to see if as expected
     fig = plt.figure(figsize=(20,20))
     plt.imshow(visual[0])
     fig = plt.figure(figsize=(20,20))
     plt.imshow(visual[1])
-    
-    # save visual-image array
-    np.save('%s/%s_%i_%i_%ii_%i_%ij_visual.npy' % (directory, date, wavelength, y1, y2, x1, x2), visual)
     
     
     
@@ -1692,7 +1692,7 @@ import astropy.units as u
 import h5py
 #from scipy import fftpack  # not working with this called here???
 from timeit import default_timer as timer
-#import accelerate  # switch on if computer has installed
+import accelerate  # switch on if computer has installed
 
 
 def fft_avg_int(datacube, timeseries, exposure_array, num_seg):
@@ -1809,10 +1809,10 @@ def fft_avg_int(datacube, timeseries, exposure_array, num_seg):
                 
               ## perform Fast Fourier Transform on each segment       
               sig = split[i]
-              sig_fft = fftpack.fft(sig)
+              #sig_fft = fftpack.fft(sig)
               #sig_fft = fftpack.rfft(sig)  # real-FFT
               #sig_fft = np.fft.rfft(sig)  # numpy significantly slower than scipy                 
-              #sig_fft = accelerate.mkl.fftpack.fft(sig)  # MKL-accelerated is (2x) faster
+              sig_fft = accelerate.mkl.fftpack.fft(sig)  # MKL-accelerated is (2x) faster
               #sig_fft = accelerate.mkl.fftpack.rfft(sig)  # this is slightly faster
               powers = np.abs(sig_fft)[pidxs]
               norm = len(sig)  # to normalize the power
@@ -1867,7 +1867,7 @@ def fft_avg_int(datacube, timeseries, exposure_array, num_seg):
         #print l
         for m in range(1,spectra_seg.shape[1]-1):
         #for m in range(1,25):
-            
+            """
             temp[0] = np.log10(spectra_seg[l-1][m-1])
             temp[1] = np.log10(spectra_seg[l-1][m])
             temp[2] = np.log10(spectra_seg[l-1][m+1])
@@ -1877,9 +1877,22 @@ def fft_avg_int(datacube, timeseries, exposure_array, num_seg):
             temp[6] = np.log10(spectra_seg[l+1][m-1])
             temp[7] = np.log10(spectra_seg[l+1][m])
             temp[8] = np.log10(spectra_seg[l+1][m+1])
-    
+            """
+                       
+            temp[0] = spectra_seg[l-1][m-1]
+            temp[1] = spectra_seg[l-1][m]
+            temp[2] = spectra_seg[l-1][m+1]
+            temp[3] = spectra_seg[l][m-1]
+            temp[4] = spectra_seg[l][m]
+            temp[5] = spectra_seg[l][m+1]
+            temp[6] = spectra_seg[l+1][m-1]
+            temp[7] = spectra_seg[l+1][m]
+            temp[8] = spectra_seg[l+1][m+1]
+
+
             temp9 = np.sum(temp, axis=0)
             p_geometric = temp9 / 9.
-            spectra_array[l-1][m-1] = np.power(10,p_geometric)
+            #spectra_array[l-1][m-1] = np.power(10,p_geometric)
+            spectra_array[l-1][m-1] = p_geometric
     
     return spectra_array
