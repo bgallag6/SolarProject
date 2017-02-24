@@ -66,7 +66,7 @@ T1 = 0
 for l in range(145,146):
     
     #for m in range(0,SPECTRA.shape[1]):
-    for m in range(190,191):
+    for m in range(190,195):
         
                                         
         f = freqs  # frequencies
@@ -147,8 +147,8 @@ for l in range(145,146):
         #diffM1M2_temp = (m2_fit - m1_fit)**2  # differences squared
         #diffM1M2[l][m] = np.sum(diffM1M2_temp)  # sum of squared differences 
         
-        #nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
-        nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
+        nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
+        #nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
         A22, n22, C22, P22, fp22, fw22 = nlfit_gp2  # unpack fitting parameters     
         m2_param = A22, n22, C22, P22, fp22, fw22  # could have used this for params array : = params[0:6,l-1,m-1]
         m2_fit2 = GaussPowerBase(f, A22,n22,C22,P22,fp22,fw22)     
