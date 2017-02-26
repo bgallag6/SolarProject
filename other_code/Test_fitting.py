@@ -66,7 +66,7 @@ T1 = 0
 for l in range(145,146):
     
     #for m in range(0,SPECTRA.shape[1]):
-    for m in range(190,195):
+    for m in range(190,191):
         
                                         
         f = freqs  # frequencies
@@ -129,35 +129,43 @@ for l in range(145,146):
         # unpack uncertainties in fitting parameters from diagonal of covariance matrix
         dA2, dn2, dC2, dP2, dfp2, dfw2 = [np.sqrt(nlpcov_gp[j,j]) for j in range(nlfit_gp.size)]
         
-        """
-        #m2_param = A2, n2, C2, P2, fp2, fw2  # could have used this for params array : = params[0:6,l-1,m-1]
-        """
-        uncertainties = dA2, dn2, dC2, dP2, dfp2, dfw2  # do we want to keep a global array of uncertainties?  
+        
+          
         
         # create model functions from fitted parameters
         #m1_fit = PowerLaw(f_fit, A, n, C)
         m1_fit = PowerLaw(f, A, n, C)
-        amp_scale = PowerLaw(np.exp(fp2), A, n, C)  # to extract the gaussian-amplitude scaling factor
+        amp_scale = PowerLaw(np.exp(fp2), A2, n2, C2)  # to extract the gaussian-amplitude scaling factor
         #m2_fit = GaussPowerBase(f_fit, A2,n2,C2,P2,fp2,fw2)
         m2_fit = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)
         #s_fit_gp_full = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)  # could get rid of this if not making smaller m2_fit
+        print amp_scale
+        """
         m2P_fit = PowerLaw(f, A2, n2, C2)  # only need if plotting
         m2G_fit = Gauss(f, P2, fp2, fw2)  # only need if plotting
+        m2_param = A2, n2, C2, P2, fp2, fw2  # could have used this for params array : = params[0:6,l-1,m-1]      
+        uncertainties = dA2, dn2, dC2, dP2, dfp2, dfw2  # do we want to keep a global array of uncertainties?
+        """
         
         #diffM1M2_temp = (m2_fit - m1_fit)**2  # differences squared
         #diffM1M2[l][m] = np.sum(diffM1M2_temp)  # sum of squared differences 
         
+        #"""
         nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
         #nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
         A22, n22, C22, P22, fp22, fw22 = nlfit_gp2  # unpack fitting parameters     
+        dA22, dn22, dC22, dP22, dfp22, dfw22 = [np.sqrt(nlpcov_gp[j,j]) for j in range(nlfit_gp.size)]
         m2_param = A22, n22, C22, P22, fp22, fw22  # could have used this for params array : = params[0:6,l-1,m-1]
-        m2_fit2 = GaussPowerBase(f, A22,n22,C22,P22,fp22,fw22)     
+        m2_fit2 = GaussPowerBase(f, A22,n22,C22,P22,fp22,fw22) 
+        uncertainties = dA22, dn22, dC22, dP22, dfp22, dfw22  # do we want to keep a global array of uncertainties?
+        
         residsM22 = (s - m2_fit2)
         chisqrM22 = ((residsM22/ds)**2).sum()
         redchisqrM22 = ((residsM22/ds)**2).sum()/float(f.size-6)  
         
         m2P_fit = PowerLaw(f, A22, n22, C22)  # only need if plotting
         m2G_fit = Gauss(f, P22, fp22, fw22)  # only need if plotting           
+        #"""        
         
         #residsM2 = (s - s_fit_gp_full)
         residsM2 = (s - m2_fit)
@@ -193,11 +201,11 @@ for l in range(145,146):
         plt.text(0.01, 10**-1.2, 'fp = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[4], uncertainties[4]), fontsize=15)
         plt.text(0.01, 10**-1.5, 'fw = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[5], uncertainties[5]), fontsize=15)
         plt.text(0.01, 10**-1.8, 'f_test = {0:0.3f}'.format(f_test), fontsize=15)
-        plt.text(0.01, 10**-2.1, 'chi2 = {0:0.4f}'.format(redchisqrM2), fontsize=15)
-        plt.text(0.01, 10**-2.4, 'chi22 = {0:0.4f}'.format(redchisqrM22), fontsize=15)
+        plt.text(0.01, 10**-2.1, r'$\chi^2$: Dogbox = {0:0.4f}'.format(redchisqrM2), fontsize=15)
+        #plt.text(0.01, 10**-2.4, r'$\chi^2$: Dogbox + trf = {0:0.4f}'.format(redchisqrM22), fontsize=15)
         plt.legend(loc='upper left', prop={'size':15})
         plt.show()
-        #plt.savefig('C:/Users/Brendan/Desktop/bounds_test/%ii_%ij_6_double_optimize.jpeg' % (l,m))
+        #plt.savefig('C:/Users/Brendan/Desktop/double_optimize/%ii_%ij_6_double_optimize.pdf' % (l,m), format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))
         #plt.close()
         #"""

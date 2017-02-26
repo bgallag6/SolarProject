@@ -113,8 +113,6 @@ def spec_fit( subcube ):
         f = freqs  # frequencies
         s = spectra_array[l][m]  # fourier power
         
-        #ds = (1./f**2.2)/1000
-        #ds = s*0.1  # set the error / variance estimate to a constant percentage of the spectra power-values
         
         # assign equal weights to all parts of the curve
         df = np.log10(f[1:len(f)]) - np.log10(f[0:len(f)-1])
@@ -161,6 +159,7 @@ def spec_fit( subcube ):
             # change method to 'dogbox' and increase max number of function evaluations to 3000
             nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000) # replaced #'s with arrays
             #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A,n,C,0.1,-5.55,0.425], bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000) # replaced #'s with arrays
+        
         except RuntimeError:
             #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
             pass
@@ -175,42 +174,65 @@ def spec_fit( subcube ):
         # unpack uncertainties in fitting parameters from diagonal of covariance matrix
         dA2, dn2, dC2, dP2, dfp2, dfw2 = [np.sqrt(nlpcov_gp[j,j]) for j in range(nlfit_gp.size)]
         
-                   
+        
+        try:
+            nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
+            #nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
+       
+        except RuntimeError:
+            #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            pass
+        
+        except ValueError:
+            #print("Error M2 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            pass
+        
+        A22, n22, C22, P22, fp22, fw22 = nlfit_gp2  # unpack fitting parameters     
+        dA22, dn22, dC22, dP22, dfp22, dfw22 = [np.sqrt(nlpcov_gp[j,j]) for j in range(nlfit_gp.size)]
+        
+        #m2_param = A22, n22, C22, P22, fp22, fw22  # could have used this for params array : = params[0:6,l-1,m-1]
+        #uncertainties = dA22, dn22, dC22, dP22, dfp22, dfw22  # do we want to keep a global array of uncertainties?
+                       
         # create model functions from fitted parameters
-        #m1_fit = PowerLaw(f_fit, A, n, C)
-        m1_fit = PowerLaw(f, A, n, C)
-        amp_scale = PowerLaw(np.exp(fp2), A, n, C)  # to extract the gaussian-amplitude scaling factor
-        #m2_fit = GaussPowerBase(f_fit, A2,n2,C2,P2,fp2,fw2)
-        m2_fit = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)
-        #s_fit_gp_full = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)  # could get rid of this if not making smaller m2_fit
-        # m2P_fit = PowerLaw(f_fit, A2, n2, C2)  # only need if plotting
-        # m2G_fit = Gauss(f_fit, P2, fp2, fw2)  # only need if plotting 
+        m1_fit = PowerLaw(f, A, n, C)        
+        #m2_fit = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)
+        m2_fit2 = GaussPowerBase(f, A22,n22,C22,P22,fp22,fw22) 
+        #m2P_fit = PowerLaw(f, A2, n2, C2)  # only need if plotting
+        #m2G_fit = Gauss(f, P2, fp2, fw2)  # only need if plotting 
+        #m2P_fit = PowerLaw(f, A22, n22, C22)  # only need if plotting
+        #m2G_fit = Gauss(f, P22, fp22, fw22)  # only need if plotting      
         
         #diffM1M2_temp = (m2_fit - m1_fit)**2  # differences squared
         #diffM1M2[l][m] = np.sum(diffM1M2_temp)  # sum of squared differences 
                                
+        residsM22 = (s - m2_fit2)
+        chisqrM22 = ((residsM22/ds)**2).sum()
+        redchisqrM22 = ((residsM22/ds)**2).sum()/float(f.size-6) 
         
-        #residsM2 = (s - s_fit_gp_full)
-        residsM2 = (s - m2_fit)
-        chisqrM2 = ((residsM2/ds)**2).sum()
-        redchisqrM2 = ((residsM2/ds)**2).sum()/float(f.size-6)
+        #residsM2 = (s - m2_fit)
+        #chisqrM2 = ((residsM2/ds)**2).sum()
+        #redchisqrM2 = ((residsM2/ds)**2).sum()/float(f.size-6)
         
         residsM1 = (s - m1_fit)
         chisqrM1 =  ((residsM1/ds)**2).sum()
         redchisqrM1 = ((residsM1/ds)**2).sum()/float(f.size-3)       
         
-        f_test = ((chisqrM1-chisqrM2)/(6-3))/((chisqrM2)/(f.size-6))
+        #f_test = ((chisqrM1-chisqrM2)/(6-3))/((chisqrM2)/(f.size-6))
+        f_test2 = ((chisqrM1-chisqrM22)/(6-3))/((chisqrM22)/(f.size-6))
+        
+        #amp_scale = PowerLaw(np.exp(fp2), A2, n2, C2)  # to extract the gaussian-amplitude scaling factor
+        amp_scale2 = PowerLaw(np.exp(fp22), A22, n22, C22)  # to extract the gaussian-amplitude scaling factor
         
         # populate array with parameters
-        params[0][l][m] = A2
-        params[1][l][m] = n2
-        params[2][l][m] = C2
-        params[3][l][m] = P2
-        params[4][l][m] = fp2
-        params[5][l][m] = fw2
+        params[0][l][m] = A22
+        params[1][l][m] = n22
+        params[2][l][m] = C22
+        params[3][l][m] = P22
+        params[4][l][m] = fp22
+        params[5][l][m] = fw22
         #params[6][l][m] = redchisqrM2
-        params[6][l][m] = f_test
-        params[7][l][m] = P2 / amp_scale
+        params[6][l][m] = f_test2
+        params[7][l][m] = P22 / amp_scale2
         #params[8][l][m] = 
         
         # populate array holding model fits
@@ -252,9 +274,15 @@ start = timer()
 
 size = MPI.COMM_WORLD.Get_size()  # How many processors do we have? (pulls from "-n 4" specified in terminal execution command)
 
+directory = 'F:/Users/Brendan/Desktop/SolarProject'
+date = '20130530'
+wavelength = 193
+
 # load memory-mapped array as read-only
-#cube = np.memmap('F:/Users/Brendan/Desktop/SolarProject/data/20130626/211/20130626_211_-500_500i_-500_500j_spectra_mmap.npy', dtype='float64', mode='r', shape=(1658,1481,299))
-cube = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_spectra.npy')
+cube_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))
+cube = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
+#cube = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(1658,1481,299))
+#cube = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_spectra.npy')
 
 chunks = np.array_split(cube, size)  # Split the data based on no. of processors
 
@@ -286,5 +314,6 @@ T_min_final, T_sec_final = divmod(T_final, 60)
 T_hr_final, T_min_final = divmod(T_min_final, 60)
 print "Total program time = %i sec" % T_final   
 
-np.save('/mnt/data/Gallagher/DATA/Output/20130626/193/20130626_193_-500_500i_-500_600j_param_slope6_arthm', stack_p)
+#np.save('/mnt/data/Gallagher/DATA/Output/20130626/193/20130626_193_-500_500i_-500_600j_param_slope6_arthm', stack_p)
+np.save('%s/DATA/Output/%s/%i/param' % (directory, date, wavelength), stack_p)
 #np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_param', stack_p)

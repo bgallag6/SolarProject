@@ -8,7 +8,7 @@ Created on Tue Dec 20 22:33:10 2016
 
 import numpy as np
 import SolSpec as ss
-import h5py
+#import h5py
 
 """
 ## download data
@@ -38,39 +38,40 @@ import h5py
 #ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data/20130626/171/aia_lev1_171a_2013_06_26t00_00_11_34z_image_lev1.fits.fits')
 #ss.pix2arc(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data/20140902/193/aia_lev1_193a_2014_09_02t05_59_54_84z_image_lev1.fits.fits')
 
+#directory = '/mnt/data/Gallagher'
+directory = 'F:/Users/Brendan/Desktop/SolarProject'
+date = '20130530'
+wavelength = 193
 
 """
-## create derotated region datacube (old)
+## create derotated region datacube
 """
-#ss.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20130530/193', date='20130530', wavelength=193, sub_reg_coords=[2200,3000,2300,2600], coords_type='pix', bin_frac=1)
-
-
-"""
-## create derotated region datacube (int - new)
-"""
-#ss.datacube_int(directory='F:/Users/Brendan/Desktop/SolarProject/data/20120923/304', date='20120923', wavelength=304, sub_reg_coords=[-528,-132,-100,100], coords_type='arc', bin_frac=1)
-#ss.datacube_int(directory='F:/Users/Brendan/Desktop/SolarProject/data/20130530/193', date='20130626', wavelength=193, sub_reg_coords=[2200,3000,2300,2600], coords_type='pix', bin_frac=1)
+#ss.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20120923/304', date='20120923', wavelength=304, sub_reg_coords=[-528,-132,-100,100], coords_type='arc', bin_frac=1)
+#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[2200,3000,2300,2600], coords_type='pix', bin_frac=1)
 
 
 """
-## fft-averaging + 3x3 averaging (old)
+## fft-averaging + 3x3 averaging
 """
-#DATA = np.load('F:/Users/Brendan/Desktop/SolarProject/datacubes/20130530_1700_2300_2600i_2200_3000j_data_rebin1.npy')
-#TIME = np.load('F:/Users/Brendan/Desktop/SolarProject/time_arrays/20130530_1700_2300_2600i_2200_3000j_time.npy')
+#DATA = np.load('%s/DATA/Temp/%s/%i/*rebin1.npy')
+#TIME = np.load('%s/DATA/Temp/%s/%i/*time.npy')
+#EXPOSURE = np.load('%s/DATA/Temp/%s/%i/*exposure.npy')
 
-#spectra_array = ss.fft_avg(datacube = DATA, timeseries = TIME, num_seg = 6)
-#np.save('C:/Users/Brendan/Desktop/SDO/spectra_20130530_1700_2300_2600i_2200_3000j', spectra_array)
+ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, num_seg = 6)
+#spectra_array = ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= '%i' % (wavelength), datacube = DATA, timeseries = TIME, exposure_array = EXPOSURE, num_seg = 6)
+#np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/304/20120923_304_-100_100i_-528_-132j_spectra', spectra_array)
 #np.save('C:/Users/Brendan/Desktop/SDO/spectra_20130530_193_2300_2600_2200_3000', spectra)  # now this
 
 
 """
-## fft-averaging + 3x3 averaging (int - new)
+## memory mapping 
 """
-#DATA = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/304/20120923_304_-100_100i_-528_-132j_data_rebin1.npy')
-#TIME = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/304/20120923_304_-100_100i_-528_-132j_time.npy')
-#EXPOSURE = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/304/20120923_304_-100_100i_-528_-132j_exposure.npy')
+#DATA = np.load('%s/DATA/Temp/%s/%i/*rebin1.npy')
+#TIME = np.load('%s/DATA/Temp/%s/%i/*time.npy')
+#EXPOSURE = np.load('%s/DATA/Temp/%s/%i/*exposure.npy')
 
-#spectra_array = ss.fft_avg_int(datacube = DATA, timeseries = TIME, exposure_array = EXPOSURE, num_seg = 3)
+ss.mem_map(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength)
+#spectra_array = ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= '%i' % (wavelength), datacube = DATA, timeseries = TIME, exposure_array = EXPOSURE, num_seg = 6)
 #np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/304/20120923_304_-100_100i_-528_-132j_spectra', spectra_array)
 #np.save('C:/Users/Brendan/Desktop/SDO/spectra_20130530_193_2300_2600_2200_3000', spectra)  # now this
 
@@ -98,8 +99,9 @@ import h5py
     #VISUAL = np.array(f['visual'])
     #r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20141025', wavelength=1600, path_name='C:/Users/Brendan/Desktop/PDFs')
     
-HEATMAPS = np.load('C:/Users/Brendan/Desktop/20130626_193_-500_500i_-500_600j_param.npy')
+#HEATMAPS = np.load('C:/Users/Brendan/Desktop/20130626_193_-500_500i_-500_600j_param.npy')
 #HEATMAPS = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_param.npy')
-VISUAL = np.load('C:/Users/Brendan/Desktop/20130626_193_-500_500i_-500_600j_visual.npy')
+#VISUAL = np.load('C:/Users/Brendan/Desktop/20130626_193_-500_500i_-500_600j_visual.npy')
 #VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_visual.npy')
-r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130626', wavelength=193, path_name='C:/Users/Brendan/Desktop/test_delete/')
+#ss.heatmap(directory= '%s' % (directory), date='%s' % (date), wavelength= '%i' % (wavelength))
+#r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130626', wavelength=193, path_name='C:/Users/Brendan/Desktop/test_delete/')
