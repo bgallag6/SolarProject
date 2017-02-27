@@ -506,6 +506,7 @@ def heatmap(directory, date, wavelength):
             cmap = cm.get_cmap('jet', 10)
         
         im = ax.imshow(np.flipud(h_map[i]), cmap = cmap, vmin=h_min, vmax=h_max)
+        #im = ax.imshow(h_map[i], cmap = cmap, vmin=h_min, vmax=h_max)
         #plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
         #plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
         plt.xticks(fontsize=17)
@@ -583,7 +584,9 @@ def heatmap(directory, date, wavelength):
             cmap = cm.get_cmap('jet', 10)
         if k == 1:
             im = ax.imshow(np.flipud(plots[k]), cmap = cmap, vmin = h_min_amp, vmax = h_max_amp)
+            #im = ax.imshow(plots[k], cmap = cmap, vmin = h_min_amp, vmax = h_max_amp)
         else:
+            #im = ax.imshow(plots[k], cmap = cmap)
             im = ax.imshow(np.flipud(plots[k]), cmap = cmap)
         #plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
         #plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
@@ -612,6 +615,7 @@ def heatmap(directory, date, wavelength):
     #cmap = 'jet'      
     cmap = cm.get_cmap('jet', 10)    
     
+    #im = ax.imshow(roll_freq, cmap = cmap, vmin=h_min, vmax=h_max)
     im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=h_min, vmax=h_max)
     #im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=(1./10**-1.), vmax=(1./10**-3.5))  # should bounds be set at frequency range
     #plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
@@ -646,6 +650,7 @@ def heatmap(directory, date, wavelength):
         #plt.title(r'%s: %i $\AA$  [Visual: %s]' % (date_title, wavelength, titles_vis[i]), y = 1.01, fontsize=25)
         plt.title('Visual: %s' % (titles_vis[i]), y = 1.01, fontsize=25)  # no date / wavelength
         #im = ax.imshow(h_map[i], vmin=vmin[i], vmax=vmax[i])
+        #im = ax.imshow(vis[i], cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
         im = ax.imshow(np.flipud(vis[i]), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
         #plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
         #plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
@@ -1237,7 +1242,7 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     #np.save('%s/DATA/Temp/%s/%i/%i_%ii_%i_%ij_data_rebin%i.npy' % (directory, date, wavelength, y1, y2, x1, x2, bin_frac), DATA)
     #np.save('%s/DATA/Temp/%s/%i/%i_%ii_%i_%ij_time.npy' % (directory, date, wavelength, y1, y2, x1, x2), TIME)
     #np.save('%s/DATA/Temp/%s/%i/%i_%ii_%i_%ij_exposure.npy' % (directory, date, wavelength, y1, y2, x1, x2), I)
-    np.save('%s/DATA/Temp/%s/%i/derotated.npy' % (directory, date, wavelength, bin_frac), DATA)
+    np.save('%s/DATA/Temp/%s/%i/derotated.npy' % (directory, date, wavelength), DATA)
     np.save('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength), TIME)
     np.save('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength), I)
     

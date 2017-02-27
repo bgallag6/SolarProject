@@ -13,13 +13,17 @@ from scipy.stats import f as ff
 from matplotlib import cm
 
 
-h171 = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/171/20130626_171_-500_500i_-500_500j_param.npy')
-h193 = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/193/20130626_193_-500_500i_-500_500j_param.npy')
-h211 = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/211/20130626_211_-500_500i_-500_500j_param.npy')
-h304 = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/304/20130626_304_-500_500i_-500_500j_param.npy')
+#h171 = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/171/20130626_171_-500_500i_-500_500j_param.npy')
+#h193 = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/193/20130626_193_-500_500i_-500_500j_param.npy')
+#h211 = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/211/20130626_211_-500_500i_-500_500j_param.npy')
+#h304 = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/304/20130626_304_-500_500i_-500_500j_param.npy')
+
+h171 = np.load('C:/Users/Brendan/Desktop/param.npy')
+h171_new = np.load('C:/Users/Brendan/Desktop/20130626_171_-500_500i_-500_600j_param_slope6_arthm.npy')
     
-date = '2013/06/26'
-path_name = 'F:/Users/Brendan/Desktop/SolarProject/data/20130626'
+date = '20130626'
+#path_name = 'F:/Users/Brendan/Desktop/SolarProject/data/20130626'
+path_name = 'C:/Users/Brendan/Desktop/171'
 
 # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
 #titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', '$\chi^2$']
@@ -32,8 +36,14 @@ cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'L
 
 
 
-heatmap = [h171,h193,h211,h304]
-wavelengths = [171,193,211,304]
+#heatmap = [h171,h193,h211,h304]
+#wavelengths = [171,193,211,304]
+
+heatmap = [h171,h171_new]
+wavelengths = [171,171]
+
+h_map2 = h171_new
+
 year = date[0:4]
 month = date[4:6]
 day = date[6:8]
@@ -53,10 +63,12 @@ for m in range(6):
 """
 #vmin = [10**-11, 0.5, 10**-6, 10**-6, -6.5, 0.1, 2.]  # think don't need anymore  (or option to set ranges for specific wavelengths?)
 #vmax = [10**-6, 2.5, 0.003, 10**-2, -4.5, 0.8, 15.]  # think don't need anymore
+M2_low = [0., 0.3, 0., 0.00001, 1./np.exp(-4.6), 0.05]
+M2_high = [0.000002, 3.0, 0.003, 0.01, 1./np.exp(-6.5), 0.8]
 
 for m in range(7):
         
-    for n in range(4):
+    for n in range(len(heatmap)):
         if n == 0:
             v_temp = []
         v_temp_flat = np.reshape(heatmap[n][m], (heatmap[n][m].shape[0]*heatmap[n][m].shape[1]))
@@ -65,13 +77,19 @@ for m in range(7):
         NaN_replace = np.nan_to_num(v_temp)  # NaN's in chi^2 heatmap were causing issue, replace with 0?
         vmin[m] = np.percentile(NaN_replace,0.1)
         vmax[m] = np.percentile(NaN_replace,99.9)
+    elif m == 4:
+        v_temp_loc = 1./(np.exp(v_temp))
+        vmin[m] = np.percentile(v_temp_loc,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        vmax[m] = np.percentile(v_temp_loc,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        #cmap = 'jet_r'  # reverse color-scale for Gaussian Location, because of flipped frequencies to seconds
+        cmap = cm.get_cmap('jet_r', 10)
     else:
         vmin[m] = np.percentile(v_temp,0.1)
         vmax[m] = np.percentile(v_temp,99.9)
 
 
 
-for c in range(4):
+for c in range(len(heatmap)):
     h_map = heatmap[c]
     wavelength = wavelengths[c]
 
@@ -92,7 +110,7 @@ for c in range(4):
     
     
     #for i in range(0,len(titles)-1):
-    for i in range(6,7):
+    for i in range(4,5):
         
         
         if i == 6:
@@ -103,6 +121,7 @@ for c in range(4):
             cmap = cm.get_cmap('jet', 10)
         elif i == 4:
             h_map[i] = 1./(np.exp(h_map[i]))
+            h_map2[i] = 1./(np.exp(h_map2[i]))
             h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
             #cmap = 'jet_r'  # reverse color-scale for Gaussian Location, because of flipped frequencies to seconds
@@ -127,6 +146,7 @@ for c in range(4):
         plt.title('%s' % (titles[i]), y = 1.01, fontsize=25)  # no date / wavelength
         
         im = ax.imshow(np.flipud(h_map[i]), cmap = cmap, vmin=h_min, vmax=h_max)
+        #im = ax.imshow(np.flipud(h_map[i]), cmap = cmap, vmin=M2_low[i], vmax=M2_high[i])  #other script used this?
         #plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
         #plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
         plt.xticks(fontsize=17)
@@ -141,7 +161,7 @@ for c in range(4):
         cbar.ax.tick_params(labelsize=17, pad=5) 
         #plt.tight_layout()
         #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
-        #plt.savefig('%s/%s_%i_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
+        plt.savefig('%s/%s_%i_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
         
         #fig = plt.figure(figsize=(13,9))
         fig = plt.figure(figsize=(fig_width,fig_height))
@@ -150,6 +170,7 @@ for c in range(4):
         plt.title('%s -- Same Colorscale' % (titles[i]), y = 1.01, fontsize=25)  # no date / wavelength
         
         im = ax.imshow(np.flipud(h_map[i]), cmap = cmap, vmin=vmin[i], vmax=vmax[i])
+        #im = ax.imshow(np.flipud(h_map2[i]), cmap = cmap, vmin=M2_low[i], vmax=M2_high[i])
         #plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
         #plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
         plt.xticks(fontsize=17)
@@ -164,24 +185,32 @@ for c in range(4):
         cbar.ax.tick_params(labelsize=17, pad=5) 
         #plt.tight_layout()
         #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
-        #plt.savefig('%s/%s_%i_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
+        plt.savefig('%s/%s_%i_%s_same_%i.pdf' % (path_name, date, wavelength, names[i], c), format='pdf')
         
-        """
-        flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
-    
-        fig = plt.figure(figsize=(12,9))
-        plt.title(r'%s: %i $\AA$  [Histogram - %s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
-        plt.xlabel('%s' % cbar_labels[i], fontsize=20, labelpad=10)
-        plt.ylabel('Bin Count', fontsize=20, labelpad=10)
-        plt.xticks(fontsize=17)
-        plt.yticks(fontsize=17)
-        plt.xlim(h_min, h_max)
-        y, x, _ = plt.hist(flat_param, bins=200, range=(h_min, h_max))
-        plt.ylim(0, y.max()*1.1)
-        #plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
-        #plt.savefig('%s/%s_%i_Histogram_%s.jpeg' % (path_name, date, wavelength, names[i]))
-        plt.savefig('%s/%s_%i_Histogram_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
-        """
+        if c == 0:
+            if i != 6:
+                #"""
+                flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
+                flat_param2 = np.reshape(h_map2[i], (h_map2[i].shape[0]*h_map2[i].shape[1]))
+            
+                fig = plt.figure(figsize=(12,9))
+                plt.title('Geometric vs Arithmetic Average: %s' % titles[i], y = 1.01, fontsize=25)
+                plt.title(r'%s: %i $\AA$  [Histogram - %s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
+                plt.xlabel('%s' % cbar_labels[i], fontsize=20, labelpad=10)
+                plt.ylabel('Bin Count', fontsize=20, labelpad=10)
+                plt.xticks(fontsize=17)
+                plt.yticks(fontsize=17)
+                plt.xlim(M2_low[i],M2_high[i])
+                y, x, _ = plt.hist(flat_param, bins=200, color='black', range=(M2_low[i],M2_high[i]), label = 'Geometric')
+                y, x, _ = plt.hist(flat_param2, bins=200, color='red', alpha=0.5, range=(M2_low[i],M2_high[i]), label = 'Arithmetic')
+                plt.ylim(0, y.max()*1.1)
+                plt.legend(loc = 'upper left')
+                #plt.xlim(h_min, h_max)
+                #y, x, _ = plt.hist(flat_param, bins=200, range=(h_min, h_max))
+                #plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
+                #plt.savefig('%s/%s_%i_Histogram_%s.jpeg' % (path_name, date, wavelength, names[i]))
+                plt.savefig('%s/%s_%i_Histogram_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
+                #"""
         
     """
     # generate p-value heatmap
