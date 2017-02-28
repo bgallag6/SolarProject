@@ -1426,10 +1426,13 @@ def fft_avg(directory, date, wavelength, num_seg):
             last_good_pos = bad - 1			# retain only data before the <=zero
             
             # Get time and pixel values
-            v=pixmed[0:last_good_pos]		
-            t=TIME[0:last_good_pos]
-            #v=pixmed  # use for 335/131/094 -- can't get rid of negative values for those
-            #t=TIME
+            if wavelength == 94:
+                v=pixmed  # use for 335/131/094 -- can't get rid of negative values for those
+                t=TIME
+            else:
+                v=pixmed[0:last_good_pos]		
+                t=TIME[0:last_good_pos]
+            
         
             v_interp = np.interp(t_interp,t,v)  # interpolate pixel-intensity values onto specified time grid
             

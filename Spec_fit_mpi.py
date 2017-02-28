@@ -276,7 +276,7 @@ size = MPI.COMM_WORLD.Get_size()  # How many processors do we have? (pulls from 
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
 date = '20120923'
-wavelength = 304
+wavelength = 94
 
 # load memory-mapped array as read-only
 cube_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))

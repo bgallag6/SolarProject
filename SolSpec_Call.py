@@ -41,7 +41,7 @@ import SolSpec as ss
 #directory = '/mnt/data/Gallagher'
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
 date = '20120923'
-wavelength = 304
+wavelength = 94
 
 """
 ## create derotated region datacube

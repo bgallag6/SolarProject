@@ -18,12 +18,14 @@ from matplotlib import cm
 #h211 = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/211/20130626_211_-500_500i_-500_500j_param.npy')
 #h304 = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/304/20130626_304_-500_500i_-500_500j_param.npy')
 
-h171 = np.load('C:/Users/Brendan/Desktop/param.npy')
-h171_new = np.load('C:/Users/Brendan/Desktop/20130626_171_-500_500i_-500_600j_param_slope6_arthm.npy')
+#h171 = np.load('C:/Users/Brendan/Desktop/project_files/param.npy')
+#h171 = np.load('F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/171/20130626_171_-500_500i_-500_500j_param_newsigma.npy')
+h_old = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_304_-500_500i_-500_500j_param.npy')
+h_new = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_304_-500_500i_-500_600j_param_slope6_arthm.npy')
     
 date = '20130626'
 #path_name = 'F:/Users/Brendan/Desktop/SolarProject/data/20130626'
-path_name = 'C:/Users/Brendan/Desktop/171'
+path_name = 'C:/Users/Brendan/Desktop/final_results_2_27B'
 
 # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
 #titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', '$\chi^2$']
@@ -39,10 +41,14 @@ cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'L
 #heatmap = [h171,h193,h211,h304]
 #wavelengths = [171,193,211,304]
 
-heatmap = [h171,h171_new]
-wavelengths = [171,171]
+#heatmap = [h171,h171_new]
+heatmap = [h_old,h_new]
+#wavelengths = [171,171]
+#wavelengths = [193,193]
+#wavelengths = [211,211]
+wavelengths = [304,304]
 
-h_map2 = h171_new
+h_map2 = h_new
 
 year = date[0:4]
 month = date[4:6]
@@ -109,8 +115,8 @@ for c in range(len(heatmap)):
         fig_height = 10*aspect_ratio  # works better for 20130626
     
     
-    #for i in range(0,len(titles)-1):
-    for i in range(4,5):
+    for i in range(7):
+    #for i in range(0,2):
         
         
         if i == 6:
@@ -121,7 +127,7 @@ for c in range(len(heatmap)):
             cmap = cm.get_cmap('jet', 10)
         elif i == 4:
             h_map[i] = 1./(np.exp(h_map[i]))
-            h_map2[i] = 1./(np.exp(h_map2[i]))
+            #h_map2[i] = 1./(np.exp(h_map2[i]))
             h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
             #cmap = 'jet_r'  # reverse color-scale for Gaussian Location, because of flipped frequencies to seconds
@@ -161,7 +167,7 @@ for c in range(len(heatmap)):
         cbar.ax.tick_params(labelsize=17, pad=5) 
         #plt.tight_layout()
         #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
-        plt.savefig('%s/%s_%i_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
+        plt.savefig('%s/%s_%i_%s_diff_%i.pdf' % (path_name, date, wavelength, names[i], c), format='pdf')
         
         #fig = plt.figure(figsize=(13,9))
         fig = plt.figure(figsize=(fig_width,fig_height))
@@ -189,9 +195,14 @@ for c in range(len(heatmap)):
         
         if c == 0:
             if i != 6:
+                
                 #"""
-                flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
-                flat_param2 = np.reshape(h_map2[i], (h_map2[i].shape[0]*h_map2[i].shape[1]))
+                if i == 4: 
+                    flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
+                    flat_param2 = 1./np.exp(np.reshape(h_map2[i], (h_map2[i].shape[0]*h_map2[i].shape[1])))
+                else:
+                    flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
+                    flat_param2 = np.reshape(h_map2[i], (h_map2[i].shape[0]*h_map2[i].shape[1]))
             
                 fig = plt.figure(figsize=(12,9))
                 plt.title('Geometric vs Arithmetic Average: %s' % titles[i], y = 1.01, fontsize=25)
