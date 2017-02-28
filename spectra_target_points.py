@@ -42,7 +42,7 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
     
 #spectra_array = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/193/20130626_193_-450_-200i_-200_200j_spectra.npy')
-spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
+spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_193_-500_500i_-500_600j_spectra_arthm.npy')
 ## load in array of segment-averaged pixel FFTs
 SPECTRA = spectra_array
 
@@ -201,7 +201,7 @@ for l in range(1):
         #"""
         fig = plt.figure(figsize=(15,15))
         #plt.title('Power-Law Dominated : Pixel %ii, %ij' % (l2[m],m2[m]), y = 1.01, fontsize=25)
-        plt.title('171A: Pixel %ii, %ij' % (l,m), y = 1.01, fontsize=25)
+        plt.title('193A: Pixel %ii, %ij' % (l,m), y = 1.01, fontsize=25)
         plt.ylim((10**-5,10**0))
         plt.xlim((10**-5,10**-1))
         plt.loglog(f,s,'k')
@@ -223,8 +223,8 @@ for l in range(1):
         #plt.text(0.01, 10**-2.4, r'$\chi^2$: Dogbox + trf = {0:0.4f}'.format(redchisqrM22), fontsize=15)
         plt.legend(loc='upper left', prop={'size':15})
         #plt.show()
-        #plt.savefig('C:/Users/Brendan/Desktop/use_these/tail_722_1441.pdf', format='pdf')
-        #plt.savefig('C:/Users/Brendan/Desktop/171_slice2_double_optimize/171A_%ii_%ij.jpeg' % (l,m))
+        plt.savefig('C:/Users/Brendan/Desktop/spectra_points/193_%ii_%ij.pdf' % (l2[m],m2[m]), format='pdf')
+        plt.savefig('C:/Users/Brendan/Desktop/171_slice2_double_optimize/171A_%ii_%ij.jpeg' % (l,m))
         #plt.savefig('C:/Users/Brendan/Desktop/171_points_square/pixel_%ii_%ij_new.jpeg' % (l2[m],m2[m]))
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))
         #plt.close()

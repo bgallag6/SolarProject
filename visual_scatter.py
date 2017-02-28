@@ -20,7 +20,8 @@ import numpy as np
 import astropy.units as u
 
 
-v171 = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/171/20130626_171_-500_500i_-500_500j_visual.npy')
+#v171 = np.load('F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/171/20130626_171_-500_500i_-500_500j_visual.npy')
+v171 = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_visual.npy')
     
 # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
 #titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', '$\chi^2$']
@@ -81,8 +82,9 @@ for i in range(2):
     #plt.title(r'%s: %i $\AA$  [Visual: %s]' % (date_title, wavelength, titles_vis[i]), y = 1.01, fontsize=25)
     plt.title(r'171$\AA$  Visual: %s w/ Points' % (titles_vis[i]), y = 1.01, fontsize=25)  # no date / wavelength
     #im = ax.imshow(h_map[i], vmin=vmin[i], vmax=vmax[i])
-    im = ax.imshow(vis[i], cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
-    plt.scatter(m2, l2, s=50, c='white')
+    im = ax.imshow(vis[i], cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)    
+    plt.scatter(m2, l2, s=75, c='white')
+    #plt.scatter(m2, l2, s=75, c='red', marker='*')
     plt.xlim(0, vis[0].shape[1])
     plt.ylim(0, vis[0].shape[0])
     #plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
@@ -96,4 +98,4 @@ for i in range(2):
     cbar.ax.tick_params(labelsize=17, pad=5) 
     #plt.tight_layout()
     #plt.savefig('%s/%s_%i_visual_%s.jpeg' % (path_name, date, wavelength, names_vis[i]))
-    #plt.savefig('C:/Users/Brendan/Desktop/use_these/171_visual_%s_points.pdf' % names_vis[i], format='pdf')
+    #plt.savefig('C:/Users/Brendan/Desktop/171_visual_%s_points_sz75.pdf' % names_vis[i], format='pdf')
