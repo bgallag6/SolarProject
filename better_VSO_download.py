@@ -13,9 +13,11 @@ import glob
 import numpy as np
 
 t1 = '2015/11/1 00:00:00'
-t2 = '2015/11/1 00:10:00'
+t2 = '2015/11/1 00:01:00'
 wavelength = 193
 path_name = 'F:/Users/Brendan/Desktop/SolarProject/data2/20141115/193'
+path_name = '/mnt/data-solar/Gallagher/193_vso_test'
+
 
 client=vso.VSOClient()  # establish connection to VSO database
 
@@ -43,12 +45,10 @@ for i in range(len(qr)):
 print qr
 print arr_need
 
-n = 10
-chunks = len(arr_need)/n
-for k in range(chunks):
+for i in range(len(arr_need)):
     
     #res=client.get(qr, path='%s/{file}.fits' % path_name).wait()  # leave the "{file}.fits" part alone  <-- ? 
-    qr=client.query(vso.attrs.Time(arr_need[10*k],arr_need[10*(k+1)-1]), vso.attrs.Instrument('aia'), vso.attrs.Wave(wavelength * u.AA, wavelength * u.AA))
+    qr=client.query(vso.attrs.Time(arr_need[i],arr_need[i]), vso.attrs.Instrument('aia'), vso.attrs.Wave(wavelength * u.AA, wavelength * u.AA))
     res=client.get(qr, path='%s/{file}.fits' % path_name).wait()  # leave the "{file}.fits" part alone  <-- ? 
     #print res
 #"""

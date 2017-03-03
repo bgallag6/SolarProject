@@ -13,29 +13,29 @@ import SolSpec as ss
 """
 ## download data
 """
-#r = ss.get_data(wavelength=1600, time_begin='2013/06/26 08:23:00', time_end='2013/06/26 12:00:00', path_name='F:/Users/Brendan/Desktop/SolarProject/data/20130626/1600')
+#r = ss.get_data(wavelength=1600, time_begin='2013/06/26 00:00:00', time_end='2013/06/26 00:05:00', path_name='F:/Users/Brendan/Desktop/SolarProject/data2/20130626/1600')
 
 
 """
 ## download data (fill in missing)
 """
-#r = ss.get_data_fill(wavelength=193, cadence=12, time_begin='2012/09/23 00:00:00', time_end='2012/09/23 06:00:00', path_name='F:/Users/Brendan/Desktop/SolarProject/data/20120923/193')
+#r = ss.get_data_fill(wavelength=1600, time_begin='2013/06/26 00:00:00', time_end='2013/06/26 00:05:00', path_name='F:/Users/Brendan/Desktop/SolarProject/data2/20130626/1600')
 
 
 """
 ## arcsecond to pixel + subregion
 """
-x1 = -500
-x2 = 500
-y1 = -500
-y2 = 500
+#x1 = -500
+#x2 = 500
+#y1 = -500
+#y2 = 500
 
 #x1 = 1850
 #x2 = 3050
 #y1 = 2000
 #y2 = 2900
 
-ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/171/aia_lev1_171a_2013_06_26t00_00_11_34z_image_lev1.fits.fits')
+#ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/171/aia_lev1_171a_2013_06_26t00_00_11_34z_image_lev1.fits.fits')
 #ss.pix2arc(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data/20140902/193/aia_lev1_193a_2014_09_02t05_59_54_84z_image_lev1.fits.fits')
 
 """
@@ -59,7 +59,7 @@ ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavele
 #TIME = np.load('%s/DATA/Temp/%s/%i/*time.npy')
 #EXPOSURE = np.load('%s/DATA/Temp/%s/%i/*exposure.npy')
 
-ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, num_seg = 3)
+ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, num_seg = 6)
 #spectra_array = ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= '%i' % (wavelength), datacube = DATA, timeseries = TIME, exposure_array = EXPOSURE, num_seg = 6)
 #np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/304/20120923_304_-100_100i_-528_-132j_spectra', spectra_array)
 #np.save('C:/Users/Brendan/Desktop/SDO/spectra_20130530_193_2300_2600_2200_3000', spectra)  # now this

@@ -18,12 +18,9 @@ This module can be used to:
 # maybe put module imports inside function definitions (so not executing all for each)
 # delete unused modules for each function
 
-# maybe write script to compare results easier
-
 # update 1/21:
 # maybe make duplicate fft_avg function, one for computers that have accelerate, one for don't
 
-# as of 1/23: have tested all functions to be working (except parameter masking tool)
 
 """
 ############################
@@ -33,7 +30,6 @@ This module can be used to:
 ############################
 """
 
-# where should I specify path to save (within function or before/during/after function call)
 # put in error handling if start date is after end date? also if data is entered incorrectly - not yyyy/mm/dd format
 
 # generalize for 1600 - string bounds wont work - add 1
@@ -41,6 +37,8 @@ This module can be used to:
 # maybe make first past be much quicker - like 10 min at a time
 
 # for 20130815 193 - files are just ".fits" not ".fits.fits" - screws up call obviously
+
+# 3/2: added extracting dates from query - removed manually creating the arr_all
 
 from sunpy.net import vso
 import astropy.units as u
@@ -93,6 +91,20 @@ def get_data(wavelength, time_begin, time_end, path_name):
     # query request to determine total number of files in time-range
     qr=client.query(vso.attrs.Time(T1,T2), vso.attrs.Instrument('aia'), vso.attrs.Wave(wavelength * u.AA, wavelength * u.AA))
     
+    arr_all = [] 
+
+    # extract all image times from query request to check against
+    for i in range(len(qr)):
+        sec = qr[i].time[1][12:14]
+        minute = qr[i].time[1][10:12]
+        hour = qr[i].time[1][8:10]
+        day = qr[i].time[1][6:8]
+        month = qr[i].time[1][4:6]
+        year = qr[i].time[1][0:4]
+        time = '%s/%s/%s' ' %s:%s:%s' % (year, month, day, hour, minute, sec)
+        time = time.encode('utf8')
+        arr_all = np.append(arr_all, time)
+    
     num_files = len(qr)  # total number of files in time-range
     duration = (H2-H1)*3600 + (M2-M1)*60  # total length of time-range
     spacing = duration / num_files  # determine average image cadence
@@ -120,7 +132,7 @@ def get_data(wavelength, time_begin, time_end, path_name):
     h2 = h1
     
     # loop through entire time range, 1 minute at a time (so as not to overload the server with requests)
-    for i in range(0,(duration/60)-1):
+    for i in range((duration/60)-1):
     #for i in range(0,(duration/(60*mins))-1):  # try for quicker download using custom minutes-per-query
         m1 += 1
         m2 += 1
@@ -140,7 +152,7 @@ def get_data(wavelength, time_begin, time_end, path_name):
         qr=client.query(vso.attrs.Time(t1,t2), vso.attrs.Instrument('aia'), vso.attrs.Wave(wavelength * u.AA, wavelength * u.AA))
         #print qr
         res=client.get(qr, path='%s/{file}.fits' % path_name).wait()  # leave the "{file}.fits" part alone  <-- ? 
-        #print res
+    
     
     ## after initial passthrough, determine files downloaded and those that still need to be    
         
@@ -150,15 +162,11 @@ def get_data(wavelength, time_begin, time_end, path_name):
     l = len(flist)
      
     l_fname = len(flist[0])
-   
-    # find first file after 00:00:00 - set time base to that
-    
-    # loop through flist couple times until get all.
     
     arr_have = []
     
     # create searchable array of images that have already been downloaded
-    for i in range(0,l):
+    for i in range(l):
         x = flist[i]
         h = int(x[(l_fname-33):(l_fname-31)])
         m = int(x[(l_fname-30):(l_fname-28)])
@@ -167,33 +175,9 @@ def get_data(wavelength, time_begin, time_end, path_name):
         arr_have.append(t)
     #print arr_have
     
-    # using the first image file as the starting time, add determined cadence to generate searchable array of all possible files
-    # adding ' -1' to m3 because initial download starts at first minute
-    f_first = flist[0]
-    h3 = int(f_first[(l_fname-33):(l_fname-31)])
-    m3 = int(f_first[(l_fname-30):(l_fname-28)]) - 1 
-    s3 = (60 +  (int(f_first[(l_fname-27):(l_fname-25)])) - (int(np.floor(60/cadence))*cadence))
-    #t_first = ('%s''%02d'':''%02d'':''%02d' % (Y1,H1,(m_first - 1),s_first))
-       
-    
-    # create array of all possible files
-    arr_all = []
-    for i in range(0,num_files):  # changed from range(0,l)
-        t3 = ('%s''%02d'':''%02d'':''%02d' % (Y1,h3,m3,s3))
-        arr_all.append(t3)
-        s3 += cadence
-        if s3 >= 60:
-            s3 -= 60
-            m3 += 1
-            if m3 >= 60:
-                m3 -= 60
-                h3 += 1 
-    #print arr_all
-    
-    
     # compare array_all to array_have to determine array_need
     arr_need = []
-    for i in range(0,num_files):  # changed from range(0,l)
+    for i in range(num_files):  # changed from range(0,l)
         z = arr_all[i] in arr_have    
         if z == False:
             arr_need.append(arr_all[i])
@@ -203,9 +187,9 @@ def get_data(wavelength, time_begin, time_end, path_name):
     print "After the initial pass, still need %d files." % len(arr_need)
     
     # loop through the array of needed files, requesting them one at a time        
-    for i in range(0,len(arr_need)):
+    for i in range(len(arr_need)):
         qr=client.query(vso.attrs.Time(arr_need[i],arr_need[i]), vso.attrs.Instrument('aia'), vso.attrs.Wave(wavelength * u.AA, wavelength * u.AA))
-        res=client.get(qr, path='%s/{file}.fits' % path_name).wait()
+        res=client.get(qr, path='%s/{file}.fits' % path_name).wait()  # .wait() -- wait until file is downloaded before issuing another request
   
       
 
@@ -222,8 +206,6 @@ def get_data(wavelength, time_begin, time_end, path_name):
         
 # prof weigel mentioned that could instead use push/pop to move first element of array to bottom
 # so that program doesn't get stuck on one file, also that it would be better to use the ISO module for date/time
-        
-# when redownloading - takes first file and subtracts one minute - so have to delete first minute of files
 
         
 from sunpy.net import vso
@@ -231,7 +213,7 @@ import astropy.units as u
 import glob
 import numpy as np
 
-def get_data_fill(wavelength, cadence, time_begin, time_end, path_name):
+def get_data_fill(wavelength, time_begin, time_end, path_name):
     """
     Downloads .fits image files from database. 
     
@@ -249,7 +231,7 @@ def get_data_fill(wavelength, cadence, time_begin, time_end, path_name):
       
     Example:
     ::
-        ss.get_data_fill(wavelength=171, cadence=12, time_begin='2013/08/15 00:00:00',
+        ss.get_data_fill(wavelength=171, time_begin='2013/08/15 00:00:00',
            time_end='2013/08/15 12:00:00', path_name='F:/SDO/data/20130815/171')
     """
     
@@ -277,9 +259,22 @@ def get_data_fill(wavelength, cadence, time_begin, time_end, path_name):
     # query request to determine total number of files in time-range
     qr=client.query(vso.attrs.Time(T1,T2), vso.attrs.Instrument('aia'), vso.attrs.Wave(wavelength * u.AA, wavelength * u.AA))
     
+    arr_all = [] 
+
+    for i in range(len(qr)):
+        sec = qr[i].time[1][12:14]
+        minute = qr[i].time[1][10:12]
+        hour = qr[i].time[1][8:10]
+        day = qr[i].time[1][6:8]
+        month = qr[i].time[1][4:6]
+        year = qr[i].time[1][0:4]
+        time = '%s/%s/%s' ' %s:%s:%s' % (year, month, day, hour, minute, sec)
+        time = time.encode('utf8')
+        arr_all = np.append(arr_all, time)
+    
     num_files = len(qr)
     
-    cadence = cadence  # set cadence to specified value
+    #cadence = cadence  # set cadence to specified value *took out because extracting times from query
         
     flist = glob.glob('%s/*.fits' % path_name)
     
@@ -307,29 +302,6 @@ def get_data_fill(wavelength, cadence, time_begin, time_end, path_name):
         arr_have.append(t)
     #print arr_have
     print len(arr_have)    
-    
-    
-    f_first = flist[0]
-    h3 = int(f_first[(l_fname-33+adj):(l_fname-31+adj)])
-    m3 = int(f_first[(l_fname-30+adj):(l_fname-28+adj)]) - 1 
-    s3 = (60 +  (int(f_first[(l_fname-27+adj):(l_fname-25+adj)])) - (int(np.floor(60/cadence))*cadence))
-    #t_first = ('%s''%02d'':''%02d'':''%02d' % (Y1,H1,(m_first - 1),s_first))
-    
-    # create array of all possible files
-    arr_all = []   
-    for i in range(0,num_files):  # changed from range(0,l)
-        t3 = ('%s''%02d'':''%02d'':''%02d' % (Y1,h3,m3,s3))
-        arr_all.append(t3)
-        s3 += cadence
-        if s3 >= 60:
-            s3 -= 60
-            m3 += 1
-            if m3 >= 60:
-                m3 -= 60
-                h3 += 1 
-    #print arr_all
-    print len(arr_all)
-    
     
     # compare array_all to array_have to determine array_need
     arr_need = []   
@@ -360,41 +332,16 @@ def get_data_fill(wavelength, cadence, time_begin, time_end, path_name):
 ############################
 """
 
-## currently enter wavelength and date as arguments in call - could possibly
-## extract that info from parameter-array file name? 
-
 # think I can take out the trimming of edges?  should be built into the array creation
-
-# might want to flip all heatmaps / visual images to match sunpy's peek()?
 
 # maybe instead of NaN for chi^2, use [if.data?] - so only looks at valid data
 
 # when generating heatmaps for rebinned regions - should it scale x/y axes by that factor?
 
-# update 1/13:
-# included visual images in single function call
-# added pdf-save support for easy inclusion in latex documents
-
 # update 1/19:
-# added now generates histograms of all parameters
 # might want to set histogram ranges based on curve_fit parameter bounds?
 # want them to be all the same ranges? -- or are we just using to pick out fit problems?
 
-# got odd error when generating float32 heatmaps:
-#UserWarning: Attempting to set identical left==right results
-#in singular transformations; automatically expanding.
-#left=0.425, right=0.425 'left=%s, right=%s') % (left, right))
-
-# add in generalized - aspect ratio of region determines size of figure
-
-# update 1/25:
-# added percentiles to visual images 
-# changed gaussian location ticks to seconds 
-
-# update 1/26:
-# removing plt.tight_layout gives all same size plots
-# find way to possibly take aspect ratio of array and make figure size match that
-# allowing for the parameters that have more digits 
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -784,12 +731,6 @@ def pix2arc(x1, x2, y1, y2, image):
 ############################
 """    
 
-# update 1/14:
-# changing slope bounds to [0.3, 4.0]
-# moved the 3x3 pixel-box averaging, only fitting now
-
-# when segmenting for parallelization - numpy.load(mmap-reads in only slice?)
-
 # should revise the variable naming ('gp' --> 'M2', all the '2' variables?)
 
 import numpy as np
@@ -1102,13 +1043,7 @@ def spec_fit(spectra_array):
 ############################
 """
 
-# could get first .fits file and extract date and wavelength from
-# worked for one full run-through - then also worked through full FFT + 3x3 + fit
-
 # maybe add -- if rebin = 1, don't add to filename
-# have visual / time be either both at beginning or end of filename
-
-# add printout of region dimensions and rebinned region dimensions
 
 from pylab import *
 import glob
@@ -1161,7 +1096,6 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
         return eval(''.join(evList))
         
     # define subregion coordinates   
-    # or possibly import these from the return values of arc2pix  <-- this
     x1 = sub_reg_coords[0]  # j1
     x2 = sub_reg_coords[1]  # j2
     y1 = sub_reg_coords[2]  # i1
@@ -1173,10 +1107,7 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
 
     # Select the image that is the "middle" of our selection.
     # We do this because the solar derotation algorithm operates centered on the 
-    # "middle" image  (might not be used)
     mid_file = np.int(np.floor(nf / 2))
-
- 
     
     mc_list = []  # create an empty list
     
@@ -1231,7 +1162,6 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     # initialize arrays to hold exposure time, pixel data, and time values
     I = np.empty((nf))  # exposure time
     DATA = np.empty((nf, subarr_idim, subarr_jdim), dtype=np.int16)  # save as int16, since that is what original is
-    #TIME = np.empty((nf), dtype='int')
     TIME = np.empty((nf))  # might as well just have all as float
     
     # loop through datacube and extract pixel data and time values
@@ -1241,7 +1171,6 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
         L = dr[p].data
         L_trim = L[0:(mid_subarr.shape[0] - rem_i), 0:(mid_subarr.shape[1] - rem_j)]
         small_L = rebin(L_trim, L_trim.shape[0]/bin_frac, L_trim.shape[1]/bin_frac)
-        #DATA[p][:][:] = small_L/Ex  # normalize by exposure time
         DATA[p][:][:] = small_L  # normalize by exposure time
         T = dr[p].date
         curr_time=(T.hour * 3600.)+(T.minute * 60.)+T.second	
@@ -1313,33 +1242,32 @@ import scipy.misc
 import astropy.units as u
 #from scipy import fftpack  # not working with this called here???
 from timeit import default_timer as timer
-#import accelerate  # switch on if computer has installed
+import accelerate  # switch on if computer has installed
 import glob
 
 
-#def fft_avg(datacube, timeseries, exposure_array, num_seg):
 def fft_avg(directory, date, wavelength, num_seg):
     """
     Calculates segment-averaged FFT for region, and 3x3 pixel-box average.
     
-    datacube : 
-        3D datacube of timeseries of images.  (array)
+    directory : 
+        The directory containing the derotated datacube, as well as the time and exposure arrays. (string)
         
-    timeseries :
-        Array of timeseries.  (array)
+    date :
+        The date of the timeseries.  (string)
                 
-    exposure_array :
-        Array of exposure durations.  (array)
+    wavelength :
+        The wavelength of the dataset.  (int)
         
     num_seg :
-        Number of segments to divide timeseries into.  (int)
+        The number of segments to divide the timeseries into.  (int)
         
     Returns : 
-        3D array of FFT-segment and 3x3-pixel-box averaged region
+        3D array of FFT-segment and 3x3-pixel-box averaged region.
       
     Example:
     ::
-        ss.fft_avg(datacube = DATA, timeseries = TIME, exposure_array = Ex, num_seg = 3)
+        ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, num_seg = 6)
     """
     
     from scipy import fftpack
@@ -1372,12 +1300,7 @@ def fft_avg(directory, date, wavelength, num_seg):
     TIME = np.load('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength))
     
     Ex = np.load('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength))
-    
-    #DATA = datacube
-    
-    #TIME = timeseries
-    
-    #Ex = exposure_array
+
     
     print DATA.shape 
     
@@ -1435,8 +1358,8 @@ def fft_avg(directory, date, wavelength, num_seg):
             last_good_pos = bad - 1			# retain only data before the <=zero
             
             # Get time and pixel values
-            if wavelength == 94:
-                v=pixmed  # use for 335/131/094 -- can't get rid of negative values for those
+            if wavelength == 94 or wavelength == 131 or wavelength == 335:  
+                v=pixmed  # 094/131/335 -- intensities too low to trim off negative values
                 t=TIME
             else:
                 v=pixmed[0:last_good_pos]		
@@ -1515,8 +1438,9 @@ def fft_avg(directory, date, wavelength, num_seg):
         #print l
         for m in range(1,spectra_seg.shape[1]-1):
         #for m in range(1,25):
+        
             """
-            temp[0] = np.log10(spectra_seg[l-1][m-1])
+            temp[0] = np.log10(spectra_seg[l-1][m-1])  # previous geometric calculations
             temp[1] = np.log10(spectra_seg[l-1][m])
             temp[2] = np.log10(spectra_seg[l-1][m+1])
             temp[3] = np.log10(spectra_seg[l][m-1])
@@ -1559,6 +1483,25 @@ def fft_avg(directory, date, wavelength, num_seg):
 import numpy as np
 
 def mem_map(directory, date, wavelength):
+    """
+    Creates memory-mapped array of spectra array to use in MPI
+    
+    directory : 
+        The directory containing the spectra array. (string)
+        
+    date :
+        The date of the timeseries.  (string)
+                
+    wavelength :
+        The wavelength of the dataset.  (int)
+        
+    Returns : 
+        Memory-mapped spectra array. 
+      
+    Example:
+    ::
+        ss.mem_map(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength)
+    """
     
     # load original array 
     original = np.load('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength))
