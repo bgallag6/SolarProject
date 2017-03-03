@@ -5,22 +5,24 @@ Created on Tue Feb 21 19:23:08 2017
 @author: Brendan
 """
 
+# maybe use this just for filling in.  time range seems to work just as well for initial pass - though maybe up to 5 min?  
+
 from sunpy.net import vso
 import astropy.units as u
 import glob
 import numpy as np
 
 t1 = '2015/11/1 00:00:00'
-t2 = '2015/11/1 00:01:00'
+t2 = '2015/11/1 00:10:00'
 wavelength = 193
-path_name = 'F:/Users/Brendan/Desktop/SolarProject/data/20141115/193'
+path_name = 'F:/Users/Brendan/Desktop/SolarProject/data2/20141115/193'
 
 client=vso.VSOClient()  # establish connection to VSO database
 
 qr=client.query(vso.attrs.Time(t1,t2), vso.attrs.Instrument('aia'), vso.attrs.Wave(wavelength * u.AA, wavelength * u.AA))
-res=client.get(qr, path='%s/{file}.fits' % path_name)  # leave the "{file}.fits" part alone  <-- ? 
+#res=client.get(qr, path='%s/{file}.fits' % path_name)  # leave the "{file}.fits" part alone  <-- ? 
 
-"""
+#"""
 arr_need = [] 
 arr_need2 = [] 
 
@@ -40,8 +42,13 @@ for i in range(len(qr)):
     
 print qr
 print arr_need
-#res=client.get(qr, path='%s/{file}.fits' % path_name).wait()  # leave the "{file}.fits" part alone  <-- ? 
-qr=client.query(vso.attrs.Time(time,time), vso.attrs.Instrument('aia'), vso.attrs.Wave(wavelength * u.AA, wavelength * u.AA))
-res=client.get(qr, path='%s/{file}.fits' % path_name)  # leave the "{file}.fits" part alone  <-- ? 
-#print res
-"""
+
+n = 10
+chunks = len(arr_need)/n
+for k in range(chunks):
+    
+    #res=client.get(qr, path='%s/{file}.fits' % path_name).wait()  # leave the "{file}.fits" part alone  <-- ? 
+    qr=client.query(vso.attrs.Time(arr_need[10*k],arr_need[10*(k+1)-1]), vso.attrs.Instrument('aia'), vso.attrs.Wave(wavelength * u.AA, wavelength * u.AA))
+    res=client.get(qr, path='%s/{file}.fits' % path_name).wait()  # leave the "{file}.fits" part alone  <-- ? 
+    #print res
+#"""

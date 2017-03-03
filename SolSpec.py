@@ -521,7 +521,7 @@ def heatmap(directory, date, wavelength):
         cbar.ax.tick_params(labelsize=17, pad=5) 
         #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
+        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
         
         """
         flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
@@ -556,16 +556,25 @@ def heatmap(directory, date, wavelength):
     h_min_amp = np.percentile(h_map[3],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
     h_max_amp = np.percentile(h_map[3],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
     
+    count = 0
+    
     for i in range(p_val.shape[0]):
             for j in range(p_val.shape[1]):
                 if p_val[i][j] > mask_thresh:
+                    count += 1
                     p_mask[i][j] = np.NaN
                     amp_mask[i][j] = np.NaN
                     loc_mask[i][j] = np.NaN
                     wid_mask[i][j] = np.NaN
+
+    total_pix = p_val.shape[0]*p_val.shape[1]
+    print total_pix
+    print count
+    mask_percent = ((np.float(count))/total_pix)*100
+    print mask_percent
                     
     plots = [p_mask, amp_mask, loc_mask, wid_mask]
-    names_f = ['P-Value Mask', 'Gaussian Amplitude', 'Gaussian Location', 'Gaussian Width']
+    names_f = ['P-Value Mask', 'Gaussian Amplitude', 'Gaussian Location [Seconds]', 'Gaussian Width']
     names_m = ['p_mask', 'amp', 'loc', 'wid']
     
     for k in range(4):           
@@ -575,7 +584,7 @@ def heatmap(directory, date, wavelength):
         if k == 0:
             plt.title('P-Value < %0.3f' % (mask_thresh), y = 1.01, fontsize=25)
         else:
-            plt.title('%s: P-Value < %0.3f' % (names_f[k], mask_thresh), y = 1.01, fontsize=25)
+            plt.title('%s: P-Value < %0.3f [%0.1f]' % (names_f[k], mask_thresh, mask_percent), y = 1.01, fontsize=25)
         if k == 2:
             #cmap = 'jet_r'
             cmap = cm.get_cmap('jet_r', 10)
@@ -599,7 +608,7 @@ def heatmap(directory, date, wavelength):
         cbar.ax.tick_params(labelsize=17, pad=5) 
         #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_m[k]))
-        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.pdf' % (directory, date, wavelength, date, wavelength, names_m[k], (1./mask_thresh)), format='pdf')
+        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.pdf' % (directory, date, wavelength, date, wavelength, names_m[k], (1./mask_thresh)), format='pdf')
         
     
     # generate 'rollover frequency' heatmap
@@ -628,7 +637,7 @@ def heatmap(directory, date, wavelength):
     #cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
     cbar.ax.tick_params(labelsize=17, pad=5) 
     #plt.tight_layout()
-    plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
+    #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
     
     
   
@@ -663,7 +672,7 @@ def heatmap(directory, date, wavelength):
         cbar.ax.tick_params(labelsize=17, pad=5) 
         #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_vis[i]))
-        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
+        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
 
 
 
@@ -1304,7 +1313,7 @@ import scipy.misc
 import astropy.units as u
 #from scipy import fftpack  # not working with this called here???
 from timeit import default_timer as timer
-import accelerate  # switch on if computer has installed
+#import accelerate  # switch on if computer has installed
 import glob
 
 

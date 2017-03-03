@@ -25,19 +25,20 @@ import SolSpec as ss
 """
 ## arcsecond to pixel + subregion
 """
-#x1 = -450
-#x2 = 550
-#y1 = -500
-#y2 = 500
+x1 = -500
+x2 = 500
+y1 = -500
+y2 = 500
 
 #x1 = 1850
 #x2 = 3050
 #y1 = 2000
 #y2 = 2900
 
-#ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data/20130626/171/aia_lev1_171a_2013_06_26t00_00_11_34z_image_lev1.fits.fits')
+ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/171/aia_lev1_171a_2013_06_26t00_00_11_34z_image_lev1.fits.fits')
 #ss.pix2arc(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data/20140902/193/aia_lev1_193a_2014_09_02t05_59_54_84z_image_lev1.fits.fits')
 
+"""
 #directory = '/mnt/data/Gallagher'
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
 date = '20120923'
@@ -106,3 +107,4 @@ ss.mem_map(directory='%s' % (directory), date='%s' % (date), wavelength= wavelen
 #VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_visual.npy')
 #ss.heatmap(directory= '%s' % (directory), date='%s' % (date), wavelength= '%i' % (wavelength))
 #r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130626', wavelength=193, path_name='C:/Users/Brendan/Desktop/test_delete/')
+"""

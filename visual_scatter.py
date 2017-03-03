@@ -18,7 +18,7 @@ from sunpy.image.coalignment import mapcube_coalign_by_match_template
 from sunpy.physics.transforms.solar_rotation import mapcube_solar_derotate
 import numpy as np
 import astropy.units as u
-
+import matplotlib.patches as patches
 
 #v171 = np.load('F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/171/20130626_171_-500_500i_-500_500j_visual.npy')
 v171 = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_visual.npy')
@@ -36,12 +36,15 @@ cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'L
 #vmax = [10**-6, 2.5, 0.003, 10**-2, -4.5, 0.8, 15.]  # think don't need anymore
 
 
-m2 = [743, 708, 525, 757, 765, 722, 867]
-width = np.array([v171[0].shape[1] for i in range(len(m2))])
+#m2 = [743, 708, 525, 757, 765, 722, 867]
+#width = np.array([v171[0].shape[1] for i in range(len(m2))])
 #m2 = width - m2
-l2 = [322, 352, 551, 319, 325, 1441, 864]
-height = np.array([v171[0].shape[0] for i in range(len(l2))])
+#l2 = [322, 352, 551, 319, 325, 1441, 864]
+#height = np.array([v171[0].shape[0] for i in range(len(l2))])
 #l2 = height - l2
+
+m2 = [722, 525, 757, 743]
+l2 = [1441, 551, 319, 322]
 
 wavelength = 171
 
@@ -91,11 +94,27 @@ for i in range(2):
     #plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
     plt.xticks(fontsize=17)
     plt.yticks(fontsize=17)
+    rect = patches.Rectangle((590,1460), 70, 90, color='white', fill=True)
+    ax.add_patch(rect)
+    ax.text(600,1475, 'A', fontsize=25)
+    rect = patches.Rectangle((590,580), 70, 90, color='white', fill=True)
+    ax.add_patch(rect)
+    ax.text(600,595, 'B', fontsize=25)   
+    rect = patches.Rectangle((815,330), 70, 90, color='white', fill=True)
+    ax.add_patch(rect)
+    ax.text(825,345, 'C', fontsize=25)
+    rect = patches.Rectangle((610,180), 70, 90, color='white', fill=True)
+    ax.add_patch(rect)
+    ax.text(620,195, 'D', fontsize=25)
+    
+    
+    
     divider = make_axes_locatable(ax)
     cax = divider.append_axes("right", size="3%", pad=0.07)
     cbar = plt.colorbar(im,cax=cax)
+    
     #cbar.set_label('Intensity', size=20, labelpad=10)
     cbar.ax.tick_params(labelsize=17, pad=5) 
     #plt.tight_layout()
     #plt.savefig('%s/%s_%i_visual_%s.jpeg' % (path_name, date, wavelength, names_vis[i]))
-    #plt.savefig('C:/Users/Brendan/Desktop/171_visual_%s_points_sz75.pdf' % names_vis[i], format='pdf')
+    plt.savefig('C:/Users/Brendan/Desktop/test_format/171_visual_%s_points_label.pdf' % names_vis[i], format='pdf')

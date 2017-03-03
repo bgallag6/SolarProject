@@ -41,7 +41,7 @@ def Gauss(f, P, fp, fw):
 def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
     
-spectra_array = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/193/20130626_193_-450_-200i_-200_200j_spectra.npy')
+spectra_array = np.load('F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/193/20130626_193_-450_-200i_-200_200j_spectra.npy')
 ## load in array of segment-averaged pixel FFTs
 SPECTRA = spectra_array
 
