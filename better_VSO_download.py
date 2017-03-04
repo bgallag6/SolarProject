@@ -16,7 +16,7 @@ t1 = '2015/11/1 00:00:00'
 t2 = '2015/11/1 00:01:00'
 wavelength = 193
 path_name = 'F:/Users/Brendan/Desktop/SolarProject/data2/20141115/193'
-path_name = '/mnt/data-solar/Gallagher/193_vso_test'
+#path_name = '/mnt/data-solar/Gallagher/193_vso_test'
 
 
 client=vso.VSOClient()  # establish connection to VSO database

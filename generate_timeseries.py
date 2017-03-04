@@ -13,13 +13,15 @@ from pylab import *
 from scipy.interpolate import interp1d
 
 #DATA = np.load('/mnt/data-solar/Gallagher/DATA/Temp/20130626/171/derotated.npy')
-DATA = np.load('F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/193/20130626_193_-450_-200i_-200_200j_data_rebin1.npy')
+DATA = np.load('F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/20130626_193_-450_-200i_-200_200j_data_rebin1.npy')
 
 #Ex =  np.load('/mnt/data-solar/Gallagher/DATA/Temp/20130626/171/exposure.npy')
-Ex =  np.load('F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/193/20130626_193_-450_-200i_-200_200j_exposure.npy')   
+Ex =  np.load('F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/20130626_193_-450_-200i_-200_200j_exposure.npy')   
 
 #TIME = np.load('/mnt/data-solar/Gallagher/DATA/Temp/20130626/171/time.npy')
-TIME = np.load('F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/193/20130626_193_-450_-200i_-200_200j_time.npy')      
+TIME = np.load('F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/20130626_193_-450_-200i_-200_200j_time.npy') 
+
+timeseries = np.load('C:/Users/Brendan/Desktop/timeseries_arr.npy')     
     
 t_interp = np.linspace(0, TIME[len(TIME)-1], (TIME[len(TIME)-1]/12)+1)  #  <-- use this (might be correct method) - not sure if matters
   
@@ -71,7 +73,7 @@ for l in range(1):
         #plt.show()
         #plt.savefig('/mnt/data-solar/Gallagher/171_timeseries_%ix_%iy.pdf' % (x2[m], y2[m]), format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/test_format/171_%ix_%iy_timeseries.pdf' % (x2[m],y2[m]), format='pdf')
-        plt.savefig('C:/Users/Brendan/Desktop/171_%ix_%iy_timeseries.pdf' % (x2[m],y2[m]), format='pdf')
+        #plt.savefig('C:/Users/Brendan/Desktop/171_%ix_%iy_timeseries.pdf' % (x2[m],y2[m]), format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/title25_labels21_tick17.pdf', format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))
         #plt.close()
