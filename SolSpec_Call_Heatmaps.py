@@ -17,14 +17,15 @@ import SolSpec as ss
 
 #directory = 'F:/Users/Brendan/Desktop/SolarProject'
 #date = '20130626'
-#wavelength = 171
+#wavelength = 1600
 
+#"""
 import sys
 
 directory = sys.argv[1]
 date = sys.argv[2]
 wavelength = int(sys.argv[3])
-
+#"""
 #HEATMAPS = np.load('C:/Users/Brendan/Desktop/20130626_193_-500_500i_-500_600j_param.npy')
 #VISUAL = np.load('C:/Users/Brendan/Desktop/20130626_193_-500_500i_-500_600j_visual.npy')
 

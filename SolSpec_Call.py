@@ -54,7 +54,7 @@ wavelength = int(sys.argv[3])
 ## create derotated region datacube
 """
 #ss.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20120923/304', date='20120923', wavelength=304, sub_reg_coords=[-528,-132,-100,100], coords_type='arc', bin_frac=1)
-ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-550,550,-500,500], coords_type='arc', bin_frac=1)
+#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-550,550,-500,500], coords_type='arc', bin_frac=1)
 #ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[2200,3000,2300,2600], coords_type='pix', bin_frac=1)
 
 

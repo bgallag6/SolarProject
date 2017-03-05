@@ -7,12 +7,12 @@ echo "The process of this program:
 4) Power-spectra are computed from extracted timeseries via use of the Fast Fourier Transform
 5) A memory-mapped copy of the power-spectra array is created in order to be passed to MPI
 6) Two models, M1 and M2, are fitted to the spectra and the model parameters are extracted
-7) Heatmaps and histograms are generated from extracted model parameters 
+7) Heatmaps and histograms are generated from extracted model parameters" 
 
-read -p "Enter a directory: " directory
-read -p "Enter a date: " date
-read -p "Enter a wavelength: " wavelength
-read -p "Enter the number of processors: " num
+read -p "Enter a directory [ex. /mnt/data-solar/Gallagher]: " directory
+read -p "Enter a date [ex. 20130626]: " date
+read -p "Enter a wavelength [ex. 193]: " wavelength
+read -p "Enter the number of processors [ex. 16]: " num
 
 python SolSpec_Call.py $directory $date $wavelength
 

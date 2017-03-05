@@ -289,8 +289,9 @@ for l in range(1):
         #plt.text(0.007, 10**-1.09, r'$\beta$ = {0:0.3f}'.format(m2_param[4]), fontsize=25)
         plt.text(0.007, 10**-1.15, r'$\beta$ = {0:1.0f} [s]'.format(1./np.exp(m2_param[4])), fontsize=30)
         plt.text(0.007, 10**-1.35, r'$\sigma$ =  {0:0.3f}'.format(m2_param[5]), fontsize=30)
-        plt.text(0.007, 10**-1.55, r'$\chi^2$ = {0:0.3f}'.format(redchisqrM22), fontsize=30)
-        plt.text(0.007, 10**-1.75, r'$p$ = {0:0.2e}'.format(p_val), fontsize=30)
+        plt.text(0.007, 10**-1.55, r'$\chi^2$ = {0:0.3f}'.format(chisqrM22), fontsize=30)
+        #plt.text(0.007, 10**-1.75, r'$p$ = {0:0.2e}'.format(p_val), fontsize=30)
+        plt.text(0.007, 10**-1.75, r'$p$ = {0:0.3g}'.format(p_val), fontsize=30)
         legend = ax.legend(loc='lower left', prop={'size':30}, labelspacing=0.35)
         for label in legend.get_lines():
             label.set_linewidth(3.0)  # the legend line width
@@ -308,7 +309,7 @@ for l in range(1):
         plt.legend(loc='upper right', prop={'size':23})
         """
         #plt.show()
-        #plt.savefig('C:/Users/Brendan/Desktop/test_format2/171_%ix_%iy_E.pdf' % (m2[m],l2[m]), format='pdf')
+        #plt.savefig('C:/Users/Brendan/Desktop/171_point_%s_chi.pdf' % (point_label[m]), format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/171_slice2_double_optimize/171A_%ii_%ij.jpeg' % (l,m))
         #plt.savefig('C:/Users/Brendan/Desktop/171_points_square/pixel_%ii_%ij_new.jpeg' % (l2[m],m2[m]))
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))

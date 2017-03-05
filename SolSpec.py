@@ -410,7 +410,14 @@ def heatmap(directory, date, wavelength):
     trim_y = (h_map.shape[1]-1600)/2
     trim_x = (h_map.shape[2]-1600)/2
     h_map = h_map[:, trim_y:h_map.shape[1]-trim_y, trim_x:h_map.shape[2]-trim_x]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
-
+    
+    #x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
+    #y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
+    
+    x_ticks = [0,100,200,300,400]
+    y_ticks = [0,100,200]  
+    
+    #"""
     if h_map.shape[2] > h_map.shape[1]:
         aspect_ratio = float(h_map.shape[2]) / float(h_map.shape[1])
         fig_height = 10
@@ -423,7 +430,10 @@ def heatmap(directory, date, wavelength):
         fig_width = 10+2  # works better for 20130626 (with no x/y labels)
         #fig_height = 10*aspect_ratio
         fig_height = 10*aspect_ratio  # works better for 20130626
+    #"""
     
+    #fig_width = 10+2  # works better for 20130626 (with no x/y labels)
+    #fig_height = 10  # works better for 20130626
     
     for i in range(0,len(titles)-1):
     #for i in range(0,1):
@@ -463,8 +473,8 @@ def heatmap(directory, date, wavelength):
         #im = ax.imshow(h_map[i], cmap = cmap, vmin=h_min, vmax=h_max)
         plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
         plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
-        plt.xticks([0,400,800,1200,1600],fontsize=font_size)
-        plt.yticks([0,400,800,1200,1600],fontsize=font_size)
+        plt.xticks(x_ticks,fontsize=font_size)
+        plt.yticks(y_ticks,fontsize=font_size)
         divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
         cax = divider.append_axes("right", size="3%", pad=0.07)
         if i == 0:
@@ -475,7 +485,7 @@ def heatmap(directory, date, wavelength):
         cbar.ax.tick_params(labelsize=font_size, pad=5) 
         #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
+        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
         
         #"""
         flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
@@ -554,8 +564,8 @@ def heatmap(directory, date, wavelength):
             im = ax.imshow(np.flipud(plots[k]), cmap = cmap)
         plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
         plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
-        plt.xticks([0,400,800,1200,1600],fontsize=font_size)
-        plt.yticks([0,400,800,1200,1600],fontsize=font_size)
+        plt.xticks(x_ticks,fontsize=font_size)
+        plt.yticks(y_ticks,fontsize=font_size)
         divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
         cax = divider.append_axes("right", size="3%", pad=0.07)
         cbar = plt.colorbar(im,cax=cax)
@@ -563,7 +573,7 @@ def heatmap(directory, date, wavelength):
         cbar.ax.tick_params(labelsize=font_size, pad=5) 
         #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_m[k]))
-        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.pdf' % (directory, date, wavelength, date, wavelength, names_m[k], (1./mask_thresh)), format='pdf')
+        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.pdf' % (directory, date, wavelength, date, wavelength, names_m[k], (1./mask_thresh)), format='pdf')
         
     
     # generate 'rollover frequency' heatmap
@@ -584,15 +594,15 @@ def heatmap(directory, date, wavelength):
     #im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=(1./10**-1.), vmax=(1./10**-3.5))  # should bounds be set at frequency range
     plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
     plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
-    plt.xticks([0,400,800,1200,1600],fontsize=font_size)
-    plt.yticks([0,400,800,1200,1600],fontsize=font_size)
+    plt.xticks(x_ticks,fontsize=font_size)
+    plt.yticks(y_ticks,fontsize=font_size)
     divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
     cax = divider.append_axes("right", size="3%", pad=0.07)
     cbar = plt.colorbar(im,cax=cax)
     #cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
     cbar.ax.tick_params(labelsize=font_size, pad=5) 
     #plt.tight_layout()
-    #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
+    plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
     
     
   
@@ -621,8 +631,8 @@ def heatmap(directory, date, wavelength):
         im = ax.imshow(np.flipud(vis[i]), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
         plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
         plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
-        plt.xticks([0,400,800,1200,1600],fontsize=font_size)
-        plt.yticks([0,400,800,1200,1600],fontsize=font_size)
+        plt.xticks(x_ticks,fontsize=font_size)
+        plt.yticks(y_ticks,fontsize=font_size)
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="3%", pad=0.07)
         cbar = plt.colorbar(im,cax=cax)
@@ -630,7 +640,7 @@ def heatmap(directory, date, wavelength):
         cbar.ax.tick_params(labelsize=font_size, pad=5) 
         #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_vis[i]))
-        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
+        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
 
 
 
@@ -1253,7 +1263,7 @@ import scipy.misc
 import astropy.units as u
 #from scipy import fftpack  # not working with this called here???
 from timeit import default_timer as timer
-#import accelerate  # switch on if computer has installed
+import accelerate  # switch on if computer has installed
 import glob
 
 
