@@ -19,7 +19,7 @@ import SolSpec as ss
 #date = '20130626'
 #wavelength = 171
 
-i8mport sys
+import sys
 
 directory = sys.argv[1]
 date = sys.argv[2]
