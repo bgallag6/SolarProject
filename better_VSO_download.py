@@ -12,8 +12,8 @@ import astropy.units as u
 import glob
 import numpy as np
 
-t1 = '2015/11/1 00:00:00'
-t2 = '2015/11/1 00:01:00'
+t1 = '2014/11/02 00:00:00'
+t2 = '2014/11/02 00:01:00'
 wavelength = 193
 path_name = 'F:/Users/Brendan/Desktop/SolarProject/data2/20141115/193'
 #path_name = '/mnt/data-solar/Gallagher/193_vso_test'
@@ -48,7 +48,9 @@ print arr_need
 for i in range(len(arr_need)):
     
     #res=client.get(qr, path='%s/{file}.fits' % path_name).wait()  # leave the "{file}.fits" part alone  <-- ? 
+    print arr_need[i]
     qr=client.query(vso.attrs.Time(arr_need[i],arr_need[i]), vso.attrs.Instrument('aia'), vso.attrs.Wave(wavelength * u.AA, wavelength * u.AA))
+    print qr
     res=client.get(qr, path='%s/{file}.fits' % path_name).wait()  # leave the "{file}.fits" part alone  <-- ? 
     #print res
 #"""
