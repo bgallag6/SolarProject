@@ -20,28 +20,28 @@ import SolSpec as ss
 """
 ## download data (fill in missing)
 """
-#r = ss.get_data_fill(wavelength=193, time_begin='2013/05/30 00:00:00', time_end='2013/05/30 00:05:00', path_name='F:/Users/Brendan/Desktop/SolarProject/FITS/20130530/193')
+r = ss.get_data_fill(wavelength=193, time_begin='2013/05/30 00:00:00', time_end='2013/05/30 11:59:59', path_name='F:/Users/Brendan/Desktop/SolarProject/FITS/20130530/193')
 
 
 """
 ## arcsecond to pixel + subregion
 """
-#x1 = -500
-#x2 = 500
-#y1 = -500
-#y2 = 500
+#x1 = -528
+#x2 = -132
+#y1 = -100
+#y2 = 100
 
 #x1 = 1850
 #x2 = 3050
 #y1 = 2000
 #y2 = 2900
 
-#ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/171/aia_lev1_171a_2013_06_26t00_00_11_34z_image_lev1.fits.fits')
+#ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/FITS/20120923/171/aia_lev1_171a_2012_09_23t05_59_59_34z_image_lev1.fits.fits')
 #ss.pix2arc(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data/20140902/193/aia_lev1_193a_2014_09_02t05_59_54_84z_image_lev1.fits.fits')
 
 #"""
 #directory = 'F:/Users/Brendan/Desktop/SolarProject'
-
+"""
 import sys
 #directory = '/mnt/data/Gallagher'
 #date = '20120923'
@@ -56,6 +56,7 @@ wavelength = int(sys.argv[3])
 #ss.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20120923/304', date='20120923', wavelength=304, sub_reg_coords=[-528,-132,-100,100], coords_type='arc', bin_frac=1)
 #ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-550,550,-500,500], coords_type='arc', bin_frac=1)
 #ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[2200,3000,2300,2600], coords_type='pix', bin_frac=1)
+#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-528,-132,-100,100], coords_type='arc', bin_frac=1)  #20120923
 
 
 """
@@ -65,7 +66,7 @@ wavelength = int(sys.argv[3])
 #TIME = np.load('%s/DATA/Temp/%s/%i/*time.npy')
 #EXPOSURE = np.load('%s/DATA/Temp/%s/%i/*exposure.npy')
 
-ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, num_seg = 6)
+ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, num_seg = 3)  # 3 seg for 20120923, 6 seg for rest
 #spectra_array = ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= '%i' % (wavelength), datacube = DATA, timeseries = TIME, exposure_array = EXPOSURE, num_seg = 6)
 #np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/304/20120923_304_-100_100i_-528_-132j_spectra', spectra_array)
 #np.save('C:/Users/Brendan/Desktop/SDO/spectra_20130530_193_2300_2600_2200_3000', spectra)  # now this
@@ -82,7 +83,7 @@ ss.mem_map(directory='%s' % (directory), date='%s' % (date), wavelength= wavelen
 #spectra_array = ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= '%i' % (wavelength), datacube = DATA, timeseries = TIME, exposure_array = EXPOSURE, num_seg = 6)
 #np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/304/20120923_304_-100_100i_-528_-132j_spectra', spectra_array)
 #np.save('C:/Users/Brendan/Desktop/SDO/spectra_20130530_193_2300_2600_2200_3000', spectra)  # now this
-
+"""
 
 """
 ## spectra fitting

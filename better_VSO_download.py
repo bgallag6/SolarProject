@@ -12,8 +12,8 @@ import astropy.units as u
 import glob
 import numpy as np
 
-t1 = '2014/11/02 00:00:00'
-t2 = '2014/11/02 00:01:00'
+t1 = '2015/11/01 00:00:00'
+t2 = '2015/11/01 00:01:00'
 wavelength = 193
 path_name = 'F:/Users/Brendan/Desktop/SolarProject/data2/20141115/193'
 #path_name = '/mnt/data-solar/Gallagher/193_vso_test'

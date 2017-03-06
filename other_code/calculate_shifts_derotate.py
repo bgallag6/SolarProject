@@ -30,7 +30,7 @@ from sunpy.physics.transforms.solar_rotation import calculate_solar_rotate_shift
 
 # create a list of all the files. This is USER-DEFINED
 
-flist = glob.glob('F:/Users/Brendan/Desktop/SolarProject/data/20130530/1931/aia*.fits')
+flist = glob.glob('F:/Users/Brendan/Desktop/SolarProject/FITS/20120923/171b/aia*.fits')
 
 # Create an empty list
 mc_list = []
@@ -50,6 +50,6 @@ for filename in flist:
 new_mapcube = Map(mc_list, cube=True)
 
 
-shifts = calculate_solar_rotate_shift(new_mapcube)
+shifts = calculate_solar_rotate_shift(new_mapcube, layer_index=1)
 
 print shifts

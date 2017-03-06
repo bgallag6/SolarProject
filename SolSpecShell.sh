@@ -18,4 +18,4 @@ python SolSpec_Call.py $directory $date $wavelength
 
 mpiexec -n $num python Spec_fit_mpi.py $directory $date $wavelength
 
-python SolSpec_Call_Heatmaps.py $directory $date $wavelength
+:: python SolSpec_Call_Heatmaps.py $directory $date $wavelength
