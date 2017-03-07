@@ -380,12 +380,12 @@ def heatmap(directory, date, wavelength):
     
     # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
     #titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', '$\chi^2$']
-    titles = [r'Power Law Slope-Coefficient -- [$A$]', r'Power Law Index -- [$n$]', r'Power Law Tail -- [$C$]', r'Gaussian Amplitude -- [$\alpha$]', r'Gaussian Location [s] -- [$\beta$]', r'Gaussian Width -- [$\sigma$]', 'F-Statistic', r'Gaussian Amplitude Scaled -- [$\alpha$]', 'P-Value']
+    titles = [r'Power Law Slope-Coefficient [flux] - $A$', r'Power Law Index - $n$', r'Power Law Tail - $C$', r'Gaussian Amplitude [flux] - $\alpha$', r'Gaussian Location [s] - $\beta$', r'Gaussian Width - $\sigma$', 'F-Statistic', r'Gaussian Amplitude Scaled - $\alpha$', 'p-Value']
     #names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'Chi2']
     names = ['slope_coeff', 'index', 'tail', 'gauss_amp', 'gauss_loc', 'gauss_wid', 'f_test', 'gauss_amp_scaled', 'p_value']
     #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location (e^(Value))', 'Width', '$\chi^2$']
     #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', '$\chi^2$']
-    cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', 'F-Statistic', 'Amplitude Scaled', 'P-Value']
+    cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', 'F-Statistic', 'Amplitude Scaled', 'p-Value']
     
     #vmin = [10**-11, 0.5, 10**-6, 10**-6, -6.5, 0.1, 2.]  # think don't need anymore  (or option to set ranges for specific wavelengths?)
     #vmax = [10**-6, 2.5, 0.003, 10**-2, -4.5, 0.8, 15.]  # think don't need anymore
@@ -409,15 +409,15 @@ def heatmap(directory, date, wavelength):
     #h_map = h_map[:,0:h_map.shape[1]-1,0:h_map.shape[2]-1]  # trim last row and column from array (originally needed since went one past)
     trim_y = (h_map.shape[1]-1600)/2
     trim_x = (h_map.shape[2]-1600)/2
-    #h_map = h_map[:, trim_y:h_map.shape[1]-trim_y, trim_x:h_map.shape[2]-trim_x]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
+    h_map = h_map[:, trim_y:h_map.shape[1]-trim_y, trim_x:h_map.shape[2]-trim_x]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
     
-    #x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
-    #y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
+    x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
+    y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
     
-    x_ticks = [0,100,200,300,400,500]
-    y_ticks = [0,100,200,300]  
+    #x_ticks = [0,100,200,300,400,500]
+    #y_ticks = [0,100,200,300]  
     
-    #"""
+    """
     if h_map.shape[2] > h_map.shape[1]:
         aspect_ratio = float(h_map.shape[2]) / float(h_map.shape[1])
         fig_height = 10
@@ -430,13 +430,14 @@ def heatmap(directory, date, wavelength):
         fig_width = 10+2  # works better for 20130626 (with no x/y labels)
         #fig_height = 10*aspect_ratio
         fig_height = 10*aspect_ratio  # works better for 20130626
-    #"""
+    """
     
-    #fig_width = 10+2  # works better for 20130626 (with no x/y labels)
-    #fig_height = 10  # works better for 20130626
+    fig_width = 10+2  # works better for 20130626 (with no x/y labels)
+    #fig_width = 10+2  # works better for 20130626 (with x/y labels)
+    fig_height = 10  # works better for 20130626
     
     for i in range(0,len(titles)-1):
-    #for i in range(0,1):
+    #for i in range(4,5):
         
         #fig = plt.figure(figsize=(13,9))
         fig = plt.figure(figsize=(fig_width,fig_height))
@@ -454,6 +455,8 @@ def heatmap(directory, date, wavelength):
             h_map[i] = 1./(np.exp(h_map[i]))
             h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+            #h_min = 100
+            #h_max = 400
             #cmap = 'jet_r'  # reverse color-scale for Gaussian Location, because of flipped frequencies to seconds
             cmap = cm.get_cmap('jet_r', 10)
         elif i == 8:
@@ -471,8 +474,8 @@ def heatmap(directory, date, wavelength):
         
         im = ax.imshow(np.flipud(h_map[i]), cmap = cmap, vmin=h_min, vmax=h_max)
         #im = ax.imshow(h_map[i], cmap = cmap, vmin=h_min, vmax=h_max)
-        plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
-        plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
+        #plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
+        #plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
         plt.xticks(x_ticks,fontsize=font_size)
         plt.yticks(y_ticks,fontsize=font_size)
         divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
@@ -490,7 +493,7 @@ def heatmap(directory, date, wavelength):
         #"""
         flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
     
-        fig = plt.figure(figsize=(fig_width,fig_height))
+        fig = plt.figure(figsize=(fig_width+1,fig_height))
         plt.title('%s' % (titles[i]), y = 1.01, fontsize=font_size)  # no date / wavelength
         #plt.title(r'%s: %i $\AA$  [Histogram - %s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
         plt.xlabel('%s' % cbar_labels[i], fontsize=font_size, labelpad=10)
@@ -502,7 +505,7 @@ def heatmap(directory, date, wavelength):
         plt.ylim(0, y.max()*1.1)
         #plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
+        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
         #"""
     
     # generate p-value heatmap
@@ -539,7 +542,7 @@ def heatmap(directory, date, wavelength):
     print mask_percent
                     
     plots = [p_mask, amp_mask, loc_mask, wid_mask]
-    names_f = ['P-Value Mask', 'Gaussian Amplitude', 'Gaussian Location [s]', 'Gaussian Width']
+    names_f = ['p-Value Mask', 'Gaussian Amplitude', r'Gaussian Location [s] - $\beta$', 'Gaussian Width']
     names_m = ['p_mask', 'amp', 'loc', 'wid']
     
     for k in range(4):           
@@ -562,8 +565,8 @@ def heatmap(directory, date, wavelength):
         else:
             #im = ax.imshow(plots[k], cmap = cmap)
             im = ax.imshow(np.flipud(plots[k]), cmap = cmap)
-        plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
-        plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
+        #plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
+        #plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
         plt.xticks(x_ticks,fontsize=font_size)
         plt.yticks(y_ticks,fontsize=font_size)
         divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
@@ -582,7 +585,7 @@ def heatmap(directory, date, wavelength):
     fig = plt.figure(figsize=(fig_width,fig_height))
     ax = plt.gca()  # get current axis -- to set colorbar 
     #plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
-    plt.title(r'Rollover Period [s] -- [$(C/A)^{-\frac{1}{n}}$]', y = 1.01, fontsize=font_size)  # no date / wavelength
+    plt.title(r'Rollover Period [s] - $(C/A)^{-\frac{1}{n}}$', y = 1.01, fontsize=font_size)  # no date / wavelength
     roll_freq = np.nan_to_num(roll_freq)  # deal with NaN's causing issues
     h_min = np.percentile(roll_freq,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
     h_max = np.percentile(roll_freq,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
@@ -592,8 +595,8 @@ def heatmap(directory, date, wavelength):
     #im = ax.imshow(roll_freq, cmap = cmap, vmin=h_min, vmax=h_max)
     im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=h_min, vmax=h_max)
     #im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=(1./10**-1.), vmax=(1./10**-3.5))  # should bounds be set at frequency range
-    plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
-    plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
+    #plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
+    #plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
     plt.xticks(x_ticks,fontsize=font_size)
     plt.yticks(y_ticks,fontsize=font_size)
     divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
@@ -613,7 +616,7 @@ def heatmap(directory, date, wavelength):
     vis = visual
     trim_yv = (vis.shape[1]-1600)/2
     trim_xv = (vis.shape[2]-1600)/2
-    #vis = vis[:, trim_yv:vis.shape[1]-trim_yv, trim_xv:vis.shape[2]-trim_xv]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
+    vis = vis[:, trim_yv:vis.shape[1]-trim_yv, trim_xv:vis.shape[2]-trim_xv]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
     
     for i in range(2):
         
@@ -629,8 +632,8 @@ def heatmap(directory, date, wavelength):
         #im = ax.imshow(h_map[i], vmin=vmin[i], vmax=vmax[i])
         #im = ax.imshow(vis[i], cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
         im = ax.imshow(np.flipud(vis[i]), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
-        plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
-        plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
+        #plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
+        #plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
         plt.xticks(x_ticks,fontsize=font_size)
         plt.yticks(y_ticks,fontsize=font_size)
         divider = make_axes_locatable(ax)

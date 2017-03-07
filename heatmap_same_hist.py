@@ -12,14 +12,16 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.stats import f as ff
 from matplotlib import cm
 
-HEATMAPS = np.load('C:/Users/Brendan/Desktop/20130626_193_-500_500i_-500_600j_param.npy')
-HEATMAPS2 = np.load('C:/Users/Brendan/Desktop/20130626_193_-500_500i_-500_600j_param_slope6.npy')
-VISUAL = np.load('C:/Users/Brendan/Desktop/20130626_193_-500_500i_-500_600j_visual.npy')
+HEATMAPS = np.load('C:/Users/Brendan/Desktop/20130626_171_test/171/param_6_double.npy')
+HEATMAPS2 = np.load('C:/Users/Brendan/Desktop/20130626_171_test/171/param_6_single.npy')
+HEATMAPS3 = np.load('C:/Users/Brendan/Desktop/20130626_171_test/171/param_4_double.npy')
+HEATMAPS4 = np.load('C:/Users/Brendan/Desktop/20130626_171_test/171/param_4_single.npy')
+#VISUAL = np.load('C:/Users/Brendan/Desktop/20130626_193_-500_500i_-500_600j_visual.npy')
 
 #r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130626', wavelength=193, path_name='C:/Users/Brendan/Desktop/193_midfile_1600x1600_slope6/')
 date = '20130626'
 wavelength=193
-path_name='C:/Users/Brendan/Desktop/193_midfile_1600x1600_comparison/'
+path_name='C:/Users/Brendan/Desktop/171_compare/'
 
 # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
 #titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', '$\chi^2$']
@@ -44,6 +46,8 @@ date_title = '%s-%s-%s' % (year,month,day)
 
 h_map = HEATMAPS
 h_map2 = HEATMAPS2
+h_map3 = HEATMAPS3
+h_map4 = HEATMAPS4
 h_map = h_map[:,0:h_map.shape[1]-1,0:h_map.shape[2]-1]  # trim last row and column from array (originally needed since went one past)
 h_map2 = h_map2[:,0:h_map2.shape[1]-1,0:h_map2.shape[2]-1]  # trim last row and column from array (originally needed since went one past)
 
@@ -79,6 +83,8 @@ for i in range(0,len(titles)-1):
     elif i == 4:
         h_map[i] = 1./(np.exp(h_map[i]))
         h_map2[i] = 1./(np.exp(h_map2[i]))
+        h_map3[i] = 1./(np.exp(h_map3[i]))
+        h_map4[i] = 1./(np.exp(h_map4[i]))
         h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         #cmap = 'jet_r'  # reverse color-scale for Gaussian Location, because of flipped frequencies to seconds
@@ -111,7 +117,7 @@ for i in range(0,len(titles)-1):
     cbar.ax.tick_params(labelsize=17, pad=5) 
     #plt.tight_layout()
     #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
-    plt.savefig('%s/%s_%i_%s_4slope.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
+    #plt.savefig('%s/%s_%i_%s_4slope.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
     #"""
     #"""
     fig = plt.figure(figsize=(fig_width,fig_height))
@@ -131,10 +137,12 @@ for i in range(0,len(titles)-1):
         cbar = plt.colorbar(im,cax=cax)
     #cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
     cbar.ax.tick_params(labelsize=17, pad=5) 
-    plt.savefig('%s/%s_%i_%s_6slope.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
+    #plt.savefig('%s/%s_%i_%s_6slope.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
     
     flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
     flat_param2 = np.reshape(h_map2[i], (h_map2[i].shape[0]*h_map2[i].shape[1]))
+    flat_param3 = np.reshape(h_map3[i], (h_map3[i].shape[0]*h_map3[i].shape[1]))
+    flat_param4 = np.reshape(h_map4[i], (h_map4[i].shape[0]*h_map4[i].shape[1]))
 
     fig = plt.figure(figsize=(12,9))
     plt.title('Index Bound Comparison: %s' % titles[i], y = 1.01, fontsize=25)
@@ -143,10 +151,12 @@ for i in range(0,len(titles)-1):
     plt.xticks(fontsize=17)
     plt.yticks(fontsize=17)
     plt.xlim(M2_low[i],M2_high[i])
-    y, x, _ = plt.hist(flat_param, bins=200, color='black', range=(M2_low[i],M2_high[i]), label = '[0.3, 4.0]')
-    y, x, _ = plt.hist(flat_param2, bins=200, color='red', alpha=0.5, range=(M2_low[i],M2_high[i]), label = '[0.3, 6.0]')
+    y, x, _ = plt.hist(flat_param, bins=200, color='black', range=(M2_low[i],M2_high[i]), label = '6 - Double')
+    y, x, _ = plt.hist(flat_param2, bins=200, color='red', alpha=0.5, range=(M2_low[i],M2_high[i]), label = '6 - Single')
+    y, x, _ = plt.hist(flat_param3, bins=200, color='blue', alpha=0.5, range=(M2_low[i],M2_high[i]), label = '4 - Double')
+    y, x, _ = plt.hist(flat_param4, bins=200, color='green', alpha=0.5, range=(M2_low[i],M2_high[i]), label = '4 - Single')
     plt.ylim(0, y.max()*1.1)
-    plt.legend(loc = 'upper left')
+    plt.legend(loc = 'upper right')
     #plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
     #plt.savefig('%s/%s_%i_Histogram_%s.jpeg' % (path_name, date, wavelength, names[i]))
     plt.savefig('%s/%s_%i_Histogram_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
