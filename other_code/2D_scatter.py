@@ -9,9 +9,11 @@ Created on Thu Jan 19 17:01:57 2017
 import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
+from scipy.stats import f as ff
 
 #HEATMAPS = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/param_20130530_1600_2300_2600_2200_3000_float_numpy.npy')
-HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/param_20130530_1600_2300_2600_2200_3000_float_numpy.npy')
+HEATMAPS = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_param_slope6_arthm.npy')
+
 
 titles = ['Power Law Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location', 'Gaussian Width', '($/chi^2$)']
 names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'Chi2']
@@ -22,18 +24,106 @@ cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'L
 #year = date[0:4]
 #month = date[4:6]
 #day = date[6:8]
-wavelength = 1700
+wavelength = 171
 year = '2013'
-month = '05'
-day = '30'
+month = '06'
+day = '26'
 date_title = '%s-%s-%s' % (year,month,day)
 
 h_map = HEATMAPS
-h_map = h_map[:,0:h_map.shape[1]-1,0:h_map.shape[2]-1]
-
-flat_hmap = np.zeros((h_map.shape[0],h_map.shape[1]*h_map.shape[2]))
 
 
+# generate p-value heatmap
+df1, df2 = 3, 6
+p_val = ff.sf(h_map[6], df1, df2)
+
+p_mask = np.copy(p_val)
+
+mask_arr = [0.005,0.0005,0.00005,0.000001]
+for j in range(len(mask_arr)):
+    mask_thresh = mask_arr[j]
+       
+    p_mask = np.copy(p_val)
+    amp_mask = np.copy(h_map[3])
+    loc_mask = np.copy(h_map[4])
+    wid_mask = np.copy(h_map[5])
+    
+    h_min_amp = np.percentile(h_map[3],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+    h_max_amp = np.percentile(h_map[3],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+    
+    count = 0
+    
+    for i in range(p_val.shape[0]):
+            for j in range(p_val.shape[1]):
+                if p_val[i][j] > mask_thresh:
+                    count += 1
+                    p_mask[i][j] = np.NaN
+                    amp_mask[i][j] = np.NaN
+                    loc_mask[i][j] = np.NaN
+                    wid_mask[i][j] = np.NaN
+    
+    flat_hmap_amp = np.reshape(amp_mask,(h_map.shape[1]*h_map.shape[2]))
+    flat_hmap_loc = np.reshape(loc_mask,(h_map.shape[1]*h_map.shape[2]))
+    flat_hmap_wid = np.reshape(wid_mask,(h_map.shape[1]*h_map.shape[2]))
+    flat_hmap_index = np.reshape(h_map[1],(h_map.shape[1]*h_map.shape[2]))
+    #flat_hmap = np.zeros((h_map.shape[0],h_map.shape[1]*h_map.shape[2]))
+
+    fig = plt.figure(figsize=(15,9))
+    xmin = np.percentile(flat_hmap_amp,1)
+    xmax = np.percentile(flat_hmap_amp,99)
+    ymin = np.percentile(flat_hmap_index,1)
+    ymax = np.percentile(flat_hmap_index,99)
+    x_margin = (xmax-xmin)*0.05
+    y_margin = (ymax-ymin)*0.05
+    
+    #ax = fig.add_subplot(111,projection='3d')
+    ax = fig.add_subplot(111)
+    ax.set_title('Mask Threshold = %f' % mask_thresh)
+    #ax.scatter(fl_plC, fl_slopes, fl_plA,marker='.')
+    ax.set_xlim(-0.005, 0.04)
+    ax.set_ylim(0.75, 3.25)
+    ax.set_xlabel('Gaussian Amplitude')
+    ax.set_ylabel('Power Law Index')
+    ax.scatter(flat_hmap_amp,flat_hmap_index,marker='.')
+    plt.savefig('C:/Users/Brendan/Desktop/171_scatter_mask_%i_amp.pdf' % mask_thresh, format='pdf')
+    """
+    fig = plt.figure(figsize=(15,9))
+    xmin = np.percentile(flat_hmap_loc,1)
+    xmax = np.percentile(flat_hmap_loc,99)
+    ymin = np.percentile(flat_hmap_index,1)
+    ymax = np.percentile(flat_hmap_index,99)
+    x_margin = (xmax-xmin)*0.05
+    y_margin = (ymax-ymin)*0.05
+    
+    #ax = fig.add_subplot(111,projection='3d')
+    ax = fig.add_subplot(111)
+    #ax.scatter(fl_plC, fl_slopes, fl_plA,marker='.')
+    ax.set_xlim(-6.5,-4.6)
+    ax.set_ylim(0.75, 3.25)
+    ax.set_xlabel('Gaussian Location')
+    ax.set_ylabel('Power Law Index')
+    ax.scatter(flat_hmap_loc,flat_hmap_index,marker='.')
+    #plt.savefig('C:/Users/Brendan/Desktop/171_scatter_mask_%i_loc.pdf' % mask_thresh, format='pdf')
+    
+    fig = plt.figure(figsize=(15,9))
+    xmin = np.percentile(flat_hmap_wid,1)
+    xmax = np.percentile(flat_hmap_wid,99)
+    ymin = np.percentile(flat_hmap_index,1)
+    ymax = np.percentile(flat_hmap_index,99)
+    x_margin = (xmax-xmin)*0.05
+    y_margin = (ymax-ymin)*0.05
+    
+    #ax = fig.add_subplot(111,projection='3d')
+    ax = fig.add_subplot(111)
+    #ax.scatter(fl_plC, fl_slopes, fl_plA,marker='.')
+    ax.set_xlim(0.05,0.8)
+    ax.set_ylim(0.75, 3.25)
+    ax.set_xlabel('Gaussian Width')
+    ax.set_ylabel('Power Law Index')
+    ax.scatter(flat_hmap_wid,flat_hmap_index,marker='.')
+    #plt.savefig('C:/Users/Brendan/Desktop/171_scatter_mask_%i_wid.pdf' % mask_thresh, format='pdf')
+    """
+"""
 for i in range(h_map.shape[0]):
     if i == 6:
         NaN_replace = np.nan_to_num(h_map[i])  # NaN's in chi^2 heatmap were causing issue, replace with 0?
@@ -42,8 +132,10 @@ for i in range(h_map.shape[0]):
         flat_hmap[i] = np.reshape(h_map[i], (h_map.shape[1]*h_map.shape[2]))
 
 
-for j in range(h_map.shape[0]):
-    for i in range(h_map.shape[0]):    
+#for j in range(h_map.shape[0]):
+for j in range(1,2):
+    #for i in range(h_map.shape[0]): 
+    for i in range(3,4): 
         if i > j:
             xmin = np.percentile(flat_hmap[j],1)
             xmax = np.percentile(flat_hmap[j],99)
@@ -60,10 +152,10 @@ for j in range(h_map.shape[0]):
             ax.set_xlabel('%s' % titles[j])
             ax.set_ylabel('%s' % titles[i])
             ax.scatter(flat_hmap[j],flat_hmap[i],marker='.')
-            path_name='C:/Users/Brendan/Desktop/PHYS 326/test_temp'
-            date = '20130530'
-            plt.savefig('%s/%s_%i_scatter_%s_vs_%s.jpeg' % (path_name, date, wavelength, names[i], names[j]))
-   
+            #path_name='C:/Users/Brendan/Desktop/PHYS 326/test_temp'
+            #date = '20130530'
+            #plt.savefig('%s/%s_%i_scatter_%s_vs_%s.jpeg' % (path_name, date, wavelength, names[i], names[j]))
+"""  
     
 """
 for i in range(0,len(titles)):    
