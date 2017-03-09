@@ -62,8 +62,6 @@ print num_files
 flist = glob.glob('%s/FITS/%s/%i/*.fits' % (directory, date_reg, wavelength))
 
 l = len(flist)
- 
-l_fname = len(flist[0])
    
 # find first file after 00:00:00 - set time base to that
 
@@ -72,17 +70,20 @@ l_fname = len(flist[0])
 
 # create searchable array of images that have already been downloaded
     
-#adj = 5  # adjust 5 characters for 20130815 193 dataset (doesn't have extra '.fits')
-adj = 0  # for all other datasets
+adj = 5  # adjust 5 characters for 20130815 193 dataset (doesn't have extra '.fits')
+#adj = 0  # for all other datasets
 
 arr_have = []
-for i in range(0,l):
-    x = flist[i]
-    h = int(x[(l_fname-33+adj):(l_fname-31+adj)])
-    m = int(x[(l_fname-30+adj):(l_fname-28+adj)])
-    s = int(x[(l_fname-27+adj):(l_fname-25+adj)])        
-    t = ('%-11s''%02d'':''%02d'':''%02d' % (Y1,h,m,s))
-    arr_have.append(t)
+
+if l > 0: 
+    l_fname = len(flist[0])
+    for i in range(0,l):
+        x = flist[i]
+        h = int(x[(l_fname-33+adj):(l_fname-31+adj)])
+        m = int(x[(l_fname-30+adj):(l_fname-28+adj)])
+        s = int(x[(l_fname-27+adj):(l_fname-25+adj)])        
+        t = ('%-11s''%02d'':''%02d'':''%02d' % (Y1,h,m,s))
+        arr_have.append(t)
 #print arr_have
 print len(arr_have)    
 #print arr_have[0]

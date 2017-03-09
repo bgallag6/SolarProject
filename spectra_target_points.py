@@ -44,7 +44,8 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
     
 #spectra_array = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/193/20130626_193_-450_-200i_-200_200j_spectra.npy')
-spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
+#spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
+spectra_array = np.load('C:/Users/Brendan/Desktop/1600/spectra.npy')
 ## load in array of segment-averaged pixel FFTs
 SPECTRA = spectra_array
 
@@ -79,8 +80,11 @@ T1 = 0
 #m2 = [743, 708, 525, 757, 765, 722, 867]
 #l2 = [322, 352, 551, 319, 325, 1441, 864]
 
-m2 = [722, 525, 757, 743]
-l2 = [1441, 551, 319, 322]
+#m2 = [722, 525, 757, 743]  # 171
+#l2 = [1441, 551, 319, 322]  # 171
+
+m2 = [1288,1238,1234,1212,1215,1217,1234,1235,1291,1299]
+l2 = [701,701,701,901,901,901,901,901,901,901]
 
 point_label = ['A', 'B', 'C', 'D']
 
@@ -314,7 +318,7 @@ for l in range(1):
         plt.legend(loc='upper right', prop={'size':23})
         """
         #plt.show()
-        #plt.savefig('C:/Users/Brendan/Desktop/171_point_%s_r.pdf' % (point_label[m]), format='pdf')
+        plt.savefig('C:/Users/Brendan/Desktop/1600_points/1600_%ix_%iy.pdf' % (m2[m],l2[m]), format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/171_slice2_double_optimize/171A_%ii_%ij.jpeg' % (l,m))
         #plt.savefig('C:/Users/Brendan/Desktop/171_points_square/pixel_%ii_%ij_new.jpeg' % (l2[m],m2[m]))
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))

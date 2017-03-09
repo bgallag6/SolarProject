@@ -46,19 +46,23 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
 #spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
 #visual = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_visual.npy')
 spectra_array = np.load('C:/Users/Brendan/Desktop/1600/spectra.npy')
+#spectra_array = np.memmap('F:/Users/Brendan/Desktop/SolarProject/DATA/Temp/20130626/1600_older_spectra_mmap.npy', dtype='float64', mode='r', shape=(1636,1621,299))
+#spectra_array = np.memmap('/mnt/data-solar/Gallagher/data_older/20130626/1600_other/spectra_mmap.npy', dtype='float64', mode='r', shape=(1636,1621,299))
 visual = np.load('C:/Users/Brendan/Desktop/1600/visual_1600.npy')
+param = np.load('C:/Users/Brendan/Desktop/1600/param_1600.npy')
 vis = visual[0]
-## load in array of segment-averaged pixel FFTs
-SPECTRA = spectra_array
-#"""
-print "The region size is %ii x %ij" % (SPECTRA.shape[0], SPECTRA.shape[1])
-print "%i frequencies were evaluated in the FFT" % SPECTRA.shape[2] 
 
-num_freq = SPECTRA.shape[2]  # determine nubmer of frequencies that are used
+## load in array of segment-averaged pixel FFTs
+
+#"""
+print "The region size is %ii x %ij" % (spectra_array.shape[0], spectra_array.shape[1])
+print "%i frequencies were evaluated in the FFT" % spectra_array.shape[2] 
+
+num_freq = spectra_array.shape[2]  # determine nubmer of frequencies that are used
     
 # determine frequency values that FFT will evaluate
 freq_size = ((num_freq)*2) + 1  # determined from FFT-averaging script
-time_step = 12  # add as argument, or leave in as constant?
+time_step = 24  # add as argument, or leave in as constant?
 sample_freq = fftpack.fftfreq(freq_size, d=time_step)
 pidxs = np.where(sample_freq > 0)
 freqs = sample_freq[pidxs]
@@ -83,8 +87,10 @@ m2 = [743, 708, 525, 757, 765, 722, 867]
 l2 = [322, 352, 551, 319, 325, 1441, 864]
 
 
-y_rang = [323,324]
-x_rang = [500,900]
+y_rang = [901,902]
+x_rang = [1200,1300]
+
+#spectra_points = np.zeros((3,299))
 
 #for l in range(1278,1279):
 for l in range(y_rang[0],y_rang[1]):
@@ -98,7 +104,7 @@ for l in range(y_rang[0],y_rang[1]):
         f = freqs  # frequencies
         s = spectra_array[l][m]  # fourier power
         #s = spectra_array[l2[m]][m2[m]]  # fourier power
-        
+        #spectra_points[m-x_rang[0]] = s
        
         # assign equal weights to all parts of the curve
         df = np.log10(f[1:len(f)]) - np.log10(f[0:len(f)-1])
@@ -166,7 +172,7 @@ for l in range(y_rang[0],y_rang[1]):
         #m2_fit = GaussPowerBase(f_fit, A2,n2,C2,P2,fp2,fw2)
         m2_fit = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)
         #s_fit_gp_full = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)  # could get rid of this if not making smaller m2_fit
-        
+        #m2_param = A2, n2, C2, P2, fp2, fw2  # could have used this for params array : = params[0:6,l-1,m-1]
 
         
         #diffM1M2_temp = (m2_fit - m1_fit)**2  # differences squared
@@ -220,18 +226,11 @@ for l in range(y_rang[0],y_rang[1]):
         ax1.vlines((1.0/300.),10**-8,10**1, linestyles='dashed', label='5 minutes')
         ax1.vlines((1.0/180.),10**-8,10**1, linestyles='dotted', label='3 minutes')
         
-        #ax1.text(0.008, 10**-0.45, r'$A$ = {0:0.3e}$\pm${1:0.3e}'.format(m2_param[0], uncertainties[0]), fontsize=15)
-        #ax1.text(0.008, 10**-0.6, r'$n$ = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[1], uncertainties[1]), fontsize=15)
-        #ax1.text(0.008, 10**-0.75, r'$C$ = {0:0.3e}$\pm${1:0.3e}'.format(m2_param[2], uncertainties[2]), fontsize=15)
-        #ax1.text(0.008, 10**-0.9, r'$\alpha$ = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[3], uncertainties[3]), fontsize=15)
-        #ax1.text(0.008, 10**-1.05, r'$\beta$ = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[4], uncertainties[4]), fontsize=15)
-        #ax1.text(0.008, 10**-1.2, r'$\sigma$ = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[5], uncertainties[5]), fontsize=15)
-        
-        ax1.text(0.008, 10**-0.45, r'$A$ = {0:0.3e}'.format(m2_param[0]), fontsize=15)
+        ax1.text(0.008, 10**-0.45, r'$A$ = {0:0.2e}'.format(m2_param[0]), fontsize=15)
         ax1.text(0.008, 10**-0.6, r'$n$ = {0:0.3f}'.format(m2_param[1]), fontsize=15)
-        ax1.text(0.008, 10**-0.75, r'$C$ = {0:0.3e}'.format(m2_param[2]), fontsize=15)
-        ax1.text(0.008, 10**-0.9, r'$\alpha$ = {0:0.3f}'.format(m2_param[3]), fontsize=15)
-        ax1.text(0.008, 10**-1.05, r'$\beta$ = {0:0.3f}'.format(m2_param[4]), fontsize=15)
+        ax1.text(0.008, 10**-0.75, r'$R$ = {0:1.0f} '.format((m2_param[2]/m2_param[0])**(-1./m2_param[1])), fontsize=15)
+        ax1.text(0.008, 10**-0.9, r'$\alpha$ = {0:0.2e}'.format(m2_param[3]), fontsize=15)
+        ax1.text(0.008, 10**-1.05, r'$\beta$ = {0:1.0f} [s]'.format(1./np.exp(m2_param[4])), fontsize=15)
         ax1.text(0.008, 10**-1.2, r'$\sigma$ = {0:0.3f}'.format(m2_param[5]), fontsize=15)
         #plt.text(0.01, 10**-2.4, r'$\chi^2$: Dogbox + trf = {0:0.4f}'.format(redchisqrM22), fontsize=15)
         #ax1.legend(loc='upper left', prop={'size':15})
@@ -247,13 +246,14 @@ for l in range(y_rang[0],y_rang[1]):
         ax2.set_title('1600A: Visual Average', y = 1.01, fontsize=21)
         ax2.set_xlim(0, visual[0].shape[1])
         ax2.set_ylim(0, visual[0].shape[0])
-        rect = patches.Rectangle((x_rang[0],y_rang[0]), (x_rang[1]-x_rang[0]), 9, color='red', fill=False, linewidth=2)
-        rect2 = patches.Rectangle(((m-3),y_rang[0]), 9, 9, color='white', fill=True)
+        rect = patches.Rectangle((x_rang[0],y_rang[0]), (x_rang[1]-x_rang[0]), 9, color='white', fill=False, linewidth=2)
+        rect2 = patches.Rectangle(((m-3),y_rang[0]), 9, 9, color='red', fill=True)
         ax2.add_patch(rect)
         ax2.add_patch(rect2)
+        
         #plt.savefig('C:/Users/Brendan/Desktop/spectra_points/193_%ii_%ij.pdf' % (l2[m],m2[m]), format='pdf')
-        plt.savefig('C:/Users/Brendan/Desktop/1600_slice/1600_%ix_%iy.jpeg' % (m,l))
-        #plt.savefig('C:/Users/Brendan/Desktop/171_points_square/pixel_%ii_%ij_new.jpeg' % (l2[m],m2[m]))
+        #np.save('/mnt/data-solar/Gallagher/DATA/1600_test/1600_prev_spectra.npy', spectra_points)
+        plt.savefig('C:/Users/Brendan/Desktop/1600_slice2/1600_%ix_%iy.jpeg' % (m,l))
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))
         plt.close()
 #"""

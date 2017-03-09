@@ -20,7 +20,7 @@ import SolSpec as ss
 """
 ## download data (fill in missing)
 """
-r = ss.get_data_fill(wavelength=193, time_begin='2013/05/30 00:00:00', time_end='2013/05/30 11:59:59', path_name='F:/Users/Brendan/Desktop/SolarProject/FITS/20130530/193')
+#r = ss.get_data_fill(wavelength=193, time_begin='2013/05/30 00:00:00', time_end='2013/05/30 11:59:59', path_name='F:/Users/Brendan/Desktop/SolarProject/FITS/20130530/193')
 
 
 """
