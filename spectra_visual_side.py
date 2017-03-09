@@ -87,7 +87,7 @@ m2 = [743, 708, 525, 757, 765, 722, 867]
 l2 = [322, 352, 551, 319, 325, 1441, 864]
 
 
-y_rang = [901,902]
+y_rang = [1050,1051]
 x_rang = [1200,1300]
 
 #spectra_points = np.zeros((3,299))
@@ -253,7 +253,7 @@ for l in range(y_rang[0],y_rang[1]):
         
         #plt.savefig('C:/Users/Brendan/Desktop/spectra_points/193_%ii_%ij.pdf' % (l2[m],m2[m]), format='pdf')
         #np.save('/mnt/data-solar/Gallagher/DATA/1600_test/1600_prev_spectra.npy', spectra_points)
-        plt.savefig('C:/Users/Brendan/Desktop/1600_slice2/1600_%ix_%iy.jpeg' % (m,l))
+        plt.savefig('C:/Users/Brendan/Desktop/1600_slice3/1600_%ix_%iy.jpeg' % (m,l))
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))
         plt.close()
 #"""

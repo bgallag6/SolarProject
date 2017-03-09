@@ -56,7 +56,7 @@ num_freq = SPECTRA.shape[2]  # determine nubmer of frequencies that are used
     
 # determine frequency values that FFT will evaluate
 freq_size = ((num_freq)*2) + 1  # determined from FFT-averaging script
-time_step = 12  # add as argument, or leave in as constant?
+time_step = 24  # add as argument, or leave in as constant?
 sample_freq = fftpack.fftfreq(freq_size, d=time_step)
 pidxs = np.where(sample_freq > 0)
 freqs = sample_freq[pidxs]
@@ -268,7 +268,8 @@ for l in range(1):
         ax = plt.gca()  # get current axis -- to set colorbar 
         #plt.title('Power-Law Dominated : Pixel %ii, %ij' % (l2[m],m2[m]), y = 1.01, fontsize=25)
         #plt.title('%s: Pixel %ix, %iy' % (m2_title[m], m2[m],l2[m]), y = 1.01, fontsize=30)
-        plt.title('%s: Point %s' % (m2_title[m], point_label[m]), y = 1.01, fontsize=30)
+        plt.title('1600: %ix, %iy' % (m2[m],l2[m]), y = 1.01, fontsize=30)
+        #plt.title('%s: Point %s' % (m2_title[m], point_label[m]), y = 1.01, fontsize=30)
         plt.ylim((10**-4.7,10**0))
         plt.xlim((10**-4.,10**-1.3))
         plt.xticks(fontsize=30)
@@ -291,7 +292,7 @@ for l in range(1):
         plt.text(0.007, 10**-0.51, r'$n$ =  {0:0.2f}'.format(m2_param[1]), fontsize=30)
         #plt.text(0.008, 10**-0.75, r'$C$ =  {0:0.3e}'.format(m2_param[2]), fontsize=25)
         #plt.text(0.007, 10**-0.73, r'$(C/A)^{-\frac{1}{n}}$ = %i [s]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
-        plt.text(0.007, 10**-0.73, r'$R$ = %i [s]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
+        plt.text(0.007, 10**-0.73, r'$R$ = %1.0f [s]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
         #plt.text(0.007, 10**-0.73, r'$r$ = %i [s]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
         plt.text(0.007, 10**-0.95, r'$\alpha$ =  {0:0.2e}'.format(m2_param[3]), fontsize=30)
         #plt.text(0.007, 10**-1.09, r'$\beta$ = {0:0.3f}'.format(m2_param[4]), fontsize=25)

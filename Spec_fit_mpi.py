@@ -36,26 +36,14 @@ Created on Sat Jan 28 12:15:32 2017
 from timeit import default_timer as timer
 
 import numpy as np
-import numpy as np
 import scipy.signal
-#matplotlib.use('TkAgg') 	# NOTE: This is a MAC/OSX thing. Probably REMOVE for linux/Win
-import matplotlib.pyplot as plt
-from pylab import *
 from scipy.interpolate import interp1d
 from scipy import signal
 import scipy.misc
 import astropy.units as u
-import h5py
 from scipy import fftpack  # doesnt work in module when called here???
-import matplotlib.pylab as plt
 from astropy.convolution import convolve, Box1DKernel
-from matplotlib import cm
 from numpy.random import randn
-from matplotlib.colors import LogNorm
-import matplotlib.colors as colors
-from matplotlib.mlab import bivariate_normal
-from matplotlib.ticker import LogFormatterMathtext
-from timeit import default_timer as timer
 from mpi4py import MPI
 
 from scipy import fftpack    
@@ -78,19 +66,20 @@ def spec_fit( subcube ):
   SPECTRA = subcube
   spectra_array = SPECTRA
   print SPECTRA.shape[0], SPECTRA.shape[1]
-  num_freq = SPECTRA.shape[2]  # determine nubmer of frequencies that are used
-    
+      
   # determine frequency values that FFT will evaluate
+  num_freq = SPECTRA.shape[2]  # determine nubmer of frequencies that are used
   freq_size = ((num_freq)*2) + 1  # determined from FFT-averaging script
-  time_step = 12  # add as argument, or leave in as constant?
+  if wavelength == 1600 or wavelength == 1700:
+      time_step = 24  # 24 second cadence for these wavelengths
+  else:
+      time_step = 12  # 12 second cadence for the others
   sample_freq = fftpack.fftfreq(freq_size, d=time_step)
   pidxs = np.where(sample_freq > 0)
   freqs = sample_freq[pidxs]
-  #freqs = freqs.astype(np.float32)  # possibly use this?
 
 
   # initialize arrays to hold parameter values, also each pixel's combined model fit - for tool
-  # diffM1M2 = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1]))  # not using right now
   params = np.zeros((8, SPECTRA.shape[0], SPECTRA.shape[1]))
   # M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], (len(freqs)+1)/2))  # would save storage / memory space
   #M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], SPECTRA.shape[2]))
@@ -99,9 +88,7 @@ def spec_fit( subcube ):
   
   start = timer()
   T1 = 0
-  
-  ### calculate 3x3 pixel-box geometric average.  start at 1 and end 1 before to deal with edges.
-  ## 10^[(log(a) + log(b) + log(c) + ...) / 9] = [a*b*c*...]^(1/9)
+
     
   for l in range(0,SPECTRA.shape[0]):
   #for l in range(0,15):
@@ -122,8 +109,7 @@ def spec_fit( subcube ):
         ds = df2
         
         # create points to fit model with final parameters 
-        #f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],(len(freqs)+1)/2)  # would save storage / memory space?
-        #f_fit = freqs       
+        #f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],(len(freqs)+1)/2)  # would save storage / memory space?      
         
                                                
         ### fit data to models using SciPy's Levenberg-Marquart method
@@ -196,26 +182,20 @@ def spec_fit( subcube ):
         # create model functions from fitted parameters
         m1_fit = PowerLaw(f, A, n, C)        
         #m2_fit = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)
-        m2_fit2 = GaussPowerBase(f, A22,n22,C22,P22,fp22,fw22) 
-        #m2P_fit = PowerLaw(f, A2, n2, C2)  # only need if plotting
-        #m2G_fit = Gauss(f, P2, fp2, fw2)  # only need if plotting 
-        #m2P_fit = PowerLaw(f, A22, n22, C22)  # only need if plotting
-        #m2G_fit = Gauss(f, P22, fp22, fw22)  # only need if plotting      
-        
-        #diffM1M2_temp = (m2_fit - m1_fit)**2  # differences squared
-        #diffM1M2[l][m] = np.sum(diffM1M2_temp)  # sum of squared differences 
-                               
-        residsM22 = (s - m2_fit2)
-        chisqrM22 = ((residsM22/ds)**2).sum()
-        redchisqrM22 = ((residsM22/ds)**2).sum()/float(f.size-6) 
-        
+        m2_fit2 = GaussPowerBase(f, A22,n22,C22,P22,fp22,fw22)      
+
+        residsM1 = (s - m1_fit)
+        chisqrM1 =  ((residsM1/ds)**2).sum()
+        redchisqrM1 = ((residsM1/ds)**2).sum()/float(f.size-3)  
+                       
         #residsM2 = (s - m2_fit)
         #chisqrM2 = ((residsM2/ds)**2).sum()
         #redchisqrM2 = ((residsM2/ds)**2).sum()/float(f.size-6)
         
-        residsM1 = (s - m1_fit)
-        chisqrM1 =  ((residsM1/ds)**2).sum()
-        redchisqrM1 = ((residsM1/ds)**2).sum()/float(f.size-3)       
+        residsM22 = (s - m2_fit2)
+        chisqrM22 = ((residsM22/ds)**2).sum()
+        redchisqrM22 = ((residsM22/ds)**2).sum()/float(f.size-6) 
+        
         
         #f_test = ((chisqrM1-chisqrM2)/(6-3))/((chisqrM2)/(f.size-6))
         f_test2 = ((chisqrM1-chisqrM22)/(6-3))/((chisqrM22)/(f.size-6))

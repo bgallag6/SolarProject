@@ -1266,7 +1266,7 @@ import scipy.misc
 import astropy.units as u
 #from scipy import fftpack  # not working with this called here???
 from timeit import default_timer as timer
-#import accelerate  # switch on if computer has installed
+import accelerate  # switch on if computer has installed
 import glob
 
 
@@ -1338,7 +1338,10 @@ def fft_avg(directory, date, wavelength, num_seg):
     freq_size = (n - rem) / n_segments
     
     ## determine frequency values that FFT will evaluate
-    time_step = 12  # add as argument in function call, or leave in as constant?
+    if wavelength == 1600 or wavelength == 1700:
+      time_step = 24  # 24 second cadence for these wavelengths
+    else:
+      time_step = 12  # 12 second cadence for the others
     sample_freq = fftpack.fftfreq(freq_size, d=time_step)
     pidxs = np.where(sample_freq > 0)
     freqs = sample_freq[pidxs]
