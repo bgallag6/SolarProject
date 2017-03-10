@@ -188,4 +188,4 @@ for i in range(1):
     ax2.text(90, 60, 'Inset', fontsize=21, color='white')
     rect9 = patches.Rectangle((1,1), 298, 1598, color='white', fill=False, linewidth=3)
     ax2.add_patch(rect9)
-    plt.savefig('C:/Users/Brendan/Desktop/171_visual_%s_points_overlay_revised5.pdf' % names_vis[i], format='pdf')
+    #plt.savefig('C:/Users/Brendan/Desktop/171_visual_%s_points_overlay_revised5.pdf' % names_vis[i], format='pdf')

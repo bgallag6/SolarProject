@@ -5,6 +5,8 @@ Created on Wed Mar 08 05:02:58 2017
 @author: Brendan
 """
 
+# loop through flist couple times until get all.
+
 from sunpy.net import vso
 import astropy.units as u
 import glob
@@ -63,11 +65,6 @@ flist = glob.glob('%s/FITS/%s/%i/*.fits' % (directory, date_reg, wavelength))
 
 l = len(flist)
    
-# find first file after 00:00:00 - set time base to that
-
-# loop through flist couple times until get all.
-
-
 # create searchable array of images that have already been downloaded
     
 adj = 5  # adjust 5 characters for 20130815 193 dataset (doesn't have extra '.fits')

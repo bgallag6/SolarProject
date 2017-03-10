@@ -44,8 +44,8 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
     
 #spectra_array = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/193/20130626_193_-450_-200i_-200_200j_spectra.npy')
-#spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
-spectra_array = np.load('C:/Users/Brendan/Desktop/1600/spectra.npy')
+spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
+#spectra_array = np.load('C:/Users/Brendan/Desktop/1600/spectra.npy')
 ## load in array of segment-averaged pixel FFTs
 SPECTRA = spectra_array
 
@@ -56,7 +56,7 @@ num_freq = SPECTRA.shape[2]  # determine nubmer of frequencies that are used
     
 # determine frequency values that FFT will evaluate
 freq_size = ((num_freq)*2) + 1  # determined from FFT-averaging script
-time_step = 24  # add as argument, or leave in as constant?
+time_step = 12  # add as argument, or leave in as constant?
 sample_freq = fftpack.fftfreq(freq_size, d=time_step)
 pidxs = np.where(sample_freq > 0)
 freqs = sample_freq[pidxs]
@@ -65,8 +65,6 @@ freqs = sample_freq[pidxs]
 start = timer()
 T1 = 0
 
-#m2 = [742, 790, 586, 572, 475, 482, 839, 842, 767, 797, 295, 134, 43, 116, 746, 746, 757, 765, 867, 867, 606, 453, 1463, 804, 828, 55, 742, 573, 525, 664, 762, 649, 711, 722, 1473, 821, 826, 1325, 408, 485, 483, 647, 743, 708, 744]
-#l2 = [322, 235, 311, 313, 297, 223, 489, 590, 547, 626, 758, 371, 376, 196, 331, 325, 319, 325, 864, 807, 1124, 51, 1403, 653, 1163, 321, 323, 157, 551, 330, 1529, 1548, 1440, 1441, 1401, 1229, 1166, 1238, 427, 535, 225, 212, 322, 352, 272]
 
 #m2 = [790, 767, 757, 765, 867, 525, 762, 649, 722, 485, 743, 708, 744, 14] #use
 #l2 = [235, 547, 319, 325, 864, 551, 1529, 1548, 1441, 535, 322, 352, 272, 330] #use
@@ -83,8 +81,14 @@ T1 = 0
 #m2 = [722, 525, 757, 743]  # 171
 #l2 = [1441, 551, 319, 322]  # 171
 
-m2 = [1288,1238,1234,1212,1215,1217,1234,1235,1291,1299]
-l2 = [701,701,701,901,901,901,901,901,901,901]
+#m2 = [722, 722, 722, 722]
+#l2 = [1423, 1427, 1438, 1441]
+
+m2 = [727,726]
+l2 = [323,328]
+
+#m2 = [1288,1238,1234,1212,1215,1217,1234,1235,1291,1299]
+#l2 = [701,701,701,901,901,901,901,901,901,901]
 
 point_label = ['A', 'B', 'C', 'D']
 
@@ -268,7 +272,7 @@ for l in range(1):
         ax = plt.gca()  # get current axis -- to set colorbar 
         #plt.title('Power-Law Dominated : Pixel %ii, %ij' % (l2[m],m2[m]), y = 1.01, fontsize=25)
         #plt.title('%s: Pixel %ix, %iy' % (m2_title[m], m2[m],l2[m]), y = 1.01, fontsize=30)
-        plt.title('1600: %ix, %iy' % (m2[m],l2[m]), y = 1.01, fontsize=30)
+        plt.title('171: %ix, %iy' % (m2[m],l2[m]), y = 1.01, fontsize=30)
         #plt.title('%s: Point %s' % (m2_title[m], point_label[m]), y = 1.01, fontsize=30)
         plt.ylim((10**-4.7,10**0))
         plt.xlim((10**-4.,10**-1.3))
@@ -319,7 +323,7 @@ for l in range(1):
         plt.legend(loc='upper right', prop={'size':23})
         """
         #plt.show()
-        plt.savefig('C:/Users/Brendan/Desktop/1600_points/1600_%ix_%iy.pdf' % (m2[m],l2[m]), format='pdf')
+        plt.savefig('C:/Users/Brendan/Desktop/171_points/171_%ix_%iy.pdf' % (m2[m],l2[m]), format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/171_slice2_double_optimize/171A_%ii_%ij.jpeg' % (l,m))
         #plt.savefig('C:/Users/Brendan/Desktop/171_points_square/pixel_%ii_%ij_new.jpeg' % (l2[m],m2[m]))
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))

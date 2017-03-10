@@ -26,17 +26,17 @@ import SolSpec as ss
 """
 ## arcsecond to pixel + subregion
 """
-#x1 = -528
-#x2 = -132
-#y1 = -100
-#y2 = 100
+x1 = -525
+x2 = 525
+y1 = 250
+y2 = 500
 
 #x1 = 1850
 #x2 = 3050
 #y1 = 2000
 #y2 = 2900
 
-#ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/FITS/20120923/171/aia_lev1_171a_2012_09_23t05_59_59_34z_image_lev1.fits.fits')
+ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/FITS/20130626/171/aia_lev1_171a_2013_06_26t00_00_11_34z_image_lev1.fits.fits')
 #ss.pix2arc(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data/20140902/193/aia_lev1_193a_2014_09_02t05_59_54_84z_image_lev1.fits.fits')
 
 #"""

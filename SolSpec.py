@@ -1067,7 +1067,6 @@ def spec_fit(spectra_array):
 ############################
 """
 
-# maybe add -- if rebin = 1, don't add to filename
 
 from pylab import *
 import glob
@@ -1266,7 +1265,7 @@ import scipy.misc
 import astropy.units as u
 #from scipy import fftpack  # not working with this called here???
 from timeit import default_timer as timer
-import accelerate  # switch on if computer has installed
+#import accelerate  # switch on if computer has installed
 import glob
 
 

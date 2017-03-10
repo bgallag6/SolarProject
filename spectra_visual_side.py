@@ -43,13 +43,16 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
     
 #spectra_array = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/193/20130626_193_-450_-200i_-200_200j_spectra.npy')
-#spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
-#visual = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_visual.npy')
-spectra_array = np.load('C:/Users/Brendan/Desktop/1600/spectra.npy')
+spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
+visual = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_visual.npy')
+#spectra_array = np.load('C:/Users/Brendan/Desktop/1600/spectra.npy')
 #spectra_array = np.memmap('F:/Users/Brendan/Desktop/SolarProject/DATA/Temp/20130626/1600_older_spectra_mmap.npy', dtype='float64', mode='r', shape=(1636,1621,299))
 #spectra_array = np.memmap('/mnt/data-solar/Gallagher/data_older/20130626/1600_other/spectra_mmap.npy', dtype='float64', mode='r', shape=(1636,1621,299))
-visual = np.load('C:/Users/Brendan/Desktop/1600/visual_1600.npy')
-param = np.load('C:/Users/Brendan/Desktop/1600/param_1600.npy')
+#visual = np.load('C:/Users/Brendan/Desktop/1600/visual_1600.npy')
+#param = np.load('C:/Users/Brendan/Desktop/1600/param_1600.npy')
+param = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_param_slope6_arthm.npy')
+p_loc = 1./np.exp(param[4])
+p_loc = p_loc[125:525,525:950]
 vis = visual[0]
 
 ## load in array of segment-averaged pixel FFTs
@@ -62,7 +65,7 @@ num_freq = spectra_array.shape[2]  # determine nubmer of frequencies that are us
     
 # determine frequency values that FFT will evaluate
 freq_size = ((num_freq)*2) + 1  # determined from FFT-averaging script
-time_step = 24  # add as argument, or leave in as constant?
+time_step = 12  # add as argument, or leave in as constant?
 sample_freq = fftpack.fftfreq(freq_size, d=time_step)
 pidxs = np.where(sample_freq > 0)
 freqs = sample_freq[pidxs]
@@ -70,9 +73,6 @@ freqs = sample_freq[pidxs]
 
 start = timer()
 T1 = 0
-
-#m2 = [742, 790, 586, 572, 475, 482, 839, 842, 767, 797, 295, 134, 43, 116, 746, 746, 757, 765, 867, 867, 606, 453, 1463, 804, 828, 55, 742, 573, 525, 664, 762, 649, 711, 722, 1473, 821, 826, 1325, 408, 485, 483, 647, 743, 708, 744]
-#l2 = [322, 235, 311, 313, 297, 223, 489, 590, 547, 626, 758, 371, 376, 196, 331, 325, 319, 325, 864, 807, 1124, 51, 1403, 653, 1163, 321, 323, 157, 551, 330, 1529, 1548, 1440, 1441, 1401, 1229, 1166, 1238, 427, 535, 225, 212, 322, 352, 272]
 
 #m2 = [790, 767, 757, 765, 867, 525, 762, 649, 722, 485, 743, 708, 744, 14] #use
 #l2 = [235, 547, 319, 325, 864, 551, 1529, 1548, 1441, 535, 322, 352, 272, 330] #use
@@ -83,12 +83,12 @@ T1 = 0
 #m2 = [14, 58, 283, 512, 629, 810, 909, 901, 1342, 767, 873]
 #l2 = [330, 394, 482, 538, 379, 293, 400, 409, 1239, 1160, 1261]
 
-m2 = [743, 708, 525, 757, 765, 722, 867]
-l2 = [322, 352, 551, 319, 325, 1441, 864]
+#m2 = [743, 708, 525, 757, 765, 722, 867]
+#l2 = [322, 352, 551, 319, 325, 1441, 864]
 
 
-y_rang = [1050,1051]
-x_rang = [1200,1300]
+y_rang = [321,322]
+x_rang = [685,800]
 
 #spectra_points = np.zeros((3,299))
 
@@ -209,10 +209,10 @@ for l in range(y_rang[0],y_rang[1]):
         # Plot models + display combined-model parameters + uncertainties
         
         fig = plt.figure(figsize=(25,12))
-        ax1 = plt.subplot2grid((1,25),(0, 0), colspan=13, rowspan=1)
+        ax1 = plt.subplot2grid((1,26),(0, 0), colspan=13, rowspan=1)
         #plt.title('Power-Law Dominated : Pixel %ii, %ij' % (l2[m],m2[m]), y = 1.01, fontsize=25)
-        #ax1.set_title('171A: Pixel %ix, %iy' % (m,l), y = 1.01, fontsize=17)
-        ax1.set_title('1600A: Pixel %ix, %iy' % (m,l), y = 1.01, fontsize=21)
+        ax1.set_title('171A: Pixel %ix, %iy' % (m,l), y = 1.01, fontsize=21)
+        #ax1.set_title('1600A: Pixel %ix, %iy' % (m,l), y = 1.01, fontsize=21)
         ax1.set_ylim((10**-5,10**0))
         ax1.set_xlim((10**-5,10**-1))
         ax1.loglog(f,s,'k')
@@ -236,8 +236,8 @@ for l in range(y_rang[0],y_rang[1]):
         #ax1.legend(loc='upper left', prop={'size':15})
         ax1.legend(loc='upper left', prop={'size':12})
         
-        
-        ax2 = plt.subplot2grid((1,25),(0, 14), colspan=11, rowspan=1)
+        """ Visual Image Side-Plot
+        ax2 = plt.subplot2grid((1,26),(0, 14), colspan=12, rowspan=1)
         v_min = np.percentile(visual[0],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         v_max = np.percentile(visual[0],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)  
         #ax2.imshow(visual[0], cmap='sdoaia171', vmin=v_min, vmax=v_max)
@@ -250,10 +250,26 @@ for l in range(y_rang[0],y_rang[1]):
         rect2 = patches.Rectangle(((m-3),y_rang[0]), 9, 9, color='red', fill=True)
         ax2.add_patch(rect)
         ax2.add_patch(rect2)
+        """
+        
+        #""" Gaussian Location Side-Plot
+        ax2 = plt.subplot2grid((1,26),(0, 14), colspan=12, rowspan=1)
+        v_min = np.percentile(visual[0],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        v_max = np.percentile(visual[0],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)  
+        ax2.imshow(np.flipud(p_loc), cmap='jet_r')
+        #ax2.set_title('171A: Visual Average', y = 1.01, fontsize=17)
+        ax2.set_title('171A: Gaussian Location', y = 1.01, fontsize=21)
+        rect = patches.Rectangle((x_rang[0]-525,y_rang[0]-125), (x_rang[1]-x_rang[0]), 7, color='white', fill=False, linewidth=2)
+        rect3 = patches.Rectangle(((m-3-525),y_rang[0]-125), 7, 7, color='red', fill=True)
+        rect2 = patches.Rectangle(((m-2-525),y_rang[0]-124), 5, 5, color='white', fill=True)  
+        ax2.add_patch(rect)
+        ax2.add_patch(rect3)
+        ax2.add_patch(rect2)
+        #"""
         
         #plt.savefig('C:/Users/Brendan/Desktop/spectra_points/193_%ii_%ij.pdf' % (l2[m],m2[m]), format='pdf')
         #np.save('/mnt/data-solar/Gallagher/DATA/1600_test/1600_prev_spectra.npy', spectra_points)
-        plt.savefig('C:/Users/Brendan/Desktop/1600_slice3/1600_%ix_%iy.jpeg' % (m,l))
+        plt.savefig('C:/Users/Brendan/Desktop/171_slice/171_%ix_%iy.jpeg' % (m,l))
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))
         plt.close()
 #"""
