@@ -5,13 +5,18 @@ Created on Thu Jan 19 23:36:57 2017
 @author: Brendan
 """
 
+import numpy as np
+import plotly
 import plotly.plotly as py
 from plotly.graph_objs import *
 from plotly import tools
 import plotly.plotly as py
+import plotly.offline as offline
 import plotly.graph_objs as go
+from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+plotly.offline.init_notebook_mode() # run at the start of every ipython notebook
 
-HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/param_20130530_1600_2300_2600i_2200_3000j_data_rebin4b.npy')
+HEATMAPS = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_param_slope6_arthm.npy')
 
 h0 = HEATMAPS[0]
 h1 = HEATMAPS[1]

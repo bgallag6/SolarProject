@@ -27,6 +27,7 @@ from timeit import default_timer as timer
 from scipy.stats import f
 import matplotlib.patches as patches
 from sunpy.map import Map
+from scipy.stats import f as ff
 
 from scipy import fftpack    
 
@@ -51,9 +52,36 @@ visual = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-5
 #visual = np.load('C:/Users/Brendan/Desktop/1600/visual_1600.npy')
 #param = np.load('C:/Users/Brendan/Desktop/1600/param_1600.npy')
 param = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_param_slope6_arthm.npy')
-p_loc = 1./np.exp(param[4])
-p_loc = p_loc[125:525,525:950]
+p_loc = param[4]
+#p_loc = 1./np.exp(param[4])
+
 vis = visual[0]
+
+# generate p-value heatmap
+df1, df2 = 3, 6
+p_val = ff.sf(param[6], df1, df2)
+
+p_mask = np.copy(p_val)
+
+mask_thresh = 0.005    
+   
+p_mask = np.copy(p_val)
+loc_mask = np.copy(p_loc)
+
+#h_min_amp = np.percentile(h_map[3],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+#h_max_amp = np.percentile(h_map[3],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+
+#count = 0
+
+for i in range(p_val.shape[0]):
+        for j in range(p_val.shape[1]):
+            if p_val[i][j] > mask_thresh:
+                #count += 1
+                p_mask[i][j] = np.NaN
+                loc_mask[i][j] = np.NaN
+
+p_loc = loc_mask[125:525,525:950]
+p_loc = 1./np.exp(p_loc)
 
 ## load in array of segment-averaged pixel FFTs
 
@@ -253,12 +281,10 @@ for l in range(y_rang[0],y_rang[1]):
         """
         
         #""" Gaussian Location Side-Plot
-        ax2 = plt.subplot2grid((1,26),(0, 14), colspan=12, rowspan=1)
-        v_min = np.percentile(visual[0],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-        v_max = np.percentile(visual[0],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)  
+        ax2 = plt.subplot2grid((1,26),(0, 14), colspan=12, rowspan=1) 
         ax2.imshow(np.flipud(p_loc), cmap='jet_r')
         #ax2.set_title('171A: Visual Average', y = 1.01, fontsize=17)
-        ax2.set_title('171A: Gaussian Location', y = 1.01, fontsize=21)
+        ax2.set_title(r'171$\AA$: Gaussian Location - Masked', y = 1.01, fontsize=21)
         rect = patches.Rectangle((x_rang[0]-525,y_rang[0]-125), (x_rang[1]-x_rang[0]), 7, color='white', fill=False, linewidth=2)
         rect3 = patches.Rectangle(((m-3-525),y_rang[0]-125), 7, 7, color='red', fill=True)
         rect2 = patches.Rectangle(((m-2-525),y_rang[0]-124), 5, 5, color='white', fill=True)  
@@ -269,7 +295,7 @@ for l in range(y_rang[0],y_rang[1]):
         
         #plt.savefig('C:/Users/Brendan/Desktop/spectra_points/193_%ii_%ij.pdf' % (l2[m],m2[m]), format='pdf')
         #np.save('/mnt/data-solar/Gallagher/DATA/1600_test/1600_prev_spectra.npy', spectra_points)
-        plt.savefig('C:/Users/Brendan/Desktop/171_slice/171_%ix_%iy.jpeg' % (m,l))
+        plt.savefig('C:/Users/Brendan/Desktop/171_slice2/171_%ix_%iy.jpeg' % (m,l))
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))
         plt.close()
 #"""

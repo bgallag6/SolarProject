@@ -16,7 +16,7 @@ import SolSpec as ss
 """
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20130530'
+date = '20160905'
 wavelength = 193
 
 """

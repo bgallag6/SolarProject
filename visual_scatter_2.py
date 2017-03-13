@@ -22,7 +22,10 @@ import matplotlib.patches as patches
 
 #v171 = np.load('F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/171/20130626_171_-500_500i_-500_500j_visual.npy')
 v171 = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_visual.npy')
+p171 = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_param_slope6_arthm.npy')
 v1600 = np.load('C:/Users/Brendan/Desktop/1600/visual_1600.npy')
+
+
     
 # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
 #titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', '$\chi^2$']
@@ -48,7 +51,7 @@ cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'L
 #[322]
 
 m2 = [722, 525, 757, 1200]
-l2 = [1600-1441, 1600-551, 1600-319, 1600-900]
+l2 = [v171[0].shape[0]-1441, v171[0].shape[0]-551, v171[0].shape[0]-319, v171[0].shape[0]-900]
 
 m3 = [100]
 l3 = [1600-900]
@@ -81,7 +84,7 @@ names_vis = ['average', 'mid']
 vis = v171
 trim_yv = (vis.shape[1]-1600)/2
 trim_xv = (vis.shape[2]-1600)/2
-vis = vis[:, trim_yv:vis.shape[1]-trim_yv, trim_xv:vis.shape[2]-trim_xv]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)  
+#vis = vis[:, trim_yv:vis.shape[1]-trim_yv, trim_xv:vis.shape[2]-trim_xv]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)  
 vis1600 = v1600[:, 19:v1600.shape[1]-19, 12:v1600.shape[2]-11]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)  
 
 vis1600_trim = vis1600[:, :, 1100:1400] 
@@ -153,8 +156,8 @@ for i in range(1):
     plt.ylim(vis[0].shape[0], 0)
     plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
     plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
-    plt.xticks([0,200,400,600,800,1000,1200,1400],fontsize=23)
-    plt.yticks([0,200,400,600,800,1000,1200,1400],fontsize=23)
+    plt.xticks([0,200,400,600,800,1000,1200,1400,1600],fontsize=23)
+    plt.yticks([0,200,400,600,800,1000,1200,1400,1600],fontsize=23)
     rect = patches.Rectangle((610,1600-1460), 70, 90, color='white', fill=True)
     ax1.add_patch(rect)
     ax1.text(620,1600-1475+90, 'A', fontsize=25)

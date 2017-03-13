@@ -14,7 +14,7 @@ read -p "Enter a date [ex. 20130626]: " date
 read -p "Enter a wavelength [ex. 193]: " wavelength
 read -p "Enter the number of processors [ex. 16]: " num
 
-:: python SolSpec_Call.py $directory $date $wavelength
+python SolSpec_Call.py $directory $date $wavelength
 
 mpiexec -n $num python Spec_fit_mpi.py $directory $date $wavelength
 

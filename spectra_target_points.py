@@ -44,15 +44,17 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
     
 #spectra_array = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/193/20130626_193_-450_-200i_-200_200j_spectra.npy')
-spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
+#spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
+spectra_array = np.load('C:/Users/Brendan/Desktop/20160905/193_1000.npy')
 #spectra_array = np.load('C:/Users/Brendan/Desktop/1600/spectra.npy')
 ## load in array of segment-averaged pixel FFTs
 SPECTRA = spectra_array
 
-print "The region size is %ii x %ij" % (SPECTRA.shape[0], SPECTRA.shape[1])
-print "%i frequencies were evaluated in the FFT" % SPECTRA.shape[2] 
+#print "The region size is %ii x %ij" % (SPECTRA.shape[0], SPECTRA.shape[1])
+#print "%i frequencies were evaluated in the FFT" % SPECTRA.shape[2] 
 
-num_freq = SPECTRA.shape[2]  # determine nubmer of frequencies that are used
+#num_freq = SPECTRA.shape[2]  # determine nubmer of frequencies that are used
+num_freq = 299
     
 # determine frequency values that FFT will evaluate
 freq_size = ((num_freq)*2) + 1  # determined from FFT-averaging script
@@ -81,11 +83,14 @@ T1 = 0
 #m2 = [722, 525, 757, 743]  # 171
 #l2 = [1441, 551, 319, 322]  # 171
 
-#m2 = [722, 722, 722, 722]
+#m2 = [722, 722, 722, 722]  # tail possibilities
 #l2 = [1423, 1427, 1438, 1441]
 
-m2 = [727,726]
-l2 = [323,328]
+#m2 = [727,726] # gaussian possibilities
+#l2 = [323,328]
+
+#m2 = [516,525,525,524,174,788,189,193,188,187]
+#l2 = [551,547,550,548,417,1163,522,521,523,524]
 
 #m2 = [1288,1238,1234,1212,1215,1217,1234,1235,1291,1299]
 #l2 = [701,701,701,901,901,901,901,901,901,901]
@@ -99,14 +104,15 @@ m2_title = ['Tail Dominated w/o Gaussian', 'Power-Law Dominated w/o Gaussian', '
 #for l in range(321,322):
 for l in range(1):
     
-    #for m in range(500,900):
+    for m in range(0,10):
     #for m in range(900,901):
-    for m in range(len(m2)):    
+    #for m in range(len(m2)):    
         
                                         
         f = freqs  # frequencies
         #s = spectra_array[l][m]  # fourier power
-        s = spectra_array[l2[m]][m2[m]]  # fourier power
+        s = spectra_array[m]  # fourier power
+        #s = spectra_array[l2[m]][m2[m]]  # fourier power
         
        
         # assign equal weights to all parts of the curve
@@ -272,7 +278,7 @@ for l in range(1):
         ax = plt.gca()  # get current axis -- to set colorbar 
         #plt.title('Power-Law Dominated : Pixel %ii, %ij' % (l2[m],m2[m]), y = 1.01, fontsize=25)
         #plt.title('%s: Pixel %ix, %iy' % (m2_title[m], m2[m],l2[m]), y = 1.01, fontsize=30)
-        plt.title('171: %ix, %iy' % (m2[m],l2[m]), y = 1.01, fontsize=30)
+        #plt.title('171: %ix, %iy' % (m2[m],l2[m]), y = 1.01, fontsize=30)
         #plt.title('%s: Point %s' % (m2_title[m], point_label[m]), y = 1.01, fontsize=30)
         plt.ylim((10**-4.7,10**0))
         plt.xlim((10**-4.,10**-1.3))
@@ -323,7 +329,7 @@ for l in range(1):
         plt.legend(loc='upper right', prop={'size':23})
         """
         #plt.show()
-        plt.savefig('C:/Users/Brendan/Desktop/171_points/171_%ix_%iy.pdf' % (m2[m],l2[m]), format='pdf')
+        #plt.savefig('C:/Users/Brendan/Desktop/171_points/171_%ix_%iy.pdf' % (m2[m],l2[m]), format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/171_slice2_double_optimize/171A_%ii_%ij.jpeg' % (l,m))
         #plt.savefig('C:/Users/Brendan/Desktop/171_points_square/pixel_%ii_%ij_new.jpeg' % (l2[m],m2[m]))
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))

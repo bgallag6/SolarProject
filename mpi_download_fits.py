@@ -21,7 +21,7 @@ def get_data_fill(arr_need, wavelength, directory):
         qr=client.query(vso.attrs.Time(arr_need[i],arr_need[i]), vso.attrs.Instrument('aia'), vso.attrs.Wave(wavelength * u.AA, wavelength * u.AA))
         print qr
         #res=client.get(qr, path='%s/FITS/%s/%i/{file}.fits' % (directory, date, wavelength)).wait()
-        res=client.get(qr, path='%s/FITS/%s/%i/{file}' % (directory, date, wavelength)).wait()  # only for 193  (maybe for all going forward?)
+        res=client.get(qr, path='%s/FITS/%s/%i/{file}' % (directory, date, wavelength)).wait()  # use this from now on
         #print res
  
  

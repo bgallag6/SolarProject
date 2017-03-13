@@ -67,8 +67,8 @@ l = len(flist)
    
 # create searchable array of images that have already been downloaded
     
-adj = 5  # adjust 5 characters for 20130815 193 dataset (doesn't have extra '.fits')
-#adj = 0  # for all other datasets
+adj = 0  # adjust 5 characters for 20130815 193 dataset (doesn't have extra '.fits')
+#adj = -5  # for the datasets left that have extra '.fits.
 
 arr_have = []
 
@@ -76,9 +76,9 @@ if l > 0:
     l_fname = len(flist[0])
     for i in range(0,l):
         x = flist[i]
-        h = int(x[(l_fname-33+adj):(l_fname-31+adj)])
-        m = int(x[(l_fname-30+adj):(l_fname-28+adj)])
-        s = int(x[(l_fname-27+adj):(l_fname-25+adj)])        
+        h = int(x[(l_fname-28+adj):(l_fname-26+adj)])
+        m = int(x[(l_fname-25+adj):(l_fname-23+adj)])
+        s = int(x[(l_fname-22+adj):(l_fname-20+adj)])        
         t = ('%-11s''%02d'':''%02d'':''%02d' % (Y1,h,m,s))
         arr_have.append(t)
 #print arr_have

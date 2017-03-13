@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
     #h_map = np.array(f['params'])
     #vis = np.array(f['visual'])
 
-h_map = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/param_20130530_193_-500_500i_-500_500j.npy')
-vis = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20130530_193_-500_500i_-500_500j.npy')
+h_map = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_193_-500_500i_-500_600j_param_slope6_arthm.npy')
+vis = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_193_-500_500i_-500_600j_visual.npy')
 
 R = np.zeros((h_map.shape[1],h_map.shape[2]))
 
@@ -50,6 +50,7 @@ wid_min = 0.
 wid_max = 0.55
 """
 
+"""
 #20130530 193
 pla_min = -1.
 pla_max = 1.
@@ -63,22 +64,141 @@ loc_min = -6.5
 loc_max = -4.5
 wid_min = 0.
 wid_max = 0.8
+"""
+
+"""
+#20130626 304 Filament
+pla_min = -1.
+pla_max = 2.0e-6
+index_min = 1.3
+index_max = 4.
+plc_min = 0.0007
+plc_max = 1.
+amp_min = 0.
+amp_max = 0.01
+loc_min = -6.5
+loc_max = -4.5
+wid_min = 0.
+wid_max = 0.8
+"""
+
+#"""
+for k in range(20):
+    #20130626 193 Coronal Hole
+    pla_min = -1.
+    pla_max = 1.
+    index_min = 0.
+    #index_max = 1.5
+    index_max = 1.1 + (0.02*k)
+    plc_min = 0.0018
+    plc_max = 1.
+    amp_min = 0.
+    amp_max = 0.01
+    loc_min = -6.5
+    loc_max = -4.5
+    wid_min = 0.
+    wid_max = 0.8
+    i_m = str(index_max)
+#"""
+
+    """
+    #20130626 304 Coronal Hole
+    for k in range(20):
+        
+        pla_min = -1.
+        pla_max = 1.
+        index_min = 0.
+        #index_max = 1.3  # or 1.5, 1.4
+        index_max = 1.0+(0.02*k)
+        plc_min = 0.001
+        plc_max = 1.
+        amp_min = 0.
+        amp_max = 0.01
+        loc_min = -6.5
+        loc_max = -4.5
+        wid_min = 0.
+        wid_max = 0.8
+        
+        i_m = str(index_max)
+    """
 
 
+    
+    
+    for i in range(R.shape[0]):
+        for j in range(R.shape[1]):
+            R[i][j] = vis[0][i][j]
+    for i in range(R.shape[0]):
+        for j in range(R.shape[1]):
+            if h_map[0][i][j] > pla_max or h_map[0][i][j] < pla_min \
+            or h_map[1][i][j] > index_max or h_map[1][i][j] < index_min \
+            or h_map[2][i][j] > plc_max or h_map[2][i][j] < plc_min \
+            or h_map[3][i][j] > amp_max or h_map[3][i][j] < amp_min \
+            or h_map[4][i][j] > loc_max or h_map[4][i][j] < loc_min \
+            or h_map[5][i][j] > wid_max or h_map[5][i][j] < wid_min:
+                R[i][j] = np.nan
+                
+    fig = plt.figure(figsize=(12,15))  
+    #fig = plt.figure(figsize=(15,9))               
+    plt.imshow(np.flipud(R))
+    #plt.title('304A: Index Max = %s' % i_m)
+    plt.savefig('C:/Users/Brendan/Desktop/feature_detection/index_max_%s.jpeg' % i_m)
 
-for i in range(R.shape[0]):
-    for j in range(R.shape[1]):
-        R[i][j] = vis[0][i][j]
-for i in range(R.shape[0]):
-    for j in range(R.shape[1]):
-        if h_map[0][i][j] > pla_max or h_map[0][i][j] < pla_min \
-        or h_map[1][i][j] > index_max or h_map[1][i][j] < index_min \
-        or h_map[2][i][j] > plc_max or h_map[2][i][j] < plc_min \
-        or h_map[3][i][j] > amp_max or h_map[3][i][j] < amp_min \
-        or h_map[4][i][j] > loc_max or h_map[4][i][j] < loc_min \
-        or h_map[5][i][j] > wid_max or h_map[5][i][j] < wid_min:
-            R[i][j] = np.nan
-            
+"""
+## weighting attempt
+R_binary = np.copy(R)
+
+R_binary[R_binary > 0] = 1.
+
+R_weight = np.copy(R_binary)
+
 fig = plt.figure(figsize=(12,15))  
 #fig = plt.figure(figsize=(15,9))               
-plt.imshow(R)
+plt.imshow(R_binary)
+
+for i in range(1,R_binary.shape[0]-1):
+    for j in range(1,R_binary.shape[1]-1):
+        
+        if R_binary[i][j] == 1:
+            temp = np.zeros((8))
+            temp[0] = R_binary[i-1][j-1]
+            temp[1] = R_binary[i-1][j]
+            temp[2] = R_binary[i-1][j+1]
+            temp[3] = R_binary[i][j-1]
+            temp[4] = R_binary[i][j+1]
+            temp[5] = R_binary[i+1][j-1]
+            temp[6] = R_binary[i+1][j]
+            temp[7] = R_binary[i+1][j+1]
+            
+            R_weight[i][j] = np.sum(temp)
+
+fig = plt.figure(figsize=(12,15))  
+#fig = plt.figure(figsize=(15,9))               
+plt.imshow(R_weight)      
+
+R_weight2 = np.copy(R_weight)
+
+R_binary2 = np.copy(R_weight)
+
+R_binary2[R_binary2 > 0] = 1.
+
+for i in range(1,R_binary2.shape[0]-1):
+    for j in range(1,R_binary2.shape[1]-1):
+        
+        if R_binary2[i][j] == 1:
+            temp = np.zeros((8))
+            temp[0] = R_binary2[i-1][j-1]
+            temp[1] = R_binary2[i-1][j]
+            temp[2] = R_binary2[i-1][j+1]
+            temp[3] = R_binary2[i][j-1]
+            temp[4] = R_binary2[i][j+1]
+            temp[5] = R_binary2[i+1][j-1]
+            temp[6] = R_binary2[i+1][j]
+            temp[7] = R_binary2[i+1][j+1]
+            
+            R_weight2[i][j] = np.sum(temp)
+
+fig = plt.figure(figsize=(12,15))  
+#fig = plt.figure(figsize=(15,9))               
+plt.imshow(R_weight2)     
+""" 
