@@ -28,9 +28,9 @@ from timeit import default_timer as timer
 
 from scipy import fftpack
 
-DATA = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/20130530_193_2300_2600i_2200_3000j_data_rebin1.npy')
-TIME = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/20130530_193_2300_2600i_2200_3000j_time.npy')
-Ex = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/20130530_193_2300_2600i_2200_3000j_exposure.npy')
+DATA = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Temp/20130530/193/derotated.npy')
+TIME = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Temp/20130530/193/time.npy')
+Ex = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Temp/20130530/193/exposure.npy')
 
 num_seg = 6
 
@@ -67,10 +67,10 @@ start = timer()
 T1 = 0
 
 #for ii in range(0,spectra_seg.shape[0]):
-for ii in range(10,11):
+for ii in range(11,12):
 
     #for jj in range(0,spectra_seg.shape[1]):
-    for jj in range(10,11):        
+    for jj in range(11,12):        
     
         x1_box = 0+ii
         #x2_box = 2+ii  # if want to use median of more than 1x1 pixel box
@@ -147,32 +147,76 @@ for ii in range(10,11):
         
         avg_array /= (2*n_segments)-1  # take the average of the segments
         """
-        sig = np.zeros((len(v_interp)/num_seg))
-        #sig_test1 = sig[595:600]
-        #print sig_test1
-        percent_overlap = 90
-        print len(sig)
-        points_overlap = len(sig)*percent_overlap/100
-        print points_overlap
-        points_nonoverlap = (len(sig)-points_overlap)
-        print points_nonoverlap
-        for i in range(((len(v_interp)-len(sig))/points_nonoverlap)+1):  # maybe len(v_interp/#non-overlap points + 1)
-            sig = v_interp[i*points_nonoverlap:(i*points_nonoverlap)+600] # i*#overlap points + freqs_size
-            sig_fft = fftpack.fft(sig)
-            powers = np.abs(sig_fft)[pidxs]
-            norm = len(sig)  # to normalize the power
-            powers = ((powers/norm)**2)*(1./(sig.std()**2))*2
-            avg_array += powers
-        
-            #plt.figure()
-            #plt.loglog(freqs, powers)
-            #plt.ylim(10**-5, 10**0)
+        for w in range(1):
+            sig = np.zeros((len(v_interp)/num_seg))
+            #sig_test1 = sig[595:600]
+            #print sig_test1
+            percent_overlap = 99
+            print len(sig)
+            points_overlap = len(sig)*percent_overlap/100
+            print points_overlap
+            points_nonoverlap = (len(sig)-points_overlap)
+            print points_nonoverlap
+            for i in range(((len(v_interp)-len(sig))/points_nonoverlap)+1):  # maybe len(v_interp/#non-overlap points + 1)
+                sig = v_interp[i*points_nonoverlap:(i*points_nonoverlap)+600] # i*#overlap points + freqs_size
+                sig_fft = fftpack.fft(sig)
+                powers = np.abs(sig_fft)[pidxs]
+                norm = len(sig)  # to normalize the power
+                powers = ((powers/norm)**2)*(1./(sig.std()**2))*2
+                avg_array += powers
             
-        avg_array /= (len(v_interp)/points_nonoverlap)+1  # take the average of the segments
-        #fig = plt.figure(figsize=(15,12))
+                #plt.figure()
+                #plt.loglog(freqs, powers)
+                #plt.ylim(10**-5, 10**0)
+                
+            avg_array /= (len(v_interp)/points_nonoverlap)+1  # take the average of the segments
+            #avg_array = np.transpose(avg_array)  # take transpose of array to fit more cleanly in 3D array
+            spectra_seg[ii-11][jj-11] = avg_array  # construct 3D array with averaged FFTs from each pixel
+            
+            fig = plt.figure(figsize=(15,12))
+            plt.loglog(freqs, avg_array)
+            #plt.loglog(freqs, avg_array)
+            plt.ylim(10**-5, 10**0)
+            plt.title('FFT 2-Hour Segment Averaging @ %i-percent overlap' % percent_overlap)
+            
+            
+    # initialize arrays to hold temporary results for calculating arithmetic average (changed from geometric)
+    temp = np.zeros((9,spectra_seg.shape[2]))  # maybe have 3x3 to be generalized   
+    p_avg = np.zeros((spectra_seg.shape[2]))  # would pre-allocating help? (seems to)
+    spectra_array = np.zeros((spectra_seg.shape[0]-2, spectra_seg.shape[1]-2, spectra_seg.shape[2]))  # would pre-allocating help? (seems to)
+        
+    
+    ### calculate 3x3 pixel-box arithmetic average.  start at 1 and end 1 before to deal with edges.
+    ## previously for geometric -- 10^[(log(a) + log(b) + log(c) + ...) / 9] = [a*b*c*...]^(1/9)
+"""
+for l in range(1,2):
+#for l in range(1,25):
+    #print l
+    for m in range(1,2):
+    #for m in range(1,25):
+
+                   
+        temp[0] = spectra_seg[l-1][m-1]
+        temp[1] = spectra_seg[l-1][m]
+        temp[2] = spectra_seg[l-1][m+1]
+        temp[3] = spectra_seg[l][m-1]
+        temp[4] = spectra_seg[l][m]
+        temp[5] = spectra_seg[l][m+1]
+        temp[6] = spectra_seg[l+1][m-1]
+        temp[7] = spectra_seg[l+1][m]
+        temp[8] = spectra_seg[l+1][m+1]
+
+
+        temp9 = np.sum(temp, axis=0)
+        p_avg = temp9 / 9.
+        #spectra_array[l-1][m-1] = np.power(10,p_geometric)
+        #spectra_array[l-1][m-1] = p_avg
+        
+        fig = plt.figure(figsize=(15,12))
         #plt.loglog(freqs, avg_array)
-        #plt.ylim(10**-5, 10**0)
-        #plt.title('FFT 2-Hour Segment Averaging @ %i-percent overlap' % percent_overlap)
+        plt.loglog(freqs, p_avg)
+        plt.ylim(10**-5, 10**0)
+        plt.title('FFT 2-Hour Segment Averaging @ %i-percent overlap' % percent_overlap)
         #plt.savefig('C:/Users/Brendan/Desktop/fft_2hr_segment_averaging_percent_overlap_%i.jpeg' % percent_overlap)
         #avg_array = np.transpose(avg_array)  # take transpose of array to fit more cleanly in 3D array
                    
@@ -180,23 +224,7 @@ for ii in range(10,11):
     
     
     # estimate time remaining and print to screen
-    T = timer()
-    T2 = T - T1
-    if ii == 0:
-        T_init = T - start
-        T_est = T_init*(spectra_seg.shape[0])  
-        T_min, T_sec = divmod(T_est, 60)
-        T_hr, T_min = divmod(T_min, 60)
-        #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_seg.shape[0], T_est)
-        print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spectra_seg.shape[0], T_hr, T_min, T_sec)
-    else:
-        T_est2 = T2*(spectra_seg.shape[0]-ii)
-        T_min2, T_sec2 = divmod(T_est2, 60)
-        T_hr2, T_min2 = divmod(T_min2, 60)
-        #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_seg.shape[0], T_est2)
-        print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spectra_seg.shape[0], T_hr2, T_min2, T_sec2)
-    T1 = T
-    
+"""    
 """    
 # print estimated and total program time to screen 
 print "Beginning Estimated time = %i:%.2i:%.2i" % (T_hr, T_min, T_sec)

@@ -409,18 +409,20 @@ def heatmap(directory, date, wavelength):
     #h_map = h_map[:,0:h_map.shape[1]-1,0:h_map.shape[2]-1]  # trim last row and column from array (originally needed since went one past)
     trim_y = (h_map.shape[1]-1600)/2
     trim_x = (h_map.shape[2]-1600)/2
-    h_map = h_map[:, trim_y:h_map.shape[1]-trim_y, trim_x:h_map.shape[2]-trim_x]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
+    #h_map = h_map[:, trim_y:h_map.shape[1]-trim_y, trim_x:h_map.shape[2]-trim_x]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
     
-    x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
-    y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
-    x_ind = [-800,-600,-400,-200,0,200,400,600,800]
-    y_ind = [800,600,400,200,0,-200,-400,-600,-800]
+    #x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
+    #y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
+    #x_ind = [-800,-600,-400,-200,0,200,400,600,800]
+    #y_ind = [800,600,400,200,0,-200,-400,-600,-800]
+    
+    
 
     
     #x_ticks = [0,100,200,300,400,500]
     #y_ticks = [0,100,200,300]  
     
-    """
+    #"""
     if h_map.shape[2] > h_map.shape[1]:
         aspect_ratio = float(h_map.shape[2]) / float(h_map.shape[1])
         fig_height = 10
@@ -433,11 +435,11 @@ def heatmap(directory, date, wavelength):
         fig_width = 10+2  # works better for 20130626 (with no x/y labels)
         #fig_height = 10*aspect_ratio
         fig_height = 10*aspect_ratio  # works better for 20130626
-    """
+    #"""
     
-    fig_width = 10+2  # works better for 20130626 (with no x/y labels)
+    #fig_width = 10+2  # works better for 20130626 (with no x/y labels)
     #fig_width = 10+2  # works better for 20130626 (with x/y labels)
-    fig_height = 10  # works better for 20130626
+    #fig_height = 10  # works better for 20130626
     
     for i in range(0,len(titles)-1):
     #for i in range(4,5):
@@ -481,8 +483,8 @@ def heatmap(directory, date, wavelength):
         plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
         #plt.xticks(x_ticks,fontsize=font_size)
         #plt.yticks(y_ticks,fontsize=font_size)
-        plt.xticks(x_ticks,x_ind,fontsize=font_size)
-        plt.yticks(y_ticks,y_ind,fontsize=font_size)
+        #plt.xticks(x_ticks,x_ind,fontsize=font_size)
+        #plt.yticks(y_ticks,y_ind,fontsize=font_size)
         ax.tick_params(axis='both', which='major', pad=10)
         divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
         cax = divider.append_axes("right", size="3%", pad=0.07)
@@ -575,8 +577,8 @@ def heatmap(directory, date, wavelength):
         plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
         #plt.xticks(x_ticks,fontsize=font_size)
         #plt.yticks(y_ticks,fontsize=font_size)
-        plt.xticks(x_ticks,x_ind,fontsize=font_size)
-        plt.yticks(y_ticks,y_ind,fontsize=font_size)
+        #plt.xticks(x_ticks,x_ind,fontsize=font_size)
+        #plt.yticks(y_ticks,y_ind,fontsize=font_size)
         ax.tick_params(axis='both', which='major', pad=10)
         divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
         cax = divider.append_axes("right", size="3%", pad=0.07)
@@ -608,8 +610,8 @@ def heatmap(directory, date, wavelength):
     plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
     #plt.xticks(x_ticks,fontsize=font_size)
     #plt.yticks(y_ticks,fontsize=font_size)
-    plt.xticks(x_ticks,x_ind,fontsize=font_size)
-    plt.yticks(y_ticks,y_ind,fontsize=font_size)
+    #plt.xticks(x_ticks,x_ind,fontsize=font_size)
+    #plt.yticks(y_ticks,y_ind,fontsize=font_size)
     ax.tick_params(axis='both', which='major', pad=10)
     divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
     cax = divider.append_axes("right", size="3%", pad=0.07)
@@ -628,7 +630,7 @@ def heatmap(directory, date, wavelength):
     vis = visual
     trim_yv = (vis.shape[1]-1600)/2
     trim_xv = (vis.shape[2]-1600)/2
-    vis = vis[:, trim_yv:vis.shape[1]-trim_yv, trim_xv:vis.shape[2]-trim_xv]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
+    #vis = vis[:, trim_yv:vis.shape[1]-trim_yv, trim_xv:vis.shape[2]-trim_xv]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
     
     for i in range(2):
         
@@ -648,8 +650,8 @@ def heatmap(directory, date, wavelength):
         plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
         #plt.xticks(x_ticks,fontsize=font_size)
         #plt.yticks(y_ticks,fontsize=font_size)
-        plt.xticks(x_ticks,x_ind,fontsize=font_size)
-        plt.yticks(y_ticks,y_ind,fontsize=font_size)
+        #plt.xticks(x_ticks,x_ind,fontsize=font_size)
+        #plt.yticks(y_ticks,y_ind,fontsize=font_size)
         ax.tick_params(axis='both', which='major', pad=10)
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="3%", pad=0.07)
@@ -1280,7 +1282,7 @@ import scipy.misc
 import astropy.units as u
 #from scipy import fftpack  # not working with this called here???
 from timeit import default_timer as timer
-#import accelerate  # switch on if computer has installed
+#import accelerate  # put inside function
 import glob
 
 
@@ -1307,6 +1309,7 @@ def fft_avg(directory, date, wavelength, num_seg):
     ::
         ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, num_seg = 6)
     """
+    import accelerate  # switch on if computer has installed
     
     from scipy import fftpack
     
