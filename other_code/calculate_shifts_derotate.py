@@ -30,7 +30,12 @@ from sunpy.physics.transforms.solar_rotation import calculate_solar_rotate_shift
 
 # create a list of all the files. This is USER-DEFINED
 
-flist = glob.glob('F:/Users/Brendan/Desktop/SolarProject/FITS/20120923/171b/aia*.fits')
+x1 = 2000
+x2 = 2200
+y1 = 2000
+y2 = 2200
+
+flist = glob.glob('F:/Users/Brendan/Desktop/SolarProject/derotate_test/aia*.fits')
 
 # Create an empty list
 mc_list = []
@@ -40,8 +45,12 @@ mc_list = []
 print " "
 print "Reading files and extracting submaps. This takes a while..."
 print " "
+#for filename in flist:
+#   mc_list.append(Map(filename))  # ** SEE NOTE BELOW ***
+   
 for filename in flist:
-   mc_list.append(Map(filename))  # ** SEE NOTE BELOW ***
+    mc_list.append(Map(filename).submap([x1,x2]*u.pixel, [y1,y2]*u.pixel))
+
 	
 # NOTE: the u.pixel means we're selecting data based on pixel coordinates. Alternate coordinates
 #		would be degrees of solar latitude/longitude positions

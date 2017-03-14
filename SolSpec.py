@@ -411,6 +411,11 @@ def heatmap(directory, date, wavelength):
     trim_x = (h_map.shape[2]-1600)/2
     #h_map = h_map[:, trim_y:h_map.shape[1]-trim_y, trim_x:h_map.shape[2]-trim_x]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
     
+    #h_map = h_map[:, 0:h_map.shape[1]-50, 0:500]  # for 20130626 blobs      
+    x_ticks = [0,100,200,300,400,500]
+    y_ticks = [0,100,200,300,400]   
+    y_ticks = [0,100,200,300] # 20120923
+    
     #x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
     #y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
     #x_ind = [-800,-600,-400,-200,0,200,400,600,800]
@@ -438,7 +443,7 @@ def heatmap(directory, date, wavelength):
     #"""
     
     #fig_width = 10+2  # works better for 20130626 (with no x/y labels)
-    #fig_width = 10+2  # works better for 20130626 (with x/y labels)
+    #fig_width = 10+3  # works better for 20130626 (with x/y labels)
     #fig_height = 10  # works better for 20130626
     
     for i in range(0,len(titles)-1):
@@ -481,8 +486,8 @@ def heatmap(directory, date, wavelength):
         #im = ax.imshow(h_map[i], cmap = cmap, vmin=h_min, vmax=h_max)
         plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
         plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
-        #plt.xticks(x_ticks,fontsize=font_size)
-        #plt.yticks(y_ticks,fontsize=font_size)
+        plt.xticks(x_ticks,fontsize=font_size)
+        plt.yticks(y_ticks,fontsize=font_size)
         #plt.xticks(x_ticks,x_ind,fontsize=font_size)
         #plt.yticks(y_ticks,y_ind,fontsize=font_size)
         ax.tick_params(axis='both', which='major', pad=10)
@@ -575,8 +580,8 @@ def heatmap(directory, date, wavelength):
             im = ax.imshow(np.flipud(plots[k]), cmap = cmap)
         plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
         plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
-        #plt.xticks(x_ticks,fontsize=font_size)
-        #plt.yticks(y_ticks,fontsize=font_size)
+        plt.xticks(x_ticks,fontsize=font_size)
+        plt.yticks(y_ticks,fontsize=font_size)
         #plt.xticks(x_ticks,x_ind,fontsize=font_size)
         #plt.yticks(y_ticks,y_ind,fontsize=font_size)
         ax.tick_params(axis='both', which='major', pad=10)
@@ -608,8 +613,8 @@ def heatmap(directory, date, wavelength):
     #im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=(1./10**-1.), vmax=(1./10**-3.5))  # should bounds be set at frequency range
     plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
     plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
-    #plt.xticks(x_ticks,fontsize=font_size)
-    #plt.yticks(y_ticks,fontsize=font_size)
+    plt.xticks(x_ticks,fontsize=font_size)
+    plt.yticks(y_ticks,fontsize=font_size)
     #plt.xticks(x_ticks,x_ind,fontsize=font_size)
     #plt.yticks(y_ticks,y_ind,fontsize=font_size)
     ax.tick_params(axis='both', which='major', pad=10)
@@ -632,6 +637,8 @@ def heatmap(directory, date, wavelength):
     trim_xv = (vis.shape[2]-1600)/2
     #vis = vis[:, trim_yv:vis.shape[1]-trim_yv, trim_xv:vis.shape[2]-trim_xv]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
     
+    #vis = vis[:, 0:vis.shape[1]-50, 0:500]  # for 20130626 blobs     
+    
     for i in range(2):
         
         v_min = np.percentile(vis[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
@@ -648,8 +655,8 @@ def heatmap(directory, date, wavelength):
         im = ax.imshow(np.flipud(vis[i]), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
         plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
         plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
-        #plt.xticks(x_ticks,fontsize=font_size)
-        #plt.yticks(y_ticks,fontsize=font_size)
+        plt.xticks(x_ticks,fontsize=font_size)
+        plt.yticks(y_ticks,fontsize=font_size)
         #plt.xticks(x_ticks,x_ind,fontsize=font_size)
         #plt.yticks(y_ticks,y_ind,fontsize=font_size)
         ax.tick_params(axis='both', which='major', pad=10)
