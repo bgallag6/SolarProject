@@ -18,7 +18,7 @@ def get_data_fill(arr_need, wavelength, directory):
         
     # loop through the array of needed files, requesting them one at a time         
     for i in range(0,len(arr_need)):
-        qr=client.query(vso.attrs.Time(arr_need[i],arr_need[i]), vso.attrs.Instrument('aia'), vso.attrs.Wave(wavelength * u.AA, wavelength * u.AA))
+        qr=client.query(vso.attrs.Time(arr_need[i],arr_need[i]), vso.attrs.Instrument('aia'), vso.attrs.Wavelength(wavelength * u.AA, wavelength * u.AA))
         print qr
         #res=client.get(qr, path='%s/FITS/%s/%i/{file}.fits' % (directory, date, wavelength)).wait()
         res=client.get(qr, path='%s/FITS/%s/%i/{file}' % (directory, date, wavelength)).wait()  # use this from now on
