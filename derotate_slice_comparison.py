@@ -19,11 +19,11 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import matplotlib.patches as patches
 
-Z = np.load('C:/Users/Brendan/Desktop/derotate_mpi_4seg.npy')
+Z = np.load('C:/Users/Brendan/Desktop/derotate_mpi_8seg_D.npy')
 
 # define subregion coordinates   
-x1 = -550
-x2 = 550
+x1 = -500
+x2 = 500
 y1 = -500
 y2 = 500
 
@@ -112,6 +112,6 @@ for i in range(DATA.shape[0]):
     rect4 = patches.Rectangle((350,0), 50, 1678, color='white', fill=False)  
     ax2.add_patch(rect4)
     plt.imshow(np.flipud(Z[i]), cmap='sdoaia171', vmin=25, vmax=1000)
-    plt.savefig('C:/Users/Brendan/Desktop/derotate_mpi_4/hour_%i.jpeg' % i)
+    plt.savefig('C:/Users/Brendan/Desktop/derotate_edit/hour_%i.jpeg' % i)
     
     

@@ -115,8 +115,8 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     # define subregion coordinates   
     x1 = sub_reg_coords[0]-np.array(M[0])  # j1
     x2 = sub_reg_coords[1]-np.array(M[len(M)-1])  # j2
-    y1 = sub_reg_coords[2]-np.array(L[0])-10  # i1
-    y2 = sub_reg_coords[3]-np.array(L[len(M)-1])+10  # i2
+    y1 = sub_reg_coords[2]-np.array(L[0])-6  # i1
+    y2 = sub_reg_coords[3]-np.array(L[len(M)-1])+6  # i2
     print x1,x2,y1,y2
     
     # create a list of all the files. This is USER-DEFINED
@@ -279,27 +279,28 @@ if rank == 0:
         newData_p[s] = newData_p[s][:,:,0:xmin]   # ugh, the trimming should probably be off of both sides of the array
     num_f = newData_p[0].shape[0]
     y_len = newData_p[0].shape[1]
-    overlap = np.zeros((num_f,20,xmin))
-    full_arr = np.zeros((num_f,(len(newData_p)*y_len)-(34*(len(newData_p)-1)),xmin))
+    #overlap = np.zeros((num_f,20,xmin))
+    overlap = int(np.floor(12*1.67))
+    full_arr = np.zeros((num_f,(len(newData_p)*y_len)-(overlap*(len(newData_p)-1)),xmin))
     
     for t in range(len(newData_p)-1):
         if t == 0:
-            full_arr[:,0:(t+1)*(y_len-34),:] = newData_p[t][:,0:y_len-34,:]
-            full_arr[:,(t+1)*(y_len-34):(t+1)*(y_len)-(t*34),:] = (newData_p[t][:,y_len-34:y_len,:] + newData_p[t+1][:,0:34,:]) / 2.
+            full_arr[:,0:(t+1)*(y_len-overlap),:] = newData_p[t][:,0:y_len-overlap,:]
+            full_arr[:,(t+1)*(y_len-overlap):(t+1)*(y_len)-(t*overlap),:] = (newData_p[t][:,y_len-overlap:y_len,:] + newData_p[t+1][:,0:overlap,:]) / 2.
         else:
-            full_arr[:,(t*y_len)-((t-1)*34):(t+1)*(y_len-34),:] = newData_p[t][:,34:y_len-34,:]
-            full_arr[:,(t+1)*(y_len-34):(t+1)*(y_len)-(t*34),:] = (newData_p[t][:,y_len-34:y_len,:] + newData_p[t+1][:,0:34,:]) / 2.
-    full_arr[:,(t+1)*y_len-(t*34):(t+2)*y_len-((t+1)*34), :] = newData_p[len(newData_p)-1][:,34:y_len,:] 
+            full_arr[:,(t*y_len)-((t-1)*overlap):(t+1)*(y_len-overlap),:] = newData_p[t][:,overlap:y_len-overlap,:]
+            full_arr[:,(t+1)*(y_len-overlap):(t+1)*(y_len)-(t*overlap),:] = (newData_p[t][:,y_len-overlap:y_len,:] + newData_p[t+1][:,0:overlap,:]) / 2.
+    full_arr[:,(t+1)*y_len-(t*overlap):(t+2)*y_len-((t+1)*overlap), :] = newData_p[len(newData_p)-1][:,overlap:y_len,:] 
         
     #stack_p = np.hstack(newData_p)
     #print stack_p.shape
     print "Derotated cube shape: (%s,%s,%s)" % full_arr.shape
-    #np.save('C:/Users/Brendan/Desktop/derotate_mpi_8seg_D.npy',full_arr)
-    #np.save('C:/Users/Brendan/Desktop/time.npy', newData_t[0])
-    #np.save('C:/Users/Brendan/Desktop/exposure.npy', newData_e[0])
-    np.save('%s/DATA/Temp/%s/%i/derotated.npy' % (directory, date, wavelength), full_arr)
-    np.save('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength), newData_t[0])
-    np.save('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength), newData_e[0])
+    np.save('C:/Users/Brendan/Desktop/derotate_mpi_8seg_D.npy',full_arr)
+    np.save('C:/Users/Brendan/Desktop/time.npy', newData_t[0])
+    np.save('C:/Users/Brendan/Desktop/exposure.npy', newData_e[0])
+    #np.save('%s/DATA/Temp/%s/%i/derotated.npy' % (directory, date, wavelength), full_arr)
+    #np.save('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength), newData_t[0])
+    #np.save('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength), newData_e[0])
     
     # calculate the average-intensity image of the timeseries 
     AVG = np.average(full_arr,axis=0)  #hmm, this is not normalized - doesn't really matter I don't think
@@ -324,8 +325,8 @@ if rank == 0:
     print visual.shape  # check array size agrees with expected
     
     # save visual-image array
-    #np.save('C:/Users/Brendan/Desktop/visual.npy', visual)
-    np.save('%s/DATA/Output/%s/%i/visual.npy' % (directory, date, wavelength), visual)
+    np.save('C:/Users/Brendan/Desktop/visual.npy', visual)
+    #np.save('%s/DATA/Output/%s/%i/visual.npy' % (directory, date, wavelength), visual)
 
     
     T_final = timer() - start

@@ -44,8 +44,8 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
     
 #spectra_array = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/193/20130626_193_-450_-200i_-200_200j_spectra.npy')
-#spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
-spectra_array = np.load('C:/Users/Brendan/Desktop/20160905/193_1000.npy')
+spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
+#spectra_array = np.load('C:/Users/Brendan/Desktop/20160905/193_1000.npy')
 #spectra_array = np.load('C:/Users/Brendan/Desktop/1600/spectra.npy')
 ## load in array of segment-averaged pixel FFTs
 SPECTRA = spectra_array
@@ -94,25 +94,37 @@ T1 = 0
 
 #m2 = [1288,1238,1234,1212,1215,1217,1234,1235,1291,1299]
 #l2 = [701,701,701,901,901,901,901,901,901,901]
+"""
+x2 = [187, 188, 189, 726, 727, 722, 722, 867, 765, 757, 525, 708, 743, 790, 790, 790, 794, 796, 797, 798, 858, 861, 863, 872, 872, 876]  # used in timeseries generation
+y2 = [524, 523, 522, 328, 323, 1441, 1427, 864, 325, 319, 551, 352, 322, 650, 653, 659, 642, 648, 667, 669, 866, 867, 863, 865, 875, 879]
+
 
 point_label = ['A', 'B', 'C', 'D']
 
 m2_title = ['Tail Dominated w/o Gaussian', 'Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/ Gaussian', 'Tail Dominated w/ Gaussian']
+"""
 
+m2 = [187, 188, 189, 726, 727, 722, 722] # 867, 765, 757, 525, 708, 743, 790, 790, 790, 794, 796, 797, 798, 858, 861, 863, 872, 872, 876]
+l2 = [524, 523, 522, 328, 323, 1441, 1427] # 864, 325, 319, 551, 352, 322, 650, 653, 659, 642, 648, 667, 669, 866, 867, 863, 865, 875, 879]
+
+
+m2_title = ['Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/ Gaussian', 'Power-Law Dominated w/ Gaussian','Tail Dominated w/o Gaussian', 'Tail Dominated w/o Gaussian']
+
+point_label = ['B', 'B', 'B', 'C', 'C', 'A', 'A']
 
 
 #for l in range(321,322):
 for l in range(1):
     
-    for m in range(0,10):
+    #for m in range(0,10):
     #for m in range(900,901):
-    #for m in range(len(m2)):    
+    for m in range(len(m2)):    
         
                                         
         f = freqs  # frequencies
         #s = spectra_array[l][m]  # fourier power
-        s = spectra_array[m]  # fourier power
-        #s = spectra_array[l2[m]][m2[m]]  # fourier power
+        #s = spectra_array[m]  # fourier power
+        s = spectra_array[l2[m]][m2[m]]  # fourier power
         
        
         # assign equal weights to all parts of the curve
@@ -279,7 +291,7 @@ for l in range(1):
         #plt.title('Power-Law Dominated : Pixel %ii, %ij' % (l2[m],m2[m]), y = 1.01, fontsize=25)
         #plt.title('%s: Pixel %ix, %iy' % (m2_title[m], m2[m],l2[m]), y = 1.01, fontsize=30)
         #plt.title('171: %ix, %iy' % (m2[m],l2[m]), y = 1.01, fontsize=30)
-        #plt.title('%s: Point %s' % (m2_title[m], point_label[m]), y = 1.01, fontsize=30)
+        plt.title('%s: Point %s' % (m2_title[m], point_label[m]), y = 1.01, fontsize=30)
         plt.ylim((10**-4.7,10**0))
         plt.xlim((10**-4.,10**-1.3))
         plt.xticks(fontsize=30)
@@ -298,20 +310,20 @@ for l in range(1):
         #rect = patches.Rectangle((0.005,0.05), 0.03, 0.6, color='white', fill=True)
         #ax.add_patch(rect)
         #"""
-        plt.text(0.007, 10**-0.31, r'$A$ =  {0:0.2e}'.format(m2_param[0]), fontsize=30)
-        plt.text(0.007, 10**-0.51, r'$n$ =  {0:0.2f}'.format(m2_param[1]), fontsize=30)
+        plt.text(0.0045, 10**-0.31, r'$A$ = {0:0.2e} [$flux$]'.format(m2_param[0]), fontsize=30)
+        plt.text(0.0046, 10**-0.51, r'$n$ = {0:0.2f}'.format(m2_param[1]), fontsize=30)
         #plt.text(0.008, 10**-0.75, r'$C$ =  {0:0.3e}'.format(m2_param[2]), fontsize=25)
         #plt.text(0.007, 10**-0.73, r'$(C/A)^{-\frac{1}{n}}$ = %i [s]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
-        plt.text(0.007, 10**-0.73, r'$R$ = %1.0f [s]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
+        plt.text(0.0045, 10**-0.73, r'$R$ = %1.0f [$s$]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
         #plt.text(0.007, 10**-0.73, r'$r$ = %i [s]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
-        plt.text(0.007, 10**-0.95, r'$\alpha$ =  {0:0.2e}'.format(m2_param[3]), fontsize=30)
+        plt.text(0.0046, 10**-0.95, r'$\alpha$ = {0:0.2e} [$flux$]'.format(m2_param[3]), fontsize=30)
         #plt.text(0.007, 10**-1.09, r'$\beta$ = {0:0.3f}'.format(m2_param[4]), fontsize=25)
-        plt.text(0.007, 10**-1.15, r'$\beta$ = {0:1.0f} [s]'.format(1./np.exp(m2_param[4])), fontsize=30)
-        plt.text(0.007, 10**-1.35, r'$\sigma$ =  {0:0.3f}'.format(m2_param[5]), fontsize=30)
+        plt.text(0.0046, 10**-1.15, r'$\beta$ = {0:1.0f} [$s$]'.format(1./np.exp(m2_param[4])), fontsize=30)
+        plt.text(0.0046, 10**-1.35, r'$\sigma$ = {0:0.3f}'.format(m2_param[5]), fontsize=30)
         #plt.text(0.007, 10**-1.55, r'$\chi^2$ = {0:0.3f}'.format(chisqrM22), fontsize=30)
         #plt.text(0.007, 10**-1.75, r'$p$ = {0:0.2e}'.format(p_val), fontsize=30)
-        plt.text(0.007, 10**-1.55, r'$p$ = {0:0.3g}'.format(p_val), fontsize=30)
-        plt.text(0.007, 10**-1.75, r'$r$ = {0:0.3g}'.format(r_val[0]), fontsize=30)
+        plt.text(0.0047, 10**-1.55, r'$p$ = {0:0.3g}'.format(p_val), fontsize=30)
+        plt.text(0.0047, 10**-1.75, r'$r$ = {0:0.3g}'.format(r_val[0]), fontsize=30)
         legend = ax.legend(loc='lower left', prop={'size':30}, labelspacing=0.35)
         for label in legend.get_lines():
             label.set_linewidth(3.0)  # the legend line width
@@ -329,7 +341,7 @@ for l in range(1):
         plt.legend(loc='upper right', prop={'size':23})
         """
         #plt.show()
-        #plt.savefig('C:/Users/Brendan/Desktop/171_points/171_%ix_%iy.pdf' % (m2[m],l2[m]), format='pdf')
+        plt.savefig('C:/Users/Brendan/Desktop/171_final_points/171_%ix_%iy.pdf' % (m2[m],l2[m]), format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/171_slice2_double_optimize/171A_%ii_%ij.jpeg' % (l,m))
         #plt.savefig('C:/Users/Brendan/Desktop/171_points_square/pixel_%ii_%ij_new.jpeg' % (l2[m],m2[m]))
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))

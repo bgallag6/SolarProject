@@ -42,7 +42,8 @@ T1 = ('%-11s''%02d'':''%02d'':''%02d' % (Y1,H1,M1,S1))
 T2 = ('%-11s''%02d'':''%02d'':''%02d' % (Y2,H2,M2,S2))
 
 # query request to determine total number of files in time-range
-qr=client.query(vso.attrs.Time(T1,T2), vso.attrs.Instrument('aia'), vso.attrs.Wavelength(wavelength * u.AA, wavelength * u.AA))
+#qr=client.query(vso.attrs.Time(T1,T2), vso.attrs.Instrument('aia'), vso.attrs.Wavelength(wavelength * u.AA, wavelength * u.AA))
+qr=client.query(vso.attrs.Time(T1,T2), vso.attrs.Instrument('aia'), vso.attrs.Wave(wavelength * u.AA, wavelength * u.AA))
 
 arr_all = [] 
 

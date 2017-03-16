@@ -522,8 +522,8 @@ def heatmap(directory, date, wavelength):
             
         im = ax.imshow(np.flipud(h_map[i]), cmap = cmap, vmin=h_min, vmax=h_max)
         #im = ax.imshow(h_map[i], cmap = cmap, vmin=h_min, vmax=h_max)
-        plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
-        plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
+        #plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
+        #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
         #plt.xticks(x_ticks,fontsize=font_size)
         #plt.yticks(y_ticks,fontsize=font_size)
         plt.xticks(x_ticks,x_ind,fontsize=font_size)
@@ -582,8 +582,8 @@ def heatmap(directory, date, wavelength):
             #c_ticks = np.zeros((10))
             #for h in range(10):
             #    c_ticks[h] = h1 + h_step*h
-            plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
-            plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
+            #plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
+            #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
             #plt.xticks(x_ticks,fontsize=font_size)
             #plt.yticks(y_ticks,fontsize=font_size)
             plt.xticks(x_ticks,x_ind,fontsize=font_size)
@@ -721,8 +721,8 @@ def heatmap(directory, date, wavelength):
     #im = ax.imshow(roll_freq, cmap = cmap, vmin=h_min, vmax=h_max)
     im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=h_min, vmax=h_max)
     #im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=(1./10**-1.), vmax=(1./10**-3.5))  # should bounds be set at frequency range
-    plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
-    plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
+    #plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
+    #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
     #plt.xticks(x_ticks,fontsize=font_size)
     #plt.yticks(y_ticks,fontsize=font_size)
     plt.xticks(x_ticks,x_ind,fontsize=font_size)
@@ -766,8 +766,8 @@ def heatmap(directory, date, wavelength):
         #cmap = cm.get_cmap('sdoaia%i' % wavelength, 10)    
         #im = ax.imshow(np.flipud(vis[i]), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
         im = ax.imshow(np.flipud(vis[i]), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
-        plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
-        plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
+        #plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
+        #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
         #plt.xticks(x_ticks,fontsize=font_size)
         #plt.yticks(y_ticks,fontsize=font_size)
         plt.xticks(x_ticks,x_ind,fontsize=font_size)
