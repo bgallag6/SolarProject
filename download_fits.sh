@@ -14,4 +14,4 @@ read -p "Enter the number of processors [ex. 16]: " num
 
 python create_arr_need.py $directory $dateS $dateR $start_time $end_time $wavelength
 
-mpiexec -n $num python mpi_download_fits.py $directory $dateR $wavelength
+mpiexec -n $num python mpi2_download_fits.py $directory $dateR $wavelength $dateS

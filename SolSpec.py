@@ -380,7 +380,7 @@ def heatmap(directory, date, wavelength):
     
     # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
     #titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', '$\chi^2$']
-    titles = [r'Power Law Slope-Coefficient [$flux$] - $A$', r'Power Law Index - $n$', r'Power Law Tail - $C$', r'Gaussian Amplitude [$flux$] - $\alpha$', r'Gaussian Location [$s$] - $\beta$', r'Gaussian Width - $\sigma$', 'F-Statistic', r'Gaussian Amplitude Scaled - $\alpha$', 'p-Value']
+    titles = [r'Power Law Slope-Coefficient [$flux$] - $A$', r'Power Law Index - $n$', r'Power Law Tail - $C$', r'Gaussian Amplitude [$flux$] - $\alpha$', r'Gaussian Location [$m$] - $\beta$', r'Gaussian Width - $\sigma$', 'F-Statistic', r'Gaussian Amplitude Scaled - $\alpha$', 'p-Value']
     #names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'Chi2']
     names = ['slope_coeff', 'index', 'tail', 'gauss_amp', 'gauss_loc', 'gauss_wid', 'f_test', 'gauss_amp_scaled', 'p_value']
     #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location (e^(Value))', 'Width', '$\chi^2$']
@@ -451,7 +451,7 @@ def heatmap(directory, date, wavelength):
     mask_percent = ((np.float(count))/total_pix)*100
     print mask_percent
                     
-    loc_mask = 1./np.exp(loc_mask)
+    loc_mask = (1./np.exp(loc_mask))/60.
     plots = [p_mask, amp_mask, loc_mask, wid_mask]
 
     
@@ -493,7 +493,7 @@ def heatmap(directory, date, wavelength):
             #cmap = 'jet'
             cmap = cm.get_cmap('jet', 10)
         elif i == 4:
-            h_map[i] = 1./(np.exp(h_map[i]))
+            h_map[i] = (1./(np.exp(h_map[i])))/60.
             h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
             #h_min = 100
@@ -515,10 +515,11 @@ def heatmap(directory, date, wavelength):
         
         h_range = np.abs(h_max-h_min)
         h_step = h_range / 10.
-        h1 = h_min + (h_step/2.)
-        c_ticks = np.zeros((10))
-        for h in range(10):
-            c_ticks[h] = h1 + h_step*h
+        #h1 = h_min + (h_step/2.)
+        c_ticks = np.zeros((11))  # changed from 10
+        for h in range(11):
+            #c_ticks[h] = h1 + h_step*h
+            c_ticks[h] = h_min + h_step*h 
             
         im = ax.imshow(np.flipud(h_map[i]), cmap = cmap, vmin=h_min, vmax=h_max)
         #im = ax.imshow(h_map[i], cmap = cmap, vmin=h_min, vmax=h_max)
@@ -540,19 +541,20 @@ def heatmap(directory, date, wavelength):
         elif i == 3:
             cbar = plt.colorbar(im,cax=cax, format='%0.4f')
         elif i == 4:
-            cbar = plt.colorbar(im,cax=cax, format='%i')
+            cbar = plt.colorbar(im,cax=cax, format='%0.1f')
         elif i == 5:
             cbar = plt.colorbar(im,cax=cax, format='%0.2f')
         elif i == 6:
-            cbar = plt.colorbar(im,cax=cax, format='%i')
+            cbar = plt.colorbar(im,cax=cax, format='%0.1f')
         elif i == 7:
             cbar = plt.colorbar(im,cax=cax, format='%0.2f')
         #cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
         cbar.ax.tick_params(labelsize=font_size, pad=5) 
-        cbar.set_ticks(np.round(c_ticks,8))  # 8 for slope (or might as well be for all, format separately)
+        #cbar.set_ticks(np.round(c_ticks,8))  # 8 for slope (or might as well be for all, format separately)
+        cbar.set_ticks(c_ticks)  # 8 for slope (or might as well be for all, format separately)
         #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
+        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
         
         if i == 2 or i == 3 or i == 4 or i == 5:   
             fig = plt.figure(figsize=(fig_width,fig_height))
@@ -570,10 +572,12 @@ def heatmap(directory, date, wavelength):
                 h_max = 0.005
                 h_range = np.abs(h_max-h_min)
                 h_step = h_range / 10.
-                h1 = h_min + (h_step/2.)
-                c_ticks = np.zeros((10))
-                for h in range(10):
-                    c_ticks[h] = h1 + h_step*h
+                #h1 = h_min + (h_step/2.)
+                c_ticks = np.zeros((11))
+                for h in range(11):
+                    #c_ticks[h] = h1 + h_step*h
+                    c_ticks[h] = h_min + h_step*h
+                    
                 
             im = ax.imshow(np.flipud(plots[i-2]), cmap = cmap, vmin=h_min, vmax=h_max)
         
@@ -596,15 +600,16 @@ def heatmap(directory, date, wavelength):
             elif i == 3:
                 cbar = plt.colorbar(im,cax=cax, format='%0.4f')
             elif i == 4:
-                cbar = plt.colorbar(im,cax=cax, format='%i')
+                cbar = plt.colorbar(im,cax=cax, format='%0.1f')
             elif i == 5:
                 cbar = plt.colorbar(im,cax=cax, format='%0.2f')
             #cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
             cbar.ax.tick_params(labelsize=font_size, pad=5) 
-            cbar.set_ticks(np.round(c_ticks,8))  # 8 for slope
+            #cbar.set_ticks(np.round(c_ticks,8))  # 8 for slope
+            cbar.set_ticks(c_ticks)  # 8 for slope
             #plt.tight_layout()
             #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_m[k]))
-            plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.pdf' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)), format='pdf')
+            #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.pdf' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)), format='pdf')
         
         #"""
         flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
@@ -621,7 +626,7 @@ def heatmap(directory, date, wavelength):
         plt.ylim(0, y.max()*1.1)
         #plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
+        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
         #"""
     
     """  dont need anymore - added to main loop 
@@ -701,20 +706,21 @@ def heatmap(directory, date, wavelength):
     
     # generate 'rollover frequency' heatmap
     roll_freq = (h_map[2] / h_map[0])**(-1./ h_map[1])
-    roll_freq = 1./roll_freq
+    roll_freq = (1./roll_freq)/60.
     fig = plt.figure(figsize=(fig_width,fig_height))
     ax = plt.gca()  # get current axis -- to set colorbar 
     #plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
-    plt.title(r'Rollover Period [$s$] - $(C/A)^{-\frac{1}{n}}$', y = 1.02, fontsize=font_size)  # no date / wavelength
+    plt.title(r'Rollover Period [$m$] - $(C/A)^{-\frac{1}{n}}$', y = 1.02, fontsize=font_size)  # no date / wavelength
     roll_freq = np.nan_to_num(roll_freq)  # deal with NaN's causing issues
     h_min = np.percentile(roll_freq,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
     h_max = np.percentile(roll_freq,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
     h_range = np.abs(h_max-h_min)
     h_step = h_range / 10.
-    h1 = h_min + (h_step/2.)
-    c_ticks = np.zeros((10))
-    for h in range(10):
-        c_ticks[h] = h1 + h_step*h
+    #h1 = h_min + (h_step/2.)
+    c_ticks = np.zeros((11))
+    for h in range(11):
+        #c_ticks[h] = h1 + h_step*h
+        c_ticks[h] = h_min + h_step*h
     #cmap = 'jet'      
     cmap = cm.get_cmap('jet', 10)    
     
@@ -730,12 +736,13 @@ def heatmap(directory, date, wavelength):
     ax.tick_params(axis='both', which='major', pad=10)
     divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
     cax = divider.append_axes("right", size="3%", pad=0.07)
-    cbar = plt.colorbar(im,cax=cax,format='%i')
+    cbar = plt.colorbar(im,cax=cax,format='%0.1f')
     #cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
     cbar.ax.tick_params(labelsize=font_size, pad=5) 
-    cbar.set_ticks(np.round(c_ticks,8))  # 8 for slope
+    #cbar.set_ticks(np.round(c_ticks,8))  # 8 for slope
+    cbar.set_ticks(c_ticks)  # 8 for slope
     #plt.tight_layout()
-    plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
+    #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
     
     
   
@@ -780,7 +787,7 @@ def heatmap(directory, date, wavelength):
         cbar.ax.tick_params(labelsize=font_size, pad=5) 
         #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_vis[i]))
-        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
+        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
 
 
 

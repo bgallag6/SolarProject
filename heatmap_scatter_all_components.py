@@ -161,10 +161,14 @@ with h5py.File("F:/Users/Brendan/Desktop/SolarProject/20130815_193_1000_1600i_19
         plt.draw()
         print ('x = %d, y = %d' % ( ix, iy))  # print location of pixel
         
+        
+                                  
+
         s = np.zeros((spectra.shape[2]))
         m = np.zeros((m2_fit.shape[2]))
         p = np.zeros((powerlaw.shape[2]))
         g = np.zeros((gaussian.shape[2]))
+        
         for i in range(0,cpy_arr_spec.shape[2]):
             s[i] = cpy_arr_spec[iy][ix][i]
         for i in range(0,cpy_arr_m2.shape[2]):
@@ -183,7 +187,21 @@ with h5py.File("F:/Users/Brendan/Desktop/SolarProject/20130815_193_1000_1600i_19
         axvline(x=0.00333,color='k',ls='dashed', label='5 minutes')
         axvline(x=0.00555,color='k',ls='dotted', label='3 minutes')
         ax2.set_title('Spectra Fit : Pixel (%ii , %ij)' % (iy, ix), fontsize=15)
-        plt.legend(loc='upper right', prop={'size':15})
+        plt.text(0.006, 10**-0.31, r'$A$ = {0:0.2e}'.format(h_map[0][iy][ix]), fontsize=23)
+        plt.text(0.0061, 10**-0.51, r'$n$ = {0:0.2f}'.format(h_map[1][iy][ix]), fontsize=23)
+        #plt.text(0.008, 10**-0.75, r'$C$ =  {0:0.3e}'.format(m2_param[2]), fontsize=25)
+        #plt.text(0.007, 10**-0.73, r'$(C/A)^{-\frac{1}{n}}$ = %i [s]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
+        plt.text(0.006, 10**-0.73, r'$R$ = %1.0f [$s$]' % (1./(h_map[2][iy][ix] / h_map[0][iy][ix])**(-1./ h_map[1][iy][ix])), fontsize=23)
+        #plt.text(0.007, 10**-0.73, r'$r$ = %i [s]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
+        plt.text(0.0061, 10**-0.95, r'$\alpha$ = {0:0.2e}'.format(h_map[3][iy][ix]), fontsize=23)
+        #plt.text(0.007, 10**-1.09, r'$\beta$ = {0:0.3f}'.format(m2_param[4]), fontsize=25)
+        plt.text(0.0061, 10**-1.15, r'$\beta$ = {0:1.0f} [$s$]'.format(1./np.exp(h_map[4][iy][ix])), fontsize=23)
+        plt.text(0.0061, 10**-1.35, r'$\sigma$ = {0:0.3f}'.format(h_map[5][iy][ix]), fontsize=23)
+        #plt.text(0.007, 10**-1.55, r'$\chi^2$ = {0:0.3f}'.format(chisqrM22), fontsize=30)
+        #plt.text(0.007, 10**-1.75, r'$p$ = {0:0.2e}'.format(p_val), fontsize=30)
+        #plt.text(0.0047, 10**-1.55, r'$p$ = {0:0.3g}'.format(p_val), fontsize=30)
+        #plt.text(0.0047, 10**-1.75, r'$r$ = {0:0.3g}'.format(r_val[0]), fontsize=30)
+        plt.legend(loc='lower left', prop={'size':15})
         plt.draw()
         
         return ix, iy
@@ -309,15 +327,15 @@ with h5py.File("F:/Users/Brendan/Desktop/SolarProject/20130815_193_1000_1600i_19
         
         
         # make toggle buttons to display each parameter's heatmap
-        axpl_A = plt.axes([0.01, 0.9, 0.05, 0.075])
-        axindex = plt.axes([0.07, 0.9, 0.05, 0.075])
-        axpl_C = plt.axes([0.13, 0.9, 0.05, 0.075])
-        axgauss_amp = plt.axes([0.19, 0.9, 0.05, 0.075])
-        axgauss_loc = plt.axes([0.25, 0.9, 0.05, 0.075])
-        axgauss_wid = plt.axes([0.31, 0.9, 0.05, 0.075])
-        axchi2 = plt.axes([0.37, 0.9, 0.05, 0.075])
-        axvisual = plt.axes([0.43, 0.9, 0.05, 0.075])
-        axscatter = plt.axes([0.49, 0.9, 0.05, 0.075])
+        axpl_A = plt.axes([0.01, 0.9, 0.05, 0.06])
+        axindex = plt.axes([0.07, 0.9, 0.05, 0.06])
+        axpl_C = plt.axes([0.13, 0.9, 0.05, 0.06])
+        axgauss_amp = plt.axes([0.19, 0.9, 0.05, 0.06])
+        axgauss_loc = plt.axes([0.25, 0.9, 0.05, 0.06])
+        axgauss_wid = plt.axes([0.31, 0.9, 0.05, 0.06])
+        axchi2 = plt.axes([0.37, 0.9, 0.05, 0.06])
+        axvisual = plt.axes([0.43, 0.9, 0.05, 0.06])
+        axscatter = plt.axes([0.49, 0.9, 0.05, 0.06])
  
         # set up spectra subplot
         ax2 = plt.subplot2grid((1,11),(0, 6), colspan=5, rowspan=1)
@@ -334,11 +352,11 @@ with h5py.File("F:/Users/Brendan/Desktop/SolarProject/20130815_193_1000_1600i_19
         # add callbacks to each button - linking corresponding action
         callback = Index()
         
-        bpl_A = Button(axpl_A, 'pl_A')
+        bpl_A = Button(axpl_A, 'Coeff.')
         bpl_A.on_clicked(callback.pl_A)
         bindex = Button(axindex, 'Index')
         bindex.on_clicked(callback.index)
-        bpl_C = Button(axpl_C, 'pl_C')
+        bpl_C = Button(axpl_C, 'Tail')
         bpl_C.on_clicked(callback.pl_C)
         bgauss_amp = Button(axgauss_amp, 'Gauss Amp')
         bgauss_amp.on_clicked(callback.gauss_amp)
@@ -346,7 +364,7 @@ with h5py.File("F:/Users/Brendan/Desktop/SolarProject/20130815_193_1000_1600i_19
         bgauss_loc.on_clicked(callback.gauss_loc)
         bgauss_wid = Button(axgauss_wid, 'Gauss Wid')
         bgauss_wid.on_clicked(callback.gauss_wid)
-        bchi2 = Button(axchi2, 'Chi2')
+        bchi2 = Button(axchi2, 'F-Stat')
         bchi2.on_clicked(callback.chi2)
         bvisual = Button(axvisual, 'Visual')
         bvisual.on_clicked(callback.visual)
