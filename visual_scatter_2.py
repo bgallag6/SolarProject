@@ -20,10 +20,11 @@ import numpy as np
 import astropy.units as u
 import matplotlib.patches as patches
 
-#v171 = np.load('F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/171/20130626_171_-500_500i_-500_500j_visual.npy')
+#v171 = np.load('F:/Users/Brendan/Desktop/SolarProject/1600/visual_1600.npy')
+#p171 = np.load('F:/Users/Brendan/Desktop/SolarProject/1600/param_1600.npy')
 v171 = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_visual.npy')
 p171 = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_param_slope6_arthm.npy')
-v1600 = np.load('C:/Users/Brendan/Desktop/1600/visual_1600.npy')
+#v1600 = np.load('C:/Users/Brendan/Desktop/1600/visual_1600.npy')
 
 
     
@@ -50,8 +51,8 @@ cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'L
 #[743]
 #[322]
 
-m2 = [722, 525, 757, 1200]
-l2 = [v171[0].shape[0]-1441, v171[0].shape[0]-551, v171[0].shape[0]-319, v171[0].shape[0]-900]
+m2 = [722, 188, 726, 872]
+l2 = [v171[0].shape[0]-1427, v171[0].shape[0]-523, v171[0].shape[0]-328, v171[0].shape[0]-875]
 
 m3 = [100]
 l3 = [1600-900]
@@ -85,17 +86,17 @@ vis = v171
 trim_yv = (vis.shape[1]-1600)/2
 trim_xv = (vis.shape[2]-1600)/2
 #vis = vis[:, trim_yv:vis.shape[1]-trim_yv, trim_xv:vis.shape[2]-trim_xv]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)  
-vis1600 = v1600[:, 19:v1600.shape[1]-19, 12:v1600.shape[2]-11]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)  
+#vis1600 = v1600[:, 19:v1600.shape[1]-19, 12:v1600.shape[2]-11]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)  
 
-vis1600_trim = vis1600[:, :, 1100:1400] 
+#vis1600_trim = vis1600[:, :, 1100:1400] 
 
 for i in range(1):
     
     v_min = np.percentile(vis[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
     v_max = np.percentile(vis[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)     
     
-    v_minB = np.percentile(vis1600[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-    v_maxB = np.percentile(vis1600[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)    
+    #v_minB = np.percentile(vis1600[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+    #v_maxB = np.percentile(vis1600[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)    
     
     """
     #fig = plt.figure(figsize=(12,9))
@@ -144,37 +145,59 @@ for i in range(1):
     #plt.savefig('%s/%s_%i_visual_%s.jpeg' % (path_name, date, wavelength, names_vis[i]))
     #plt.savefig('C:/Users/Brendan/Desktop/171_visual_%s_points_overlay.pdf' % names_vis[i], format='pdf')
     """
+    
+    x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
+    y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
+    x_ind = [-800,-600,-400,-200,0,200,400,600,800]
+    y_ind = [800,600,400,200,0,-200,-400,-600,-800]
    
 
-    fig = plt.figure(figsize=(16,15))
-    ax1 = plt.subplot2grid((1,6),(0, 0), colspan=5, rowspan=1)    
-    plt.title(r'171$\AA$  Visual: %s w/ Points' % (titles_vis[i]), y = 1.01, fontsize=23)  # no date / wavelength
+    fig = plt.figure(figsize=(15,15))
+    #ax1 = plt.subplot2grid((1,6),(0, 0), colspan=5, rowspan=1)  
+    ax1 = plt.gca()
+    plt.title(r'171$\AA$  Visual: %s w/ Points' % (titles_vis[i]), y = 1.02, fontsize=23)  # no date / wavelength
     im = ax1.imshow(np.flipud(vis[i]), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
-    plt.scatter(m2, l2, s=75, c='white')
+    plt.scatter(m2, l2, s=100, c='red')
+    plt.scatter(m2, l2, s=50, c='white')
     #plt.scatter(m2, l2, s=75, c='red', marker='*')
     plt.xlim(0, vis[0].shape[1])
     plt.ylim(vis[0].shape[0], 0)
     plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
     plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
-    plt.xticks([0,200,400,600,800,1000,1200,1400,1600],fontsize=23)
-    plt.yticks([0,200,400,600,800,1000,1200,1400,1600],fontsize=23)
-    rect = patches.Rectangle((610,1600-1460), 70, 90, color='white', fill=True)
+    #plt.xticks([0,200,400,600,800,1000,1200,1400,1600],fontsize=23)
+    #plt.yticks([0,200,400,600,800,1000,1200,1400,1600],fontsize=23)
+    plt.xticks(x_ticks,x_ind,fontsize=23)
+    plt.yticks(y_ticks,y_ind,fontsize=23)
+    rect = patches.Rectangle((610,140), 70, 90, color='white', fill=True)
     ax1.add_patch(rect)
-    ax1.text(620,1600-1475+90, 'A', fontsize=25)
-    rect = patches.Rectangle((580,1600-580), 70, 90, color='white', fill=True)
+    ax1.text(623.2,209, 'A', fontsize=27)
+    rect = patches.Rectangle((220,1160), 70, 90, color='white', fill=True)
     ax1.add_patch(rect)
-    ax1.text(590,1600-595+90, 'B', fontsize=25)   
-    rect = patches.Rectangle((815,1600-330), 70, 90, color='white', fill=True)
+    ax1.text(231,1229.5, 'C', fontsize=27)   
+    rect = patches.Rectangle((770,1230), 70, 90, color='white', fill=True)
     ax1.add_patch(rect)
-    ax1.text(825,1600-345+90, 'C', fontsize=25)
-    rect = patches.Rectangle((1243,570), 70, 90, color='white', fill=True)
+    ax1.text(782.2,1298.7, 'D', fontsize=27)
+    rect = patches.Rectangle((905,810), 70, 90, color='white', fill=True)
     ax1.add_patch(rect)
-    ax1.text(1253,645, 'D', fontsize=25)
-    rect6 = patches.Rectangle((1100,1), 300, 1600, color='white', fill=False, linewidth=3)
-    ax1.add_patch(rect6)
-    ax1.text(1180, 110, ' Inset\nRegion', fontsize=21, color='white')
+    ax1.text(918.3,877.6, 'B', fontsize=27)
+    #rect6 = patches.Rectangle((1100,1), 300, 1600, color='white', fill=False, linewidth=3)
+    #ax1.add_patch(rect6)
+    #ax1.text(1180, 110, ' Inset\nRegion', fontsize=21, color='white')
+    rect = patches.Rectangle((906,811), 68, 88, color='red', fill=False, linewidth=2)
+    ax1.add_patch(rect)
+    rect = patches.Rectangle((221,1161), 68, 88, color='red', fill=False, linewidth=2)
+    ax1.add_patch(rect)
+    rect = patches.Rectangle((771,1231), 68, 88, color='red', fill=False, linewidth=2)
+    ax1.add_patch(rect)
+    rect = patches.Rectangle((611,141), 68, 88, color='red', fill=False, linewidth=2)
+    ax1.add_patch(rect)
+    divider = make_axes_locatable(ax1)
+    cax = divider.append_axes("right", size="3%", pad=0.07)
+    cbar = plt.colorbar(im,cax=cax)
+    #cbar.set_label('Intensity', size=20, labelpad=10)
+    cbar.ax.tick_params(labelsize=23, pad=5)
 
-    
+    """
     ax2 = plt.subplot2grid((1,6),(0, 5), colspan=1, rowspan=1)  
     plt.title(r'1600$\AA$', y = 1.01, fontsize=23)  # no date / wavelength
     im = ax2.imshow(np.flipud(vis1600_trim[i]), cmap='sdoaia1600', vmin = v_minB, vmax = v_maxB)
@@ -191,4 +214,5 @@ for i in range(1):
     ax2.text(90, 60, 'Inset', fontsize=21, color='white')
     rect9 = patches.Rectangle((1,1), 298, 1598, color='white', fill=False, linewidth=3)
     ax2.add_patch(rect9)
-    #plt.savefig('C:/Users/Brendan/Desktop/171_visual_%s_points_overlay_revised5.pdf' % names_vis[i], format='pdf')
+    """
+    plt.savefig('C:/Users/Brendan/Desktop/171_visual_%s_points_overlay_revised6.pdf' % names_vis[i], format='pdf')

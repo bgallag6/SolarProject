@@ -38,19 +38,24 @@ ex_interp = np.interp(TIME,Ex,Ex)  # interpolate pixel-intensity values onto spe
 #x2 = [722, 525, 757, 743]
 #y2 = [1441, 551, 319, 322]
 
-x2 = [187, 188, 189, 726, 727, 722, 722] # 867, 765, 757, 525, 708, 743, 790, 790, 790, 794, 796, 797, 798, 858, 861, 863, 872, 872, 876]
-y2 = [524, 523, 522, 328, 323, 1441, 1427] # 864, 325, 319, 551, 352, 322, 650, 653, 659, 642, 648, 667, 669, 866, 867, 863, 865, 875, 879]
+x2 = [187, 188, 189, 726, 727, 722, 722, 867, 765, 757, 525, 708, 743, 790, 790, 790, 794, 796, 797, 798, 858, 861, 863, 872, 872, 876]
+y2 = [524, 523, 522, 328, 323, 1441, 1427, 864, 325, 319, 551, 352, 322, 650, 653, 659, 642, 648, 667, 669, 866, 867, 863, 865, 875, 879]
 
 
-m2_title = ['Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/ Gaussian', 'Power-Law Dominated w/ Gaussian','Tail Dominated w/o Gaussian', 'Tail Dominated w/o Gaussian']
+#m2_title = ['Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/ Gaussian', 'Power-Law Dominated w/ Gaussian','Tail Dominated w/o Gaussian', 'Tail Dominated w/o Gaussian']
 
-point_label = ['B', 'B', 'B', 'C', 'C', 'A', 'A']
+#point_label = ['C', 'C', 'C', 'D', 'D', 'A', 'A']
+
+m2_title = ['Tail Dominated w/o Gaussian']
+
+point_label = ['B']
 
 pixmed=np.empty(DATA.shape[0])  # Initialize array to hold median pixel values
 
 for l in range(1):
     
-    for m in range(len(x2)): 
+    #for m in range(len(x2)): 
+    for m in range(24,25): 
     #for m in range(1):
         
         """
@@ -78,13 +83,16 @@ for l in range(1):
         # Plot models + display combined-model parameters + uncertainties
         #"""
         fig = plt.figure(figsize=(15,15))
+        ax = plt.gca()
         #plt.title('%s: Pixel %ix, %iy' % (m2_title[m], x2[m], y2[m]), y = 1.01, fontsize=30)
-        plt.title('%s: Point %s' % (m2_title[m], point_label[m]), y = 1.01, fontsize=30)
+        plt.title('%s: Point %s' % (m2_title[m-24], point_label[m-24]), y = 1.01, fontsize=30)
         #plt.title('Pixel (%i, %i)' % (x2[m], y2[m]), y = 1.01, fontsize=25)
         #plt.plot(t_interp,v_interp,'k')
         #plt.plot(t_interp,v_interp,'k')
-        plt.plot(TIME, DATA[m]/ex_interp, 'k')
-        plt.xlabel('Time [Seconds]', fontsize=30, labelpad=10)
+        ax.tick_params(axis='both', which='major', pad=10)
+        plt.xlim(0,720)
+        plt.plot(TIME/60., DATA[m]/ex_interp, 'k')
+        plt.xlabel(r'Time [$m$]', fontsize=30, labelpad=10)
         plt.ylabel('Intensity', fontsize=30, labelpad=10)
         plt.xticks(fontsize=30)
         plt.yticks(fontsize=30)
