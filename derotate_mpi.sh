@@ -12,3 +12,5 @@ read -p "Enter the ymax dimension [ex. 500]: " ymax
 read -p "Enter the number of processors [ex. 16]: " num
 
 mpiexec -n $num python mpi_derotate.py $directory $date $wavelength $xmin $xmax $ymin $ymax
+
+read -p "Enter the number of processors [ex. 16]: " num2

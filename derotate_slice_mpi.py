@@ -165,12 +165,23 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     
     print "done derotating"
     
-    mid_subarr = dr[mid_file].data		# extract data from middle file of derotated datacube
-    rem_i = mid_subarr.shape[0] % bin_frac  # calculate remainder to get integer dimensions
-    rem_j = mid_subarr.shape[1] % bin_frac  # calculate remainder to get integer dimensions
-    subarr_idim = (mid_subarr.shape[0] - rem_i) / bin_frac  # get ydim
-    subarr_jdim = (mid_subarr.shape[1] - rem_j) / bin_frac  # get xdim
-     
+
+    subarr_idim = np.min([dr[i].data.shape[0] for i in range(nf)])
+    subarr_jdim = np.min([dr[i].data.shape[1] for i in range(nf)])
+    
+    #mid_subarr = dr[mid_file].data		# extract data from middle file of derotated datacube
+    #print mid_subarr.shape
+    #rem_i = mid_subarr.shape[0] % bin_frac  # calculate remainder to get integer dimensions
+    #rem_j = mid_subarr.shape[1] % bin_frac  # calculate remainder to get integer dimensions
+    rem_i = subarr_idim % bin_frac  # calculate remainder to get integer dimensions
+    rem_j = subarr_jdim % bin_frac  # calculate remainder to get integer dimensions
+    #subarr_idim = (mid_subarr.shape[0] - rem_i) / bin_frac  # get ydim
+    #subarr_jdim = (mid_subarr.shape[1] - rem_j) / bin_frac  # get xdim
+    subarr_idim = (subarr_idim - rem_i) / bin_frac  # get ydim
+    print subarr_idim
+    subarr_jdim = (subarr_jdim - rem_j) / bin_frac  # get xdim
+    print subarr_idim
+    
     mc_list = np.zeros((1,2,3))  # free up memory
     new_mapcube = np.zeros((1,2,3))  # free up memory
     
@@ -182,19 +193,22 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     DATA = np.empty((nf, subarr_idim, subarr_jdim), dtype=np.int16)  # save as int16, since that is what original is
     TIME = np.empty((nf))  # might as well just have all as float
     
+    print DATA.shape
+    
+    
     # loop through datacube and extract pixel data and time values
     for p in range(0,nf):
         Ex = dr[p].exposure_time
         I[p] = Ex.value
         L = dr[p].data
-        L_trim = L[0:(mid_subarr.shape[0] - rem_i), 0:(mid_subarr.shape[1] - rem_j)]
+        L_trim = L[0:(subarr_idim - rem_i), 0:(subarr_jdim - rem_j)]
         small_L = rebin(L_trim, L_trim.shape[0]/bin_frac, L_trim.shape[1]/bin_frac)
         DATA[p][:][:] = small_L  # normalize by exposure time
         T = dr[p].date
         curr_time=(T.hour * 3600.)+(T.minute * 60.)+T.second	
         TIME[p] = curr_time - base_time  # calculate running time of image
         
-    print DATA.shape
+    
         
     # generate images of each visual region, to see if as expected
     #fig = plt.figure(figsize=(20,20))
@@ -268,40 +282,53 @@ newData_p = comm.gather(data, root=0)  # Gather all the results
 newData_t = comm.gather(time, root=0)  # Gather all the results
 newData_e = comm.gather(exposure, root=0)  # Gather all the results
 
-temp_max = np.zeros((len(newData_p)))
+#temp_max = np.zeros((len(newData_p)))
 
-
+#"""
 if rank == 0:
-    for r in range(len(newData_p)):
-        temp_max[r] = newData_p[r].shape[2]
-    xmin = int(np.min(temp_max))
-    for s in range(len(newData_p)):
+    xmin = int(np.min([newData_p[r].shape[2] for r in range(size)]))  # this shouldn't be a huge difference - usually 2-3 pixels separate max/min
+    #for r in range(len(newData_p)):
+        #temp_max[r] = newData_p[r].shape[2]
+    #xmin = int(np.min(temp_max))
+    #for s in range(len(newData_p)):
+    for s in range(size):
         newData_p[s] = newData_p[s][:,:,0:xmin]   # ugh, the trimming should probably be off of both sides of the array
     num_f = newData_p[0].shape[0]
-    y_len = newData_p[0].shape[1]
+    #y_len = newData_p[0].shape[1]
+    y_min = int(np.min([newData_p[w].shape[1] for w in range(size)]))  # this shouldn't be a huge difference - usually 2-3 pixels separate max/min
+    #y_len = 0
+    #for q in range(1,(size/2)):
+    #    y_len += np.min(y_min[(2*q)-1:(2*q)])
+    #y_full_dim
+    y_len = y_min
+    #y_len = int(np.min([newData_p[r].shape[1] for r in range(size)]))
     #overlap = np.zeros((num_f,20,xmin))
     overlap = int(np.floor(12*1.67))
-    full_arr = np.zeros((num_f,(len(newData_p)*y_len)-(overlap*(len(newData_p)-1)),xmin))
+    #full_arr = np.zeros((num_f,(len(newData_p)*y_len)-(overlap*(len(newData_p)-1)),xmin))
+    full_arr = np.zeros((num_f,(size*y_len)-(overlap*(size-1)),xmin))
     
-    for t in range(len(newData_p)-1):
+    # maybe find coordinates that lead to even dimensions when dividing by size
+    
+    #for t in range(len(newData_p)-1):
+    for t in range(size-1):
         if t == 0:
             full_arr[:,0:(t+1)*(y_len-overlap),:] = newData_p[t][:,0:y_len-overlap,:]
             full_arr[:,(t+1)*(y_len-overlap):(t+1)*(y_len)-(t*overlap),:] = (newData_p[t][:,y_len-overlap:y_len,:] + newData_p[t+1][:,0:overlap,:]) / 2.
         else:
             full_arr[:,(t*y_len)-((t-1)*overlap):(t+1)*(y_len-overlap),:] = newData_p[t][:,overlap:y_len-overlap,:]
             full_arr[:,(t+1)*(y_len-overlap):(t+1)*(y_len)-(t*overlap),:] = (newData_p[t][:,y_len-overlap:y_len,:] + newData_p[t+1][:,0:overlap,:]) / 2.
-    full_arr[:,(t+1)*y_len-(t*overlap):(t+2)*y_len-((t+1)*overlap), :] = newData_p[len(newData_p)-1][:,overlap:y_len,:] 
+    full_arr[:,(t+1)*y_len-(t*overlap):(t+2)*y_len-((t+1)*overlap), :] = newData_p[size-1][:,overlap:y_len,:] 
         
     #stack_p = np.hstack(newData_p)
     #print stack_p.shape
     print "Derotated cube shape: (%s,%s,%s)" % full_arr.shape
-    np.save('C:/Users/Brendan/Desktop/derotate_mpi_8seg_D.npy',full_arr)
-    np.save('C:/Users/Brendan/Desktop/time.npy', newData_t[0])
-    np.save('C:/Users/Brendan/Desktop/exposure.npy', newData_e[0])
+    np.save('C:/Users/Brendan/Desktop/derotate_mpi_8seg_F.npy',full_arr)
+    #np.save('C:/Users/Brendan/Desktop/time.npy', newData_t[0])
+    #np.save('C:/Users/Brendan/Desktop/exposure.npy', newData_e[0])
     #np.save('%s/DATA/Temp/%s/%i/derotated.npy' % (directory, date, wavelength), full_arr)
     #np.save('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength), newData_t[0])
     #np.save('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength), newData_e[0])
-    
+    """
     # calculate the average-intensity image of the timeseries 
     AVG = np.average(full_arr,axis=0)  #hmm, this is not normalized - doesn't really matter I don't think
     
@@ -332,4 +359,6 @@ if rank == 0:
     T_final = timer() - start
     T_min_final, T_sec_final = divmod(T_final, 60)
     T_hr_final, T_min_final = divmod(T_min_final, 60)
-    print "Total program time = %i sec" % T_final   
+    print "Total program time = %i sec" % T_final 
+    """
+#"""
