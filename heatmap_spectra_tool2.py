@@ -208,7 +208,7 @@ def Gauss(f, P, fp, fw):
     return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) 
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20130815'
+date = '20130626'
 wavelength = 171
 
 
