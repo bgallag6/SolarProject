@@ -23,24 +23,34 @@ import h5py
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.pyplot import figure, show
 
-#h_map = np.load('F:/Users/Brendan/Desktop/SolarProject/M2_Spectra_Params/param_20130530_1600_0_296_0_634_numpy.npy')
-h_map = np.load('C:/Users/Brendan/Desktop/SDO/param_20130530_193_2300_2600_2200_3000.npy')
+directory = 'F:/Users/Brendan/Desktop/SolarProject'
+date = '20130626'
+wavelength = 304
 
-wavelength = 211
-year = 2012
-month = 9
-day = 23
+
+h_map0 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
+#h_map = np.copy(h_map0)
+#h_map = np.load('C:/Users/Brendan/Desktop/SDO/param_20130530_193_2300_2600_2200_3000.npy')
+
+#wavelength = 211
+#year = 2012
+#month = 9
+#day = 23
 
 
 def update_min(val):
     vmin = s_vmin.val
-    for i in range(R.shape[0]):
-        for j in range(R.shape[1]):
-            R[i][j] = h_map[1][i][j]
-    for i in range(R.shape[0]):
-        for j in range(R.shape[1]):
-            if R[i][j] < vmin:
-                R[i][j] = np.nan
+    print vmin
+    h_map = np.copy(h_map0)
+    #for i in range(R.shape[0]):
+    #    for j in range(R.shape[1]):
+    #        R[i][j] = h_map[1][i][j]
+    #for i in range(R.shape[0]):
+    #    for j in range(R.shape[1]):
+    #        if R[i][j] < vmin:
+    #            R[i][j] = np.nan
+    R = h_map[p]
+    R[R<vmin] = np.NaN
  
     ax1 = plt.subplot2grid((1,1),(0, 0), colspan=1, rowspan=1)
     plt.subplots_adjust(bottom=0.25)
@@ -58,13 +68,17 @@ def update_min(val):
     
 def update_max(val):
     vmax = s_vmax.val
-    for i in range(R.shape[0]):
-        for j in range(R.shape[1]):
-            R[i][j] = h_map[1][i][j]
-    for i in range(R.shape[0]):
-        for j in range(R.shape[1]):
-            if R[i][j] > vmax:
-                R[i][j] = np.nan
+    print vmax
+    h_map = np.copy(h_map0)
+    #for i in range(R.shape[0]):
+    #    for j in range(R.shape[1]):
+    #        R[i][j] = h_map[1][i][j]
+    #for i in range(R.shape[0]):
+    #    for j in range(R.shape[1]):
+    #        if R[i][j] > vmax:
+    #            R[i][j] = np.nan
+    R = h_map[p]
+    R[R>vmax] = np.NaN
 
     ax1 = plt.subplot2grid((1,1),(0, 0), colspan=1, rowspan=1)
     plt.subplots_adjust(bottom=0.25)
@@ -84,25 +98,28 @@ def update_max(val):
 def reset(event):
     s_vmin.reset()
     s_vmax.reset()
-    for i in range(R.shape[0]):
-        for j in range(R.shape[1]):
-            R[i][j] = h_map[1][i][j]
+    h_map = np.copy(h_map0)
+    R = h_map[p]
     ax1.imshow(R, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)    
     
     
 
+p = 1
 
-R = np.zeros((h_map.shape[1],h_map.shape[2]))
+#R = np.zeros((h_map.shape[1],h_map.shape[2]))
 
-date_title = '%i-%02i-%02i' % (year,month,day)
+#date_title = '%i-%02i-%02i' % (year,month,day)
+date_title = date
         
 # create list of titles and colorbar names for display on the figures
 titles = ['Power Law Slope Coeff.', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location', 'Gaussian Width', '$/chi^2$', 'Visual Image - Averaged']
 cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location (e^(Value))', 'Width', '$/chi^2$', 'Intensity']
 
-for i in range(R.shape[0]):
-        for j in range(R.shape[1]):
-            R[i][j] = h_map[1][i][j]
+h_map = np.copy(h_map0)
+R = h_map[p]
+#for i in range(R.shape[0]):
+#        for j in range(R.shape[1]):
+#            R[i][j] = h_map[1][i][j]
             
 
 # create figure with heatmap and spectra side-by-side subplots
@@ -113,10 +130,11 @@ plt.subplots_adjust(bottom=0.25)
 plt.subplots_adjust(left=0.05)
 ax1.set_xlim(0, h_map.shape[2]-1)
 ax1.set_ylim(0, h_map.shape[1]-1)  
-ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[1]), y = 1.01, fontsize=17)
+ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[p]), y = 1.01, fontsize=17)
                   
 
-param = h_map[1]  # set initial heatmap to power law index     
+
+param = h_map[p]  # set initial heatmap to power law index     
 h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
 h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
 im = ax1.imshow(R, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
@@ -139,12 +157,15 @@ cbar.ax.tick_params(labelsize=13, pad=3)
 #ax2.set_xlim(10**-4.5, 10**-1.3)
 #ax2.set_ylim(10**-5, 10**0)  
 
+sl_min = [10**-9, 0.3, 10**-7, 10**-5, -6.4, 0.05]
+sl_max = [10**-4, 4.0, 10**-2, 10**-1, -4.6, 0.8]
+
 axcolor = 'white'
 ax_vmin = plt.axes([0.2, 0.13, 0.45, 0.04], axisbg=axcolor)
-s_vmin = Slider(ax_vmin, 'vmin', 0.1, 3., valinit=vmin_initial)
+s_vmin = Slider(ax_vmin, 'vmin', sl_min[p], sl_max[p], valinit=vmin_initial)
 
 ax_vmax = plt.axes([0.2, 0.08, 0.45, 0.04], axisbg=axcolor)
-s_vmax = Slider(ax_vmax, 'vmax', 0.1, 3., valinit=vmax_initial)
+s_vmax = Slider(ax_vmax, 'vmax', sl_min[p], sl_max[p], valinit=vmax_initial)
     #fig.canvas.draw_idle()
 s_vmin.on_changed(update_min)
 s_vmax.on_changed(update_max)

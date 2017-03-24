@@ -7,13 +7,13 @@ Created on Sun Mar 19 18:36:12 2017
 
 import numpy as np
 
-#size = 16
-size = 4
+size = 16
+#size = 4
 
 newData_p = []
 for i in range(size):
-    #temp = np.load('/mnt/data-solar/Gallagher/DATA/Temp/20130626/171/chunk_%i_of_16.npy' % i)
-    temp = np.load('C:/Users/Brendan/Desktop/derotate_save/chunk_%i_of_4.npy' % i)
+    temp = np.load('/mnt/data-solar/Gallagher/DATA/Temp/20130626/171/chunk_%i_of_16.npy' % i)
+    #temp = np.load('C:/Users/Brendan/Desktop/derotate_save/chunk_%i_of_4.npy' % i)
     newData_p.append(temp)
 
 
@@ -56,6 +56,8 @@ for t in range(size-1):
         full_arr[:,(t*y_len)-((t-1)*overlap):(t+1)*(y_len-overlap),:] = newData_p[t][:,overlap:y_len-overlap,:]
         full_arr[:,(t+1)*(y_len-overlap):(t+1)*(y_len)-(t*overlap),:] = (newData_p[t][:,y_len-overlap:y_len,:]*weight_avg_top + newData_p[t+1][:,0:overlap,:]*weight_avg_bot) / 21.
 full_arr[:,(t+1)*y_len-(t*overlap):(t+2)*y_len-((t+1)*overlap), :] = newData_p[size-1][:,overlap:y_len,:] 
+
+del newData_p  # free up memory
     
 #stack_p = np.hstack(newData_p)
 #print stack_p.shape
@@ -63,8 +65,8 @@ full_arr[:,(t+1)*y_len-(t*overlap):(t+2)*y_len-((t+1)*overlap), :] = newData_p[s
 #np.save('C:/Users/Brendan/Desktop/derotate_mpi_8seg_F.npy',full_arr)
 #np.save('C:/Users/Brendan/Desktop/time.npy', newData_t[0])
 #np.save('C:/Users/Brendan/Desktop/exposure.npy', newData_e[0])
-#np.save('/mnt/data-solar/Gallagher/DATA/Temp/20130626/171/derotated.npy', full_arr)
-np.save('C:/Users/Brendan/Desktop/derotate_save/derotated_weight.npy', full_arr)
+np.save('/mnt/data-solar/Gallagher/DATA/Temp/20130626/171/derotated.npy', full_arr)
+#np.save('C:/Users/Brendan/Desktop/derotate_save/derotated_weight.npy', full_arr)
 #np.save('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength), newData_t[0])
 #np.save('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength), newData_e[0])
 #"""
@@ -92,6 +94,6 @@ print visual.shape  # check array size agrees with expected
 
 # save visual-image array
 #np.save('C:/Users/Brendan/Desktop/visual.npy', visual)
-#np.save('/mnt/data-solar/Gallagher/DATA/Temp/20130626/171/visual.npy', visual)
-np.save('C:/Users/Brendan/Desktop/derotate_save/visual_weight.npy', visual)
+np.save('/mnt/data-solar/Gallagher/DATA/Temp/20130626/171/visual.npy', visual)
+#np.save('C:/Users/Brendan/Desktop/derotate_save/visual_weight.npy', visual)
 #np.save('%s/DATA/Output/%s/%i/visual.npy' % (directory, date, wavelength), visual)
