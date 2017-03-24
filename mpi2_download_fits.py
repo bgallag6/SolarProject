@@ -5,14 +5,11 @@ Created on Thu Mar 16 19:56:25 2017
 @author: Brendan
 """
 
-
 from sunpy.net import vso
 import astropy.units as u
 import numpy as np
 from mpi4py import MPI
 import glob
-import time
-
 
 def get_data_fill(arr_need, wavelength, directory):
 

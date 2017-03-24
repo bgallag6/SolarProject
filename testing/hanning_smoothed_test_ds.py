@@ -35,7 +35,6 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
 
 spectra = np.load('C:/Users/Brendan/Desktop/validation/1seg_1x1_spectra.npy')   
 
-
 num_freq = spectra.shape[1]  # determine nubmer of frequencies that are used
 freq_size = ((num_freq)*2) + 1  # determined from FFT-averaging script
 time_step = 12  # 12 second cadence for the others
@@ -43,32 +42,7 @@ sample_freq = fftpack.fftfreq(freq_size, d=time_step)
 pidxs = np.where(sample_freq > 0)
 freqs = sample_freq[pidxs]
 
-a0 = 10**-8.
-n0 = 1.2
-c0 = 10**-5.
-p0 = 10**-4.
-l0 = -6.4
-w0 = 0.2
-
-ex = 'L'
-
-"""
-# maybe put how the fit changes depending on the parameters in the slider tool?
-"""
-
-spectra = a0*freqs**(-n0)+c0+p0*np.exp(-0.5*(((np.log(freqs))-(l0))/w0)**2)
-
-#noise1 = np.random.ranf(len(spectra))
-noise1 = np.random.uniform(-1.0,1.0,len(spectra))
-#plt.figure()
-#plt.hist(noise1)
-
-sig = spectra
-
-#spectra = sig+(sig*0.5*noise1)
-spectra = sig+(sig*0.5*noise1)
-
-orig_powerspec = spectra
+orig_powerspec = spectra[0]
 
 # Now Smooth the Power Spectra
 orig = orig_powerspec.copy()		# make a copy
@@ -93,25 +67,22 @@ s2=np.r_[y2c[window_len-1:0:-1],y2c,y2c[-1:-window_len:-1]]
 y2=np.convolve(w/w.sum(),s2,mode='valid')
 y2=y2[( window_len/2+1): len(orig)+( window_len/2 +1)]   # Crop down the new TS
 
-"""
+
 # PLOTS TO SEE HOW IT WORKED OUT
 plt.figure(figsize=(15,15))
-plt.title('Example %s \n Hanning-Window Smoothing' % (ex), y = 1.01, fontsize=30)
-plt.loglog(freqs, sig,color='blue', label='Pure Signal')
-plt.loglog(freqs, orig,color='black', label='Spectra w/ Noise')
-plt.loglog(freqs, y,color='green', label='1st Hanning Smooth')
-plt.loglog(freqs, y2,color='red', label='2nd Hanning Smooth')
+plt.title('Hanning-Window Smoothing', y = 1.01, fontsize=30)
+plt.loglog(freqs, orig,color='black')
+plt.loglog(freqs, y,color='green')
+plt.loglog(freqs, y2,color='red')
 ax = plt.gca()  # get current axis -- to set colorbar 
-plt.xticks(fontsize=25)
-plt.yticks(fontsize=25)
+plt.xticks(fontsize=30)
+plt.yticks(fontsize=30)
 plt.xlim(10**-4.5,10**-1)
-plt.ylim(10**-5.5,10**-.01)
+plt.ylim(10**-7,10**0)
 ax.tick_params(axis='both', which='major', pad=15)
 plt.xlabel('Frequency [Hz]', fontsize=30, labelpad=10)
 plt.ylabel('Power', fontsize=30, labelpad=10)
-plt.legend(loc='upper right')
-#plt.savefig('C:/Users/Brendan/Desktop/param_fits/example_hanning_%s.pdf' % ex, format='pdf')
-"""
+#plt.savefig('C:/Users/Brendan/Desktop/validation2/smoothing1x1.pdf', format='pdf')
 
 """
 # determine frequency values that FFT will evaluate
@@ -132,13 +103,10 @@ for ii in range(1):
     print ii     
     #for jj in range(spectra.shape[0]): 
     for jj in range(1):                             
-        
-        #f = freqs[5:]  # frequencies
-        f = freqs
+        f = freqs[1:]  # frequencies
         #s = spectra[ii][jj]
         #s = spectra[ii]
-        #s = y2[5:]
-        s = sig
+        s = y2[1:]
         
         #plt.figure()
         #plt.loglog(f,s)
@@ -150,28 +118,6 @@ for ii in range(1):
         df2[0:len(df)] = df
         df2[len(df2)-1] = df2[len(df2)-2]
         ds = df2
-        #ds = ds**(1./2.)
-        #ds = ds**(-1./2.)
-        #ds = ds**2
-        ds = ds**4
-        yerr = ds
-        
-        """
-        # First illustrate basic pyplot interface, using defaults where possible.
-        plt.figure(figsize=(15,15))
-        plt.title(r"Example: ds = $ds^{-1/2}$ | plotting ln(s) vs ln(f)", y = 1.01, fontsize=30)
-        ax = plt.gca()  # get current axis -- to set colorbar 
-        plt.xticks(fontsize=25)
-        plt.yticks(fontsize=25)
-        #plt.xlim(10**-4.5,10**-1)
-        #plt.ylim(10**-3.,10**-0.01)
-        ax.tick_params(axis='both', which='major', pad=15)
-        plt.xlabel('Frequency [Hz]', fontsize=30, labelpad=10)
-        plt.ylabel('Power', fontsize=30, labelpad=10)
-        plt.errorbar(np.log(f), np.log(s), yerr=ds)
-        #plt.savefig('C:/Users/Brendan/Desktop/param_fits/example_errorbars_%s_ds_ds_negativ_half.pdf' % ex, format='pdf')
-        #plt.loglog(f, ds)
-        """
         
         # create points to fit model with final parameters 
         #f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],(len(freqs)+1)/2)  # would save storage / memory space?      
@@ -264,14 +210,14 @@ for ii in range(1):
         redchisqrM22 = ((residsM22/ds)**2).sum()/float(f.size-6) 
         
         plt.figure(figsize=(15,15))
-        plt.title(r"Example %s: ds = $ds^{-1/2}$" % (ex) + "\n" + r"A: %0.2e | n: %0.2f | $R$: %1.0f | $\alpha$: %0.2e | $\beta$: %1.0f | $\sigma$: %0.3f" % (a0,n0,((c0/a0)**(1./n0)),p0,(1./np.exp(l0)),w0), y = 1.01, fontsize=30)
+        plt.title('1-Segment No Pixel-Box Averaging: ds = ds', y = 1.01, fontsize=30)
         plt.loglog(f,s)
         plt.loglog(f,m2_fit2)
         ax = plt.gca()  # get current axis -- to set colorbar 
-        plt.xticks(fontsize=25)
-        plt.yticks(fontsize=25)
+        plt.xticks(fontsize=30)
+        plt.yticks(fontsize=30)
         plt.xlim(10**-4.5,10**-1)
-        plt.ylim(10**-5.5,10**-0.01)
+        plt.ylim(10**-7,10**0)
         ax.tick_params(axis='both', which='major', pad=15)
         plt.xlabel('Frequency [Hz]', fontsize=30, labelpad=10)
         plt.ylabel('Power', fontsize=30, labelpad=10)
@@ -293,10 +239,8 @@ for ii in range(1):
         #plt.text(0.007, 10**-1.75, r'$p$ = {0:0.2e}'.format(p_val), fontsize=30)
         #plt.text(0.0047, 10**-1.55, r'$p$ = {0:0.3g}'.format(p_val), fontsize=30)
         #plt.text(0.0047, 10**-1.75, r'$r$ = {0:0.3g}'.format(r_val[0]), fontsize=30)
-        #plt.savefig('C:/Users/Brendan/Desktop/param_fits/example_hanning_fit_%s.pdf' % ex, format='pdf')
-        #plt.savefig('C:/Users/Brendan/Desktop/param_fits/example_fit_%s_ds_ds_negativ_half.pdf' % ex, format='pdf')
+        #plt.savefig('C:/Users/Brendan/Desktop/validation2/fit_1_1x1_smoothed.pdf', format='pdf')
         
-        """
         plt.figure(figsize=(15,15))
         plt.hist(residsM22,bins=100,range=(-0.002,0.002))
         plt.title('Residuals from 1-Segment No Pixel-Box Averaging', y = 1.01, fontsize=30)
@@ -305,7 +249,6 @@ for ii in range(1):
         plt.xlabel('Residual Amount', fontsize=25, labelpad=10)
         plt.ylabel('Bin Count', fontsize=25, labelpad=10)
         #plt.savefig('C:/Users/Brendan/Desktop/validation/histogram_1_1x1.pdf', format='pdf')
-        """        
         """
         ds2 = np.abs(residsM22)
     

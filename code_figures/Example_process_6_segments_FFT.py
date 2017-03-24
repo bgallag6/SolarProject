@@ -41,9 +41,9 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
 
 
     
-DATA = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/20130530_193_2300_2600i_2200_3000j_data_rebin1.npy')
-TIME = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/20130530_193_2300_2600i_2200_3000j_time.npy')
-EXPOSURE = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130530/20130530_193_2300_2600i_2200_3000j_exposure.npy')
+DATA = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Temp/20130530/193/derotated.npy')
+TIME = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Temp/20130530/193/time.npy')
+EXPOSURE = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Temp/20130530/193/exposure.npy')
 
 pixmed=np.empty(DATA.shape[0])  # Initialize array to hold median pixel values
 

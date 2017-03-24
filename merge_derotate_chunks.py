@@ -7,13 +7,13 @@ Created on Sun Mar 19 18:36:12 2017
 
 import numpy as np
 
-size = 16
-#size = 4
+#size = 16
+size = 4
 
 newData_p = []
 for i in range(size):
-    temp = np.load('/mnt/data-solar/Gallagher/DATA/Temp/20130626/171/chunk_%i_of_16.npy' % i)
-    #temp = np.load('C:/Users/Brendan/Desktop/derotate_save/chunk_%i_of_4.npy' % i)
+    #temp = np.load('/mnt/data-solar/Gallagher/DATA/Temp/20130626/171/chunk_%i_of_16.npy' % i)
+    temp = np.load('C:/Users/Brendan/Desktop/derotate_save/4_seg/chunk_%i_of_4.npy' % i)
     newData_p.append(temp)
 
 
@@ -36,16 +36,16 @@ y_len = y_min
 #overlap = np.zeros((num_f,20,xmin))
 overlap = int(np.floor(12*1.67))
 #full_arr = np.zeros((num_f,(len(newData_p)*y_len)-(overlap*(len(newData_p)-1)),xmin))
-full_arr = np.zeros((num_f,(size*y_len)-(overlap*(size-1)),xmin))
+full_arr = np.zeros((num_f,(size*y_len)-(overlap*(size-1)),xmin), dtype=np.int16)
 
 # maybe find coordinates that lead to even dimensions when dividing by size
 
-weight_avg_top = np.array([np.linspace(20,1,20) for i in range(1666)])
-weight_avg_bot = np.array([np.linspace(1,20,20) for i in range(1666)])
+weight_avg_top = np.array([np.linspace(20,1,20) for i in range(xmin)])
+weight_avg_bot = np.array([np.linspace(1,20,20) for i in range(xmin)])
 weight_avg_top = np.transpose(weight_avg_top)
 weight_avg_bot = np.transpose(weight_avg_bot)
-weight_avg_top = np.array([weight_avg_top for i in range(13)])
-weight_avg_bot = np.array([weight_avg_bot for i in range(13)])
+weight_avg_top = np.array([weight_avg_top for i in range(num_f)])
+weight_avg_bot = np.array([weight_avg_bot for i in range(num_f)])
 
 #for t in range(len(newData_p)-1):
 for t in range(size-1):
@@ -65,7 +65,7 @@ del newData_p  # free up memory
 #np.save('C:/Users/Brendan/Desktop/derotate_mpi_8seg_F.npy',full_arr)
 #np.save('C:/Users/Brendan/Desktop/time.npy', newData_t[0])
 #np.save('C:/Users/Brendan/Desktop/exposure.npy', newData_e[0])
-np.save('/mnt/data-solar/Gallagher/DATA/Temp/20130626/171/derotated.npy', full_arr)
+#np.save('/mnt/data-solar/Gallagher/DATA/Temp/20130626/171/derotated.npy', full_arr)
 #np.save('C:/Users/Brendan/Desktop/derotate_save/derotated_weight.npy', full_arr)
 #np.save('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength), newData_t[0])
 #np.save('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength), newData_e[0])
@@ -94,6 +94,6 @@ print visual.shape  # check array size agrees with expected
 
 # save visual-image array
 #np.save('C:/Users/Brendan/Desktop/visual.npy', visual)
-np.save('/mnt/data-solar/Gallagher/DATA/Temp/20130626/171/visual.npy', visual)
+#np.save('/mnt/data-solar/Gallagher/DATA/Temp/20130626/171/visual.npy', visual)
 #np.save('C:/Users/Brendan/Desktop/derotate_save/visual_weight.npy', visual)
 #np.save('%s/DATA/Output/%s/%i/visual.npy' % (directory, date, wavelength), visual)
