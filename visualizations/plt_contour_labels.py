@@ -17,7 +17,7 @@ import matplotlib.cm as cm
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 
-HEATMAPS = np.load('C:/Users/Brendan/Desktop/SDO/param_20130530_1600_2300_2600i_2200_3000j_data_rebin4b.npy')
+HEATMAPS = np.load('C:/Users/Brendan/Desktop/20130626_final/20130626_193_-500_500i_-500_600j_param_slope6_arthm.npy')
 hmap = HEATMAPS[1]
 
 matplotlib.rcParams['xtick.direction'] = 'out'
@@ -33,12 +33,13 @@ X, Y = np.meshgrid(x, y)
 #Z = 10.0 * (Z2 - Z1)
 Z = hmap
 
-
 # Create a simple contour plot with labels using default colors.  The
 # inline argument to clabel will control whether the labels are draw
 # over the line segments of the contour, removing the lines beneath
 # the label
 plt.figure()
+#CS = plt.contour(X, Y, Z)
 CS = plt.contour(X, Y, Z)
 plt.clabel(CS, inline=1, fontsize=10)
-plt.title('Simplest default with labels')
+plt.colorbar()
+plt.title('193A Contour : Power Law Index')

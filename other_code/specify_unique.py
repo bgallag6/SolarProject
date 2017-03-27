@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
     #h_map = np.array(f['params'])
     #vis = np.array(f['visual'])
 
-h_map = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_193_-500_500i_-500_600j_param_slope6_arthm.npy')
-vis = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_193_-500_500i_-500_600j_visual.npy')
+h_map = np.load('C:/Users/Brendan/Desktop/20130626_final/20130626_193_-500_500i_-500_600j_param_slope6_arthm.npy')
+vis = np.load('C:/Users/Brendan/Desktop/20130626_final/20130626_193_-500_500i_-500_600j_visual.npy')
 
 R = np.zeros((h_map.shape[1],h_map.shape[2]))
 
@@ -83,13 +83,13 @@ wid_max = 0.8
 """
 
 #"""
-for k in range(20):
+for k in range(1):
     #20130626 193 Coronal Hole
     pla_min = -1.
     pla_max = 1.
     index_min = 0.
-    #index_max = 1.5
-    index_max = 1.1 + (0.02*k)
+    index_max = 1.5
+    #index_max = 1.1 + (0.02*k)
     plc_min = 0.0018
     plc_max = 1.
     amp_min = 0.
@@ -142,7 +142,7 @@ for k in range(20):
     #fig = plt.figure(figsize=(15,9))               
     plt.imshow(np.flipud(R))
     #plt.title('304A: Index Max = %s' % i_m)
-    plt.savefig('C:/Users/Brendan/Desktop/feature_detection/index_max_%s.jpeg' % i_m)
+    #plt.savefig('C:/Users/Brendan/Desktop/feature_detection/index_max_%s.jpeg' % i_m)
 
 """
 ## weighting attempt

@@ -189,7 +189,7 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     del new_mapcube  # free up memory
     
     t = dr[0].date  # extract the date / time from the first image
-    base_time = (t.hour * 60.) + (t.minute * 60.) + t.second  # convert date / time to seconds
+    base_time = (t.hour * 3600.) + (t.minute * 60.) + t.second  # convert date / time to seconds
 
     # initialize arrays to hold exposure time, pixel data, and time values
     I = np.empty((nf))  # exposure time
@@ -211,7 +211,7 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
         curr_time=(T.hour * 3600.)+(T.minute * 60.)+T.second	
         TIME[p] = curr_time - base_time  # calculate running time of image
         
-    
+    TIME[TIME < 0] += 86400
     del dr    
     # generate images of each visual region, to see if as expected
     #fig = plt.figure(figsize=(20,20))

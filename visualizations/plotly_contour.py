@@ -16,7 +16,7 @@ import plotly.graph_objs as go
 from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 plotly.offline.init_notebook_mode() # run at the start of every ipython notebook
 
-HEATMAPS = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_param_slope6_arthm.npy')
+HEATMAPS = np.load('C:/Users/Brendan/Desktop/20130626_final/20130626_193_-500_500i_-500_600j_param_slope6_arthm.npy')
 
 h0 = HEATMAPS[0]
 h1 = HEATMAPS[1]

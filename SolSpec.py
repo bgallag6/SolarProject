@@ -51,6 +51,7 @@ import numpy as np
 from matplotlib import colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.stats import f as ff
+from matplotlib import cm
 
 def heatmap(directory, date, wavelength):
 #def heatmap(heatmaps, visual, date, wavelength, path_name):
@@ -111,7 +112,7 @@ def heatmap(directory, date, wavelength):
     #h_map = h_map[:,0:h_map.shape[1]-1,0:h_map.shape[2]-1]  # trim last row and column from array (originally needed since went one past)
     trim_y = (h_map.shape[1]-1600)/2
     trim_x = (h_map.shape[2]-1600)/2
-    h_map = h_map[:, trim_y:h_map.shape[1]-trim_y, trim_x:h_map.shape[2]-trim_x]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
+    #h_map = h_map[:, trim_y:h_map.shape[1]-trim_y, trim_x:h_map.shape[2]-trim_x]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
     
     #h_map = h_map[:, 0:h_map.shape[1]-50, 0:500]  # for 20130626 blobs      
     #x_ticks = [0,100,200,300,400,500]
@@ -168,7 +169,7 @@ def heatmap(directory, date, wavelength):
     #x_ticks = [0,100,200,300,400,500]
     #y_ticks = [0,100,200,300]  
     
-    """
+    #"""
     if h_map.shape[2] > h_map.shape[1]:
         aspect_ratio = float(h_map.shape[2]) / float(h_map.shape[1])
         fig_height = 10
@@ -181,11 +182,11 @@ def heatmap(directory, date, wavelength):
         fig_width = 10+2  # works better for 20130626 (with no x/y labels)
         #fig_height = 10*aspect_ratio
         fig_height = 10*aspect_ratio  # works better for 20130626
-    """
+    #"""
     
-    fig_width = 10+2  # works better for 20130626 (with no x/y labels)
+    #fig_width = 10+2  # works better for 20130626 (with no x/y labels)
     #fig_width = 10+3  # works better for 20130626 (with x/y labels)
-    fig_height = 10  # works better for 20130626
+    #fig_height = 10  # works better for 20130626
     
     for i in range(0,len(titles)-1):
     #for i in range(4,5):
@@ -237,8 +238,8 @@ def heatmap(directory, date, wavelength):
         #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
         #plt.xticks(x_ticks,fontsize=font_size)
         #plt.yticks(y_ticks,fontsize=font_size)
-        plt.xticks(x_ticks,x_ind,fontsize=font_size)
-        plt.yticks(y_ticks,y_ind,fontsize=font_size)
+        #plt.xticks(x_ticks,x_ind,fontsize=font_size)
+        #plt.yticks(y_ticks,y_ind,fontsize=font_size)
         ax.tick_params(axis='both', which='major', pad=10)
         divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
         cax = divider.append_axes("right", size="3%", pad=0.07)
@@ -264,7 +265,7 @@ def heatmap(directory, date, wavelength):
         cbar.set_ticks(c_ticks)  # 8 for slope (or might as well be for all, format separately)
         #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
+        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s2.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
         
         if i == 2 or i == 3 or i == 4 or i == 5:   
             fig = plt.figure(figsize=(fig_width,fig_height))
@@ -300,8 +301,8 @@ def heatmap(directory, date, wavelength):
             #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
             #plt.xticks(x_ticks,fontsize=font_size)
             #plt.yticks(y_ticks,fontsize=font_size)
-            plt.xticks(x_ticks,x_ind,fontsize=font_size)
-            plt.yticks(y_ticks,y_ind,fontsize=font_size)
+            #plt.xticks(x_ticks,x_ind,fontsize=font_size)
+            #plt.yticks(y_ticks,y_ind,fontsize=font_size)
             ax.tick_params(axis='both', which='major', pad=10)
             divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
             cax = divider.append_axes("right", size="3%", pad=0.07)
@@ -319,7 +320,7 @@ def heatmap(directory, date, wavelength):
             cbar.set_ticks(c_ticks)  # 8 for slope
             #plt.tight_layout()
             #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_m[k]))
-            #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.pdf' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)), format='pdf')
+            plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i2.pdf' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)), format='pdf')
         
         #"""
         flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
@@ -336,7 +337,7 @@ def heatmap(directory, date, wavelength):
         plt.ylim(0, y.max()*1.1)
         #plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
+        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s2.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
         #"""
     
     # generate 'rollover frequency' heatmap
@@ -366,8 +367,8 @@ def heatmap(directory, date, wavelength):
     #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
     #plt.xticks(x_ticks,fontsize=font_size)
     #plt.yticks(y_ticks,fontsize=font_size)
-    plt.xticks(x_ticks,x_ind,fontsize=font_size)
-    plt.yticks(y_ticks,y_ind,fontsize=font_size)
+    #plt.xticks(x_ticks,x_ind,fontsize=font_size)
+    #plt.yticks(y_ticks,y_ind,fontsize=font_size)
     ax.tick_params(axis='both', which='major', pad=10)
     divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
     cax = divider.append_axes("right", size="3%", pad=0.07)
@@ -377,7 +378,7 @@ def heatmap(directory, date, wavelength):
     #cbar.set_ticks(np.round(c_ticks,8))  # 8 for slope
     cbar.set_ticks(c_ticks)  # 8 for slope
     #plt.tight_layout()
-    #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
+    plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq2.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
     
     
   
@@ -388,7 +389,7 @@ def heatmap(directory, date, wavelength):
     vis = visual
     trim_yv = (vis.shape[1]-1600)/2
     trim_xv = (vis.shape[2]-1600)/2
-    vis = vis[:, trim_yv:vis.shape[1]-trim_yv, trim_xv:vis.shape[2]-trim_xv]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
+    #vis = vis[:, trim_yv:vis.shape[1]-trim_yv, trim_xv:vis.shape[2]-trim_xv]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
     
     #vis = vis[:, 0:vis.shape[1]-50, 0:500]  # for 20130626 blobs     
     
@@ -412,8 +413,8 @@ def heatmap(directory, date, wavelength):
         #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
         #plt.xticks(x_ticks,fontsize=font_size)
         #plt.yticks(y_ticks,fontsize=font_size)
-        plt.xticks(x_ticks,x_ind,fontsize=font_size)
-        plt.yticks(y_ticks,y_ind,fontsize=font_size)
+        #plt.xticks(x_ticks,x_ind,fontsize=font_size)
+        #plt.yticks(y_ticks,y_ind,fontsize=font_size)
         ax.tick_params(axis='both', which='major', pad=10)
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="3%", pad=0.07)
@@ -422,7 +423,7 @@ def heatmap(directory, date, wavelength):
         cbar.ax.tick_params(labelsize=font_size, pad=5) 
         #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_vis[i]))
-        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
+        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
 
 
 
@@ -647,7 +648,7 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     new_mapcube = np.zeros((1,2,3))  # free up memory
     
     t = dr[0].date  # extract the date / time from the first image
-    base_time = (t.hour * 60.) + (t.minute * 60.) + t.second  # convert date / time to seconds
+    base_time = (t.hour * 3600.) + (t.minute * 60.) + t.second  # convert date / time to seconds
 
     # initialize arrays to hold exposure time, pixel data, and time values
     I = np.empty((nf))  # exposure time
@@ -665,6 +666,8 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
         T = dr[p].date
         curr_time=(T.hour * 3600.)+(T.minute * 60.)+T.second	
         TIME[p] = curr_time - base_time  # calculate running time of image
+        
+    TIME[TIME < 0] += 86400
     
     # save the pixel-value, time-array, and exposure-time datacubes as numpy files
     #np.save('%s/DATA/Temp/%s/%i/%i_%ii_%i_%ij_data_rebin%i.npy' % (directory, date, wavelength, y1, y2, x1, x2, bin_frac), DATA)
@@ -797,18 +800,20 @@ def fft_avg(directory, date, wavelength, num_seg):
     
     print "Number of seconds in timeseries = %i" % (TIME[len(TIME)-1] - TIME[0])
     
-    t_interp = np.linspace(0, TIME[len(TIME)-1], (TIME[len(TIME)-1]/12)+1)  #  <-- use this (might be correct method) - not sure if matters
-    
+        
+    ## determine frequency values that FFT will evaluate
+    if wavelength == 1600 or wavelength == 1700:
+      time_step = 24  # 24-second cadence for these wavelengths
+    else:
+      time_step = 12  # 12-second cadence for the others
+      
+    t_interp = np.linspace(0, TIME[len(TIME)-1], (TIME[len(TIME)-1]/time_step)+1)  # interpolate onto default-cadence time-grid
+      
     n_segments = num_seg  # break data into 12 segments of equal length
     n = len(t_interp)
     rem = n % n_segments
-    freq_size = (n - rem) / n_segments
+    freq_size = (n - rem) / n_segments 
     
-    ## determine frequency values that FFT will evaluate
-    if wavelength == 1600 or wavelength == 1700:
-      time_step = 24  # 24 second cadence for these wavelengths
-    else:
-      time_step = 12  # 12 second cadence for the others
     sample_freq = fftpack.fftfreq(freq_size, d=time_step)
     pidxs = np.where(sample_freq > 0)
     freqs = sample_freq[pidxs]

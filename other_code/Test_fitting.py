@@ -41,7 +41,8 @@ def Gauss(f, P, fp, fw):
 def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
     
-spectra_array = np.load('F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/193/20130626_193_-450_-200i_-200_200j_spectra.npy')
+#spectra_array = np.load('F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/193/20130626_193_-450_-200i_-200_200j_spectra.npy')
+spectra_array = np.load('C:/Users/Brendan/Desktop/fft_overlap2/array_75pct.npy')
 ## load in array of segment-averaged pixel FFTs
 SPECTRA = spectra_array
 
@@ -62,11 +63,14 @@ start = timer()
 T1 = 0
 
 
+
+
 #for l in range(0,SPECTRA.shape[0]):
-for l in range(145,146):
+#for l in range(145,146):
+for l in range(1):
     
-    #for m in range(0,SPECTRA.shape[1]):
-    for m in range(190,191):
+    for m in range(0,SPECTRA.shape[1]):
+    #for m in range(190,191):
         
                                         
         f = freqs  # frequencies
@@ -180,10 +184,10 @@ for l in range(145,146):
         f_test = ((chisqrM1-chisqrM22)/(6-3))/((chisqrM22)/(f.size-6))   
         # Plot models + display combined-model parameters + uncertainties
         #"""
-        fig = plt.figure(figsize=(20,15))
-        plt.title('Index Bounds [0.3, 6.0], dogbox + trf: Pixel %ii, %ij' % (l,m), y = 1.01, fontsize=25)
-        plt.ylim((10**-8,10**1))
-        plt.xlim((10**-5,10**-1))
+        fig = plt.figure(figsize=(15,15))
+        plt.title('Raw Segment %i' % m, y = 1.01, fontsize=25)
+        plt.ylim((10**-6,10**0))
+        plt.xlim((10**-4.3,10**-1.2))
         plt.loglog(f,s,'k')
         plt.loglog(f, m1_fit, label='Power Law - M1')
         plt.loglog(f, m2P_fit, 'g', label='Power Law - M2')
@@ -194,19 +198,18 @@ for l in range(145,146):
         plt.ylabel('Power', fontsize=20, labelpad=10)
         plt.vlines((1.0/300.),10**-8,10**1, linestyles='dashed', label='5 minutes')
         plt.vlines((1.0/180.),10**-8,10**1, linestyles='dotted', label='3 minutes')
-        plt.text(0.01, 10**0., 'A = {0:0.3e}$\pm${1:0.3e}'.format(m2_param[0], uncertainties[0]), fontsize=15)
-        plt.text(0.01, 10**-0.3, 'n = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[1], uncertainties[1]), fontsize=15)
-        plt.text(0.01, 10**-0.6, 'C = {0:0.3e}$\pm${1:0.3e}'.format(m2_param[2], uncertainties[2]), fontsize=15)
-        plt.text(0.01, 10**-0.9, 'P = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[3], uncertainties[3]), fontsize=15)
-        plt.text(0.01, 10**-1.2, 'fp = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[4], uncertainties[4]), fontsize=15)
-        plt.text(0.01, 10**-1.5, 'fw = {0:0.3f}$\pm${1:0.3f}'.format(m2_param[5], uncertainties[5]), fontsize=15)
-        plt.text(0.01, 10**-1.8, 'f_test = {0:0.3f}'.format(f_test), fontsize=15)
-        plt.text(0.01, 10**-2.1, r'$\chi^2$: Dogbox = {0:0.4f}'.format(redchisqrM2), fontsize=15)
+        plt.text(0.01, 10**-0.6, 'A = {0:0.3e}'.format(m2_param[0]), fontsize=15)
+        plt.text(0.01, 10**-0.9, 'n = {0:0.3f}'.format(m2_param[1]), fontsize=15)
+        plt.text(0.01, 10**-1.2, 'C = {0:0.3e}'.format(m2_param[2]), fontsize=15)
+        plt.text(0.01, 10**-1.5, 'P = {0:0.3f}'.format(m2_param[3]), fontsize=15)
+        plt.text(0.01, 10**-1.8, 'fp = {0:0.3f}'.format(m2_param[4]), fontsize=15)
+        plt.text(0.01, 10**-2.1, 'fw = {0:0.3f}'.format(m2_param[5]), fontsize=15)
+        plt.text(0.01, 10**-2.4, 'f_test = {0:0.3f}'.format(f_test), fontsize=15)
         #plt.text(0.01, 10**-2.4, r'$\chi^2$: Dogbox + trf = {0:0.4f}'.format(redchisqrM22), fontsize=15)
-        plt.legend(loc='upper left', prop={'size':15})
+        plt.legend(loc='lower left', prop={'size':15})
         plt.show()
         #plt.savefig('C:/Users/Brendan/Desktop/double_optimize/%ii_%ij_6_double_optimize.pdf' % (l,m), format='pdf')
-        #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))
+        #plt.savefig('C:/Users/Brendan/Desktop/fft_overlap2/raw_segment_%i.jpeg' % m)
         #plt.close()
         #"""
         
