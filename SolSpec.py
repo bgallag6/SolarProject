@@ -31,8 +31,6 @@ This module can be used to:
 
 # think I can take out the trimming of edges?  should be built into the array creation
 
-# maybe instead of NaN for chi^2, use [if.data?] - so only looks at valid data
-
 # when generating heatmaps for rebinned regions - should it scale x/y axes by that factor?
 
 # update 1/19:
@@ -57,14 +55,13 @@ def heatmap(directory, date, wavelength):
 #def heatmap(heatmaps, visual, date, wavelength, path_name):
     """
     Generates heatmaps and histograms for each of the parameters:
-    Powerlaw Slope Coefficient, Powerlaw Index, Powerlaw Tail Value,
-    Gaussian Amplitude, Gaussian Location, Gaussian Width, and Chi^2.
+    Power Law Slope Coefficient, Power Law Index, Power Law Tail Value,
+    Gaussian Amplitude, Gaussian Location, Gaussian Width, F-Statistic,
+    p-value masking, Gaussian-component masked plots, Rollover Period,
+    and Visual Images. 
     
-    heatmaps : 
-        Array of parameters from which heatmaps are generated. (array)
-        
-    visual : 
-        Array containing visual images. (array)
+    directory : 
+        Directory which contains the DATA folder of the file structure. (string)
         
     date : 
         Date of dataset in 'YYYYMMDD' format. (String)
@@ -72,9 +69,6 @@ def heatmap(directory, date, wavelength):
     wavelength :
         Wavelength of dataset. (Integer)
                    
-    path_name : 
-        The directory to which the files should be saved. (String)
-      
     Example:
     ::
         ss.heatmap(heatmap = HEATMAPS, visual = VISUAL, date = '20130815',
@@ -82,34 +76,28 @@ def heatmap(directory, date, wavelength):
     """
     
     # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
-    #titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', '$\chi^2$']
-    titles = [r'Power Law Slope-Coefficient [$flux$] - $A$', r'Power Law Index - $n$', r'Power Law Tail - $C$', r'Gaussian Amplitude [$flux$] - $\alpha$', r'Gaussian Location [min] - $\beta$', r'Gaussian Width - $\sigma$', 'F-Statistic', r'Gaussian Amplitude Scaled - $\alpha$', 'p-Value']
-    #names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'Chi2']
+    titles = [r'Power Law Slope-Coefficient [flux] - $A$', r'Power Law Index - $n$', r'Power Law Tail - $C$', r'Gaussian Amplitude [flux] - $\alpha$', r'Gaussian Location [min] - $\beta$', r'Gaussian Width - $\sigma$', 'F-Statistic', r'Gaussian Amplitude Scaled - $\alpha$', 'p-Value']
     names = ['slope_coeff', 'index', 'tail', 'gauss_amp', 'gauss_loc', 'gauss_wid', 'f_test', 'gauss_amp_scaled', 'p_value']
-    #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location (e^(Value))', 'Width', '$\chi^2$']
-    #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', '$\chi^2$']
-    cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', 'F-Statistic', 'Amplitude Scaled', 'p-Value']
+    cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [min]', 'Width', 'F-Statistic', 'Amplitude Scaled', 'p-Value']
     
     #vmin = [10**-11, 0.5, 10**-6, 10**-6, -6.5, 0.1, 2.]  # think don't need anymore  (or option to set ranges for specific wavelengths?)
     #vmax = [10**-6, 2.5, 0.003, 10**-2, -4.5, 0.8, 15.]  # think don't need anymore
     
+    # load parameter array and visual images from file tree structure 
     heatmaps = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
     visual = np.load('%s/DATA/Output/%s/%i/visual.npy'% (directory, date, wavelength))  
+    h_map = heatmaps
     
     #heatmaps = np.load('%s/DATA/Output/%s/%i/*param.npy' % (directory, date, wavelength))
     #visual = np.load('%s/DATA/Output/%s/%i/*visual.npy'% (directory, date, wavelength))    
     
-    font_size = 23    
+    font_size = 23  # set the font size to be used for all text - titles, tick marks, text, labels
     
-    wavelength = wavelength
-    year = date[0:4]
-    month = date[4:6]
-    day = date[6:8]
-    date_title = '%s-%s-%s' % (year,month,day)
-    
-    h_map = heatmaps
+    wavelength = wavelength    
 
     #h_map = h_map[:,0:h_map.shape[1]-1,0:h_map.shape[2]-1]  # trim last row and column from array (originally needed since went one past)
+    
+    # trim x/y dimensions equally so that resulting region is 1600x1600    
     trim_y = (h_map.shape[1]-1600)/2
     trim_x = (h_map.shape[2]-1600)/2
     #h_map = h_map[:, trim_y:h_map.shape[1]-trim_y, trim_x:h_map.shape[2]-trim_x]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
@@ -119,55 +107,42 @@ def heatmap(directory, date, wavelength):
     #y_ticks = [0,100,200,300,400]   
     #y_ticks = [0,100,200,300] # 20120923
     
+    #x_ticks = [0,100,200,300,400,500]
+    #y_ticks = [0,100,200,300]  
+    
     x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
     y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
     x_ind = [-800,-600,-400,-200,0,200,400,600,800]
     y_ind = [800,600,400,200,0,-200,-400,-600,-800]
     
-    # generate p-value heatmap
-    df1, df2 = 3, 6
+    
+    # generate p-value heatmap + masked Gaussian component heatmaps
+    df1, df2 = 3, 6  # degrees of freedom for model M1, M2
     p_val = ff.sf(h_map[6], df1, df2)
     
     p_mask = np.copy(p_val)
     
-    mask_thresh = 0.005    
+    mask_thresh = 0.005  # significance threshold - masked above this value
        
     p_mask = np.copy(p_val)
     amp_mask = np.copy(h_map[3])
     loc_mask = np.copy(h_map[4])
     wid_mask = np.copy(h_map[5])
     
-    #count = 0
-    
-    #for i in range(p_val.shape[0]):
-    #        for j in range(p_val.shape[1]):
-    #            if p_val[i][j] > mask_thresh:
-    #                count += 1
-    #                p_mask[i][j] = np.NaN
-    #                amp_mask[i][j] = np.NaN
-    #                loc_mask[i][j] = np.NaN
-    #                wid_mask[i][j] = np.NaN
-    
-    # these replace the previous loop!  way faster 
+    # mask the Gaussian component arrays with NaNs if above threshold 
     p_mask[p_val > mask_thresh] = np.NaN  # for every element in p_mask, if the corresponding element in p_val is greater than the threshold, set that value to NaN
     amp_mask[p_val > mask_thresh] = np.NaN
     loc_mask[p_val > mask_thresh] = np.NaN
     wid_mask[p_val > mask_thresh] = np.NaN
     
-    count = np.count_nonzero(np.isnan(p_mask))
-    
+    # determine percentage of region masked 
+    count = np.count_nonzero(np.isnan(p_mask))   
     total_pix = p_val.shape[0]*p_val.shape[1]
-    print total_pix
-    print count
     mask_percent = ((np.float(count))/total_pix)*100
-    print mask_percent
                     
-    loc_mask = (1./np.exp(loc_mask))/60.
-    plots = [p_mask, amp_mask, loc_mask, wid_mask]
+    loc_mask = (1./np.exp(loc_mask))/60.  # convert Gaussian location to minutes
+    plots = [p_mask, amp_mask, loc_mask, wid_mask]  # make array of masked plots to iterate over
 
-    
-    #x_ticks = [0,100,200,300,400,500]
-    #y_ticks = [0,100,200,300]  
     
     #"""
     if h_map.shape[2] > h_map.shape[1]:
@@ -180,7 +155,6 @@ def heatmap(directory, date, wavelength):
         #print aspect_ratio
         #fig_width = 10
         fig_width = 10+2  # works better for 20130626 (with no x/y labels)
-        #fig_height = 10*aspect_ratio
         fig_height = 10*aspect_ratio  # works better for 20130626
     #"""
     
@@ -202,13 +176,11 @@ def heatmap(directory, date, wavelength):
             h_min = np.percentile(NaN_replace,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(NaN_replace,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
             #cmap = 'jet'
-            cmap = cm.get_cmap('jet', 10)
+            cmap = cm.get_cmap('jet', 10)  # specify discrete colorscale with 10 intervals 
         elif i == 4:
             h_map[i] = (1./(np.exp(h_map[i])))/60.
             h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
-            #h_min = 100
-            #h_max = 400
             #cmap = 'jet_r'  # reverse color-scale for Gaussian Location, because of flipped frequencies to seconds
             cmap = cm.get_cmap('jet_r', 10)
         elif i == 8:
@@ -224,12 +196,13 @@ def heatmap(directory, date, wavelength):
             #cmap = 'jet'
             cmap = cm.get_cmap('jet', 10)
         
+        # specify colorbar ticks to be at boundaries of segments
         h_range = np.abs(h_max-h_min)
         h_step = h_range / 10.
         #h1 = h_min + (h_step/2.)
-        c_ticks = np.zeros((11))  # changed from 10
+        c_ticks = np.zeros((11))  # use 10 if centers of segments
         for h in range(11):
-            #c_ticks[h] = h1 + h_step*h
+            #c_ticks[h] = h1 + h_step*h  # use for centers of segments
             c_ticks[h] = h_min + h_step*h 
             
         im = ax.imshow(np.flipud(h_map[i]), cmap = cmap, vmin=h_min, vmax=h_max)
@@ -263,7 +236,6 @@ def heatmap(directory, date, wavelength):
         cbar.ax.tick_params(labelsize=font_size, pad=5) 
         #cbar.set_ticks(np.round(c_ticks,8))  # 8 for slope (or might as well be for all, format separately)
         cbar.set_ticks(c_ticks)  # 8 for slope (or might as well be for all, format separately)
-        #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s8.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
         
@@ -528,11 +500,11 @@ def pix2arc(x1, x2, y1, y2, image):
    
    
 """
-############################
-############################
-# datacube + derotate (int) 
-############################
-############################
+#######################
+#######################
+# datacube + derotate #
+#######################
+#######################
 """
 
 
@@ -667,7 +639,7 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
         curr_time=(T.hour * 3600.)+(T.minute * 60.)+T.second	
         TIME[p] = curr_time - base_time  # calculate running time of image
         
-    TIME[TIME < 0] += 86400
+    TIME[TIME < 0] += 86400  # for times that cross from 23:59 - 00:01 --> add 1 day to correct for discrepancy
     
     # save the pixel-value, time-array, and exposure-time datacubes as numpy files
     #np.save('%s/DATA/Temp/%s/%i/%i_%ii_%i_%ij_data_rebin%i.npy' % (directory, date, wavelength, y1, y2, x1, x2, bin_frac), DATA)
@@ -713,11 +685,11 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     
 
 """
-############################
-############################
-# FFT segment averaging + 3x3 Pixel Box Averaging (int)
-############################
-############################
+###################################################
+###################################################
+# FFT segment averaging + 3x3 Pixel Box Averaging #
+###################################################
+###################################################
 """
 
 # 1/29: saving datacube as int, normalizing by exposure time in loop (saves 4x memory)

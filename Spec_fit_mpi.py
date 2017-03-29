@@ -260,6 +260,7 @@ size = MPI.COMM_WORLD.Get_size()  # How many processors do we have? (pulls from 
 
 import sys
 
+# set variables from command line
 directory = sys.argv[1]
 date = sys.argv[2]
 wavelength = int(sys.argv[3])
@@ -287,12 +288,12 @@ params_T = spec_fit( subcube )  # Do something with the array
 newData_p = comm.gather(params_T, root=0)  # Gather all the results
 #newData_m = comm.gather(M2_fit_T, root=0)  # Gather all the results
 
-# Again, just have one node do the last bit
+# Have one node stack the results
 if rank == 0:
   stack_p = np.hstack(newData_p)
   #stack_m = np.vstack(newData_m)
-  print stack_p.shape			# Verify we have a summed version of the input cube
-  #print stack_m.shape			# Verify we have a summed version of the input cube
+  print stack_p.shape  # Verify we have a summed version of the input cube
+  #print stack_m.shape  # Verify we have a summed version of the input cube
  
 
 T_final = timer() - start
