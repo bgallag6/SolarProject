@@ -265,7 +265,7 @@ def heatmap(directory, date, wavelength):
         cbar.set_ticks(c_ticks)  # 8 for slope (or might as well be for all, format separately)
         #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s2.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
+        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s8.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
         
         if i == 2 or i == 3 or i == 4 or i == 5:   
             fig = plt.figure(figsize=(fig_width,fig_height))
@@ -320,7 +320,7 @@ def heatmap(directory, date, wavelength):
             cbar.set_ticks(c_ticks)  # 8 for slope
             #plt.tight_layout()
             #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_m[k]))
-            plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i2.pdf' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)), format='pdf')
+            #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i8.pdf' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)), format='pdf')
         
         #"""
         flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
@@ -337,7 +337,7 @@ def heatmap(directory, date, wavelength):
         plt.ylim(0, y.max()*1.1)
         #plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s2.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
+        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s8.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
         #"""
     
     # generate 'rollover frequency' heatmap
@@ -378,7 +378,7 @@ def heatmap(directory, date, wavelength):
     #cbar.set_ticks(np.round(c_ticks,8))  # 8 for slope
     cbar.set_ticks(c_ticks)  # 8 for slope
     #plt.tight_layout()
-    plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq2.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
+    #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq8.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
     
     
   
@@ -423,7 +423,7 @@ def heatmap(directory, date, wavelength):
         cbar.ax.tick_params(labelsize=font_size, pad=5) 
         #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_vis[i]))
-        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
+        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
 
 
 

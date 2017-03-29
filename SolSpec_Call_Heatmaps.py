@@ -15,7 +15,8 @@ import SolSpec as ss
 ## generate heatmaps
 """
 
-directory = 'F:/Users/Brendan/Desktop/SolarProject'
+#directory = 'F:/Users/Brendan/Desktop/SolarProject'
+directory = 'C:/Users/Brendan/Desktop/solar/results'
 date = '20130626'
 wavelength = 171
 
