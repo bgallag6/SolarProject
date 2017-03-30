@@ -43,14 +43,14 @@ sample_freq = fftpack.fftfreq(freq_size, d=time_step)
 pidxs = np.where(sample_freq > 0)
 freqs = sample_freq[pidxs]
 
-a0 = 10**-8.
-n0 = 1.7
-c0 = 10**-5.
-p0 = 10**-3.5
-l0 = -6.4
+a0 = 10**-9.5
+n0 = 2.1
+c0 = 10**-4.
+p0 = 10**-4.
+l0 = -4.8
 w0 = 0.2
 
-ex = 'N'
+ex = 'R'
 
 """
 # maybe put how the fit changes depending on the parameters in the slider tool?
@@ -151,7 +151,7 @@ for ii in range(1):
         df2[0:len(df)] = df
         df2[len(df2)-1] = df2[len(df2)-2]
         ds = df2
-        k = 1
+        k = -1./2.
         ds = k*ds
         #ds = ds**(1./2.)
         #ds = ds**(-1./2.)
@@ -207,7 +207,7 @@ for ii in range(1):
                
         try:                                 
             M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
-            M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
+            M2_high = [0.002, 6., 0.01, 0.2, -2.6, 0.8]
             #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]  # see what happens if force middle of range above where slopes are
             
             # change method to 'dogbox' and increase max number of function evaluations to 3000
@@ -297,7 +297,7 @@ for ii in range(1):
         #plt.text(0.0047, 10**-1.55, r'$p$ = {0:0.3g}'.format(p_val), fontsize=30)
         #plt.text(0.0047, 10**-1.75, r'$r$ = {0:0.3g}'.format(r_val[0]), fontsize=30)
         #plt.savefig('C:/Users/Brendan/Desktop/param_fits/example_hanning_fit_%s.pdf' % ex, format='pdf')
-        #plt.savefig('C:/Users/Brendan/Desktop/param_fits/example_fit_%s_ds_ds_negativ_half.pdf' % ex, format='pdf')
+        plt.savefig('C:/Users/Brendan/Desktop/example_fit_%s_ds_ds_%0.1f.pdf' % (ex,k), format='pdf')
         
         """
         plt.figure(figsize=(15,15))

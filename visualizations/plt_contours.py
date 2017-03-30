@@ -27,7 +27,7 @@ import matplotlib.cm as cm
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 
-HEATMAPS = np.load('C:/Users/Brendan/Desktop/20130626_final/20130626_193_-500_500i_-500_600j_param_slope6_arthm.npy')
+HEATMAPS = np.load('C:/Users/Brendan/Desktop/solar/results/20130626_final/20130626_193_-500_500i_-500_600j_param_slope6_arthm.npy')
 hmap = HEATMAPS[1]
 
 matplotlib.rcParams['xtick.direction'] = 'out'

@@ -32,6 +32,9 @@ h5 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/par
 h6 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param6.npy')
 h7 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param7.npy')
 h8 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param8.npy')
+h9 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param9.npy')
+h10 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param10.npy')
+h11 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param11.npy')
 
     
 date = '20130626'
@@ -53,11 +56,11 @@ cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'L
 #wavelengths = [171,193,211,304]
 
 #heatmap = [h171,h171_new]
-heatmap = [h1,h2,h3,h4,h5,h6,h7,h8]
+heatmap = [h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11]
 #wavelengths = [171,171]
 #wavelengths = [193,193]
 #wavelengths = [211,211]
-wavelengths = [171,171,171,171,171,171,171,171]
+wavelengths = [171,171,171,171,171,171,171,171,171,171,171]
 
 #h_map2 = h_new
 
@@ -202,8 +205,8 @@ for c in range(len(heatmap)):
         cbar.ax.tick_params(labelsize=17, pad=5) 
         #plt.tight_layout()
         #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
-        plt.savefig('%s/%s_%i_%s_same_%i.jpeg' % (path_name, date, wavelength, names[i], c))
-        #plt.savefig('%s/%s_%i_%s_same_%i.pdf' % (path_name, date, wavelength, names[i], c), format='pdf')
+        #plt.savefig('%s/%s_%i_%s_same_%i.jpeg' % (path_name, date, wavelength, names[i], c))
+        plt.savefig('%s/%s_%i_%s_same_%i.pdf' % (path_name, date, wavelength, names[i], c), format='pdf')
         """
         if c == 0:
             if i != 6:

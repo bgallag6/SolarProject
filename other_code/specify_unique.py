@@ -13,10 +13,14 @@ import matplotlib.pyplot as plt
     #h_map = np.array(f['params'])
     #vis = np.array(f['visual'])
 
-h_map = np.load('C:/Users/Brendan/Desktop/20130626_final/20130626_193_-500_500i_-500_600j_param_slope6_arthm.npy')
-vis = np.load('C:/Users/Brendan/Desktop/20130626_final/20130626_193_-500_500i_-500_600j_visual.npy')
+directory = 'F:/Users/Brendan/Desktop/SolarProject'
+date = '20130626'
+wavelength = 171
 
-R = np.zeros((h_map.shape[1],h_map.shape[2]))
+h_map = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
+vis = np.load('%s/DATA/Output/%s/%i/visual.npy' % (directory, date, wavelength))
+
+#R = np.zeros((h_map.shape[1],h_map.shape[2]))
 
 """
 #20130530 1600
@@ -125,9 +129,11 @@ for k in range(1):
 
     
     
-    for i in range(R.shape[0]):
-        for j in range(R.shape[1]):
-            R[i][j] = vis[0][i][j]
+    #for i in range(R.shape[0]):
+    #    for j in range(R.shape[1]):
+    #        R[i][j] = vis[0][i][j]
+    R = vis[0,:-2,:-2]
+    
     for i in range(R.shape[0]):
         for j in range(R.shape[1]):
             if h_map[0][i][j] > pla_max or h_map[0][i][j] < pla_min \
