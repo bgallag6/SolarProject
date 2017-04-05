@@ -91,10 +91,10 @@ def spec_fit( subcube ):
 
   for h in range(SPECTRA.shape[0]):  
       for l in range(0,SPECTRA.shape[1]):
-      #for l in range(0,15):
+      #for l in range(0,10):
         
         for m in range(0,SPECTRA.shape[2]):
-        #for m in range(0,20):
+        #for m in range(0,10):
             
                                             
             f = freqs  # frequencies
@@ -158,23 +158,38 @@ def spec_fit( subcube ):
                 pass
             #"""
             
-            A2, n2, C2, P2, fp2, fw2 = nlfit_gp  # unpack fitting parameters
-            
-            # unpack uncertainties in fitting parameters from diagonal of covariance matrix
-            dA2, dn2, dC2, dP2, dfp2, dfw2 = [np.sqrt(nlpcov_gp[j,j]) for j in range(nlfit_gp.size)]
-            
-            
             try:
-                nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
-                #nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
-           
-            except RuntimeError:
-                #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
+                A2, n2, C2, P2, fp2, fw2 = nlfit_gp  # unpack fitting parameters
+                
+                # unpack uncertainties in fitting parameters from diagonal of covariance matrix
+                dA2, dn2, dC2, dP2, dfp2, dfw2 = [np.sqrt(nlpcov_gp[j,j]) for j in range(nlfit_gp.size)]
+            except:
                 pass
             
-            except ValueError:
-                #print("Error M2 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
-                pass
+            if 'A2' in globals():
+                        
+                try:
+                    nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
+                    #nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
+               
+                except RuntimeError:
+                    #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
+                    pass
+                
+                except ValueError:
+                    #print("Error M2 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
+                    pass
+            else:
+                try:
+                    nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)
+        
+                except RuntimeError:
+                    #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
+                    pass
+                
+                except ValueError:
+                    #print("Error M2 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
+                    pass                    
             
             try:
                 A22, n22, C22, P22, fp22, fw22 = nlfit_gp2  # unpack fitting parameters     
@@ -224,23 +239,23 @@ def spec_fit( subcube ):
             except:
                 pass
         
-      # estimate time remaining and print to screen  (looks to be much better - not sure why had above?)
-      T = timer()
-      T2 = T - T1
-      if l == 0:
-          T_init = T - start
-          T_est = T_init*(SPECTRA.shape[1])  
-          T_min, T_sec = divmod(T_est, 60)
-          T_hr, T_min = divmod(T_min, 60)
-          #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est)
-          print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (l, SPECTRA.shape[0], T_hr, T_min, T_sec)
-      else:
-          T_est2 = T2*((SPECTRA.shape[1])-l)
-          T_min2, T_sec2 = divmod(T_est2, 60)
-          T_hr2, T_min2 = divmod(T_min2, 60)
-          #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est2)
-          print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (l, SPECTRA.shape[0], T_hr2, T_min2, T_sec2)
-      T1 = T
+        # estimate time remaining and print to screen  (looks to be much better - not sure why had above?)
+        T = timer()
+        T2 = T - T1
+        if h == 0 and l == 0:        
+            T_init = T - start
+            T_est = T_init*(SPECTRA.shape[0]*SPECTRA.shape[1])  
+            T_min, T_sec = divmod(T_est, 60)
+            T_hr, T_min = divmod(T_min, 60)
+            #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est)
+            print "Currently on row %i of %i (%i of %i), estimated time remaining: %i:%.2i:%.2i" % (l, SPECTRA.shape[1], h, SPECTRA.shape[0], T_hr, T_min, T_sec)
+        else:
+            T_est2 = T2*((SPECTRA.shape[0]*SPECTRA.shape[1])-(l+(h*l)))
+            T_min2, T_sec2 = divmod(T_est2, 60)
+            T_hr2, T_min2 = divmod(T_min2, 60)
+            #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est2)
+            print "Currently on row %i of %i (%i of %i), estimated time remaining: %i:%.2i:%.2i" % (l, SPECTRA.shape[1], h, SPECTRA.shape[0], T_hr2, T_min2, T_sec2)
+        T1 = T
 
   # print estimated and total program time to screen        
   print "Beginning Estimated time = %i:%.2i:%.2i" % (T_hr, T_min, T_sec)
@@ -271,8 +286,10 @@ date = sys.argv[2]
 wavelength = int(sys.argv[3])
 
 # load memory-mapped array as read-only
-cube_shape = np.load('C:/Users/Brendan/Desktop/fft_overlap2/20130626_171_PCB/spectra_mmap_shape.npy')
-cube = np.memmap('C:/Users/Brendan/Desktop/fft_overlap2/20130626_171_PCB/spectra_mmap.npy', dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2], cube_shape[3]))
+cube_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))
+cube = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2], cube_shape[3]))
+#cube_shape = np.load('C:/Users/Brendan/Desktop/fft_overlap2/20130626_171_PCB/spectra_mmap_shape.npy')
+#cube = np.memmap('C:/Users/Brendan/Desktop/fft_overlap2/20130626_171_PCB/spectra_mmap.npy', dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2], cube_shape[3]))
 #cube = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(1658,1481,299))
 #cube = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_spectra.npy')
 
@@ -304,8 +321,9 @@ if rank == 0:
 T_final = timer() - start
 T_min_final, T_sec_final = divmod(T_final, 60)
 T_hr_final, T_min_final = divmod(T_min_final, 60)
-print "Total program time = %i sec" % T_final   
+print "Total program time = %i:%.2i:%.2i" % (T_hr_final, T_min_final, T_sec_final)   
 
 #np.save('/mnt/data/Gallagher/DATA/Output/20130626/193/20130626_193_-500_500i_-500_600j_param_slope6_arthm', stack_p)
-np.save('C:/Users/Brendan/Desktop/fft_overlap/20130626_171_PCB/param', stack_p)
+#np.save('C:/Users/Brendan/Desktop/fft_overlap/20130626_171_PCB/param', stack_p)
+np.save('%s/DATA/Output/%s/%i/param' % (directory, date, wavelength), stack_p)
 #np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_param', stack_p)

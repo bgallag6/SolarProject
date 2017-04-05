@@ -41,11 +41,11 @@ import SolSpec as ss
 
 #"""
 #directory = 'F:/Users/Brendan/Desktop/SolarProject'
+#directory = '/mnt/data/Gallagher'
+#date = '20130815'
+#wavelength = 193
 #"""
 import sys
-#directory = '/mnt/data/Gallagher'
-#date = '20120923'
-#wavelength = 94
 directory = sys.argv[1]
 date = sys.argv[2]
 wavelength = int(sys.argv[3])
@@ -54,8 +54,9 @@ wavelength = int(sys.argv[3])
 ## create derotated region datacube
 """
 #ss.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20120923/304', date='20120923', wavelength=304, sub_reg_coords=[-528,-132,-100,100], coords_type='arc', bin_frac=1)
-ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[50,550,-500,-100], coords_type='arc', bin_frac=1)
-#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[1950,2950,1000,1600], coords_type='pix', bin_frac=1)
+#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-250,150,-450,-150], coords_type='arc', bin_frac=4)
+#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-425,425,-375,375], coords_type='arc', bin_frac=4)
+ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[1950,2950,1000,1600], coords_type='pix', bin_frac=2)
 #ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-528,-132,-100,100], coords_type='arc', bin_frac=1)  #20120923
 
 
@@ -70,6 +71,12 @@ ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelen
 #spectra_array = ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= '%i' % (wavelength), datacube = DATA, timeseries = TIME, exposure_array = EXPOSURE, num_seg = 6)
 #np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/304/20120923_304_-100_100i_-528_-132j_spectra', spectra_array)
 #np.save('C:/Users/Brendan/Desktop/SDO/spectra_20130530_193_2300_2600_2200_3000', spectra)  # now this
+
+
+"""
+## fft-averaging + 3x3 averaging
+"""
+#ss.fft_overlap(directory='%s' % directory, date='%s' % date, wavelength=wavelength, window_length='02:00', overlap_pct=75, pixel_box=False)
 
 
 """

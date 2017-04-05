@@ -216,7 +216,8 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     # generate images of each visual region, to see if as expected
     #fig = plt.figure(figsize=(20,20))
     #plt.imshow(AVG)
-    np.save('C:/Users/Brendan/Desktop/derotate_save/chunk_%i_of_%i' % (rank, size), DATA)
+    #np.save('C:/Users/Brendan/Desktop/derotate_save/chunk_%i_of_%i' % (rank, size), DATA)
+    np.save('%s/DATA/Temp/%s/%i/chunk_%i_of_%i' % (directory, date, wavelength, rank, size), DATA)
     #return DATA, TIME, I
 
 """

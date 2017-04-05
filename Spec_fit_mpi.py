@@ -74,6 +74,7 @@ def spec_fit( subcube ):
       time_step = 24  # 24 second cadence for these wavelengths
   else:
       time_step = 12  # 12 second cadence for the others
+      #time_step = 24  # for half-cadence test
   sample_freq = fftpack.fftfreq(freq_size, d=time_step)
   pidxs = np.where(sample_freq > 0)
   freqs = sample_freq[pidxs]

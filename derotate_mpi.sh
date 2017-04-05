@@ -2,7 +2,7 @@
 
 echo "This program loads in .FITS files, extracts the specified subregion, and returns the derotated datacube, exposure and time arrays." 
 
-read -p "Enter a directory [ex. /mnt/data-solar/Gallagher]: " directory
+read -p "Enter a directory [ex. /media/solar/Gallagher]: " directory
 read -p "Enter a date [ex. 20130626]: " date
 read -p "Enter a wavelength [ex. 193]: " wavelength
 read -p "Enter the xmin dimension [ex. -500]: " xmin

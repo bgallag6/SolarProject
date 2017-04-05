@@ -237,7 +237,7 @@ def heatmap(directory, date, wavelength):
         #cbar.set_ticks(np.round(c_ticks,8))  # 8 for slope (or might as well be for all, format separately)
         cbar.set_ticks(c_ticks)  # 8 for slope (or might as well be for all, format separately)
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s8.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
+        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
         
         if i == 2 or i == 3 or i == 4 or i == 5:   
             fig = plt.figure(figsize=(fig_width,fig_height))
@@ -292,7 +292,7 @@ def heatmap(directory, date, wavelength):
             cbar.set_ticks(c_ticks)  # 8 for slope
             #plt.tight_layout()
             #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_m[k]))
-            #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i8.pdf' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)), format='pdf')
+            plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.pdf' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)), format='pdf')
         
         #"""
         flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
@@ -309,7 +309,7 @@ def heatmap(directory, date, wavelength):
         plt.ylim(0, y.max()*1.1)
         #plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s8.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
+        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
         #"""
     
     # generate 'rollover frequency' heatmap
@@ -350,7 +350,7 @@ def heatmap(directory, date, wavelength):
     #cbar.set_ticks(np.round(c_ticks,8))  # 8 for slope
     cbar.set_ticks(c_ticks)  # 8 for slope
     #plt.tight_layout()
-    #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq8.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
+    plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
     
     
   
@@ -395,7 +395,7 @@ def heatmap(directory, date, wavelength):
         cbar.ax.tick_params(labelsize=font_size, pad=5) 
         #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_vis[i]))
-        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
+        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
 
 
 
@@ -628,6 +628,7 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     TIME = np.empty((nf))  # might as well just have all as float
     
     # loop through datacube and extract pixel data and time values
+    """# this is probably another loop that I could take out and extract directly"""
     for p in range(0,nf):
         Ex = dr[p].exposure_time
         I[p] = Ex.value
@@ -778,6 +779,7 @@ def fft_avg(directory, date, wavelength, num_seg):
       time_step = 24  # 24-second cadence for these wavelengths
     else:
       time_step = 12  # 12-second cadence for the others
+      #time_step = 24  # for half-cadence try
       
     t_interp = np.linspace(0, TIME[len(TIME)-1], (TIME[len(TIME)-1]/time_step)+1)  # interpolate onto default-cadence time-grid
       
@@ -811,18 +813,21 @@ def fft_avg(directory, date, wavelength, num_seg):
         for jj in range(0,spectra_seg.shape[1]):
         #for jj in range(0,5):        
         
-            x1_box = 0+ii
+            #x1_box = 0+ii
             #x2_box = 2+ii  # if want to use median of more than 1x1 pixel box
-            y1_box = 0+jj
+            #y1_box = 0+jj
             #y2_box = 2+jj  # if want to use median of more than 1x1 pixel box
             
+            """  # replace for-loop with direct assignment - 4x faster
             for k in range(0,DATA.shape[0]):
               #im=DATA[k]/(Ex[k])	  # get image + normalize by exposure time  (time went nuts?)
               im=DATA[k]
               #pixmed[k]=np.median(im[x1_box:x2_box,y1_box:y2_box])  # finds pixel-box median
               pixmed[k]= im[x1_box,y1_box]	# median  <-- use this
+            """
 
-            pixmed = pixmed/Ex  # normalize by exposure time    
+            pixmed = DATA[:,ii,jj] / Ex  # extract timeseries + normalize by exposure time
+            #pixmed = pixmed/Ex  # normalize by exposure time    
             
             # The derotation introduces some bad data towards the end of the sequence. This trims that off
             bad = np.argmax(pixmed <= 0.)		# Look for values <= zero
@@ -939,6 +944,270 @@ def fft_avg(directory, date, wavelength, num_seg):
             spectra_array[l-1][m-1] = p_avg
             
     np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_array)
+    #np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_seg)  # for no 3x3 pixel box averaging
+    #return spectra_array
+    
+    
+    
+    
+"""
+##########################
+##########################
+# FFT Overlapping Window #
+##########################
+##########################
+"""
+
+
+import numpy as np
+import scipy.signal
+from pylab import *
+from sunpy.map import Map
+from scipy.interpolate import interp1d
+from scipy import signal
+import scipy.misc
+import astropy.units as u
+#from scipy import fftpack  # not working with this called here???
+from timeit import default_timer as timer
+#import accelerate  # put inside function
+import glob
+
+
+def fft_overlap(directory, date, wavelength, window_length, overlap_pct, pixel_box):
+    """
+    Calculates segment-averaged FFT for region, and 3x3 pixel-box average.
+    
+    directory : 
+        The directory containing the derotated datacube, as well as the time and exposure arrays. (string)
+        
+    date :
+        The date of the timeseries.  (string)
+                
+    wavelength :
+        The wavelength of the dataset.  (int)
+        
+    num_seg :
+        The number of segments to divide the timeseries into.  (int)
+        
+    Returns : 
+        3D array of FFT-segment and 3x3-pixel-box averaged region.
+      
+    Example:
+    ::
+        ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, num_seg = 6)
+    """
+    import accelerate  # switch on if computer has installed
+    
+    from scipy import fftpack
+    
+    """
+    # in case need to add other descriptors to filename
+    flist_data = glob.glob('%s/DATA/Temp/%s/%i/*rebin1.npy' % (directory, date, wavelength)) 
+    flist_time = glob.glob('%s/DATA/Temp/%s/%i/*time.npy' % (directory, date, wavelength))
+    flist_exposure = glob.glob('%s/DATA/Temp/%s/%i/*exposure.npy' % (directory, date, wavelength))
+    
+    part_name = '%s/DATA/Temp/%s/%i/' % (directory, date, wavelength)
+    len_data = len(flist_data[0])
+    len_time = len(flist_time[0])
+    len_exposure = len(flist_exposure[0])
+    len_part = len(part_name)
+    
+    fname_data = data[0][len_part:len_data]
+    fname_time = data[0][len_part:len_time]
+    fname_exposure = data[0][len_part:len_exposure]
+    
+    DATA = np.load('%s/DATA/Temp/%s/%i/%s' % (directory, date, wavelength, fname_data))
+    
+    TIME = np.load('%s/DATA/Temp/%s/%i/%s' % (directory, date, wavelength, fname_time))
+    
+    Ex = np.load('%s/DATA/Temp/%s/%i/%s' % (directory, date, wavelength, fname_exposure))
+    """
+    
+    DATA = np.load('%s/DATA/Temp/%s/%i/derotated.npy' % (directory, date, wavelength))
+    
+    TIME = np.load('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength))
+    
+    Ex = np.load('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength))
+
+    
+    print DATA.shape 
+    
+    print "Number of seconds in timeseries = %i" % (TIME[len(TIME)-1] - TIME[0])
+    
+        
+    ## determine frequency values that FFT will evaluate
+    if wavelength == 1600 or wavelength == 1700:
+      time_step = 24  # 24-second cadence for these wavelengths
+    else:
+      time_step = 12  # 12-second cadence for the others
+      
+    t_interp = np.linspace(0, TIME[len(TIME)-1], (TIME[len(TIME)-1]/time_step)+1)  # interpolate onto default-cadence time-grid
+        
+    freq_size = (int(window_length[0:2])*3600 + int(window_length[3:5])*60)/time_step
+    #rem = len(t_interp) % 
+    sample_freq = fftpack.fftfreq(freq_size, d=time_step)
+    pidxs = np.where(sample_freq > 0)
+    freqs = sample_freq[pidxs]
+    
+    reslt = (DATA.shape[0] == TIME.shape[0])
+    print "DATA and TIME array sizes match: %s" % reslt
+    
+    #pixmed=np.empty(DATA.shape[0])  # Initialize array to hold median pixel values
+    #spectra_seg = np.zeros((DATA.shape[1],DATA.shape[2],len(freqs)))
+    
+    n_segments = ((len(t_interp)-freq_size) / int(freq_size*(1.-(overlap_pct/100.)))) + 1   
+    print n_segments
+    print len(freqs)
+    spec_array = np.zeros((n_segments,DATA.shape[1],DATA.shape[2],len(freqs)))
+    
+    print "length time-interp array = %i" % len(t_interp)
+    print "size for FFT to consider = %i" % freq_size
+    print "length of sample freq array = %i" % len(sample_freq)
+    print "length of freqs array = %i (should be 1/2 of two above rows)" % len(freqs)
+    
+    
+    start = timer()
+    T1 = 0
+    
+    for ii in range(spec_array.shape[1]):
+    #for ii in range(0,5):
+    
+        for jj in range(spec_array.shape[2]):
+        #for jj in range(0,5):        
+            
+            """ replaced this with below - 4x speedup
+            for k in range(0,DATA.shape[0]):
+              #im=DATA[k]/(Ex[k])	  # get image + normalize by exposure time  (time went nuts?)
+              im=DATA[k]
+              #pixmed[k]=np.median(im[x1_box:x2_box,y1_box:y2_box])  # finds pixel-box median
+              pixmed[k]= im[x1_box,y1_box]	# median  <-- use this
+            """
+            
+            pixmed = DATA[:,ii,jj] / Ex  # extract timeseries + normalize by exposure time
+            #pixmed = pixmed/Ex  # normalize by exposure time    
+            
+            # The derotation introduces some bad data towards the end of the sequence. This trims that off
+            bad = np.argmax(pixmed <= 0.)		# Look for values <= zero
+            last_good_pos = bad - 1			# retain only data before the <=zero
+            
+            # Get time and pixel values
+            if wavelength == 94 or wavelength == 131 or wavelength == 335:  
+                v=pixmed  # 094/131/335 -- intensities too low to trim off negative values
+                t=TIME
+            else:
+                v=pixmed[0:last_good_pos]		
+                t=TIME[0:last_good_pos]
+            
+        
+            v_interp = np.interp(t_interp,t,v)  # interpolate pixel-intensity values onto specified time grid
+            
+            avg_array = np.zeros((len(freqs)))  # initialize array to hold fourier powers
+            avg_smooth = np.zeros((len(freqs)))  # initialize array to hold fourier powers
+            
+            sig = np.zeros((len(freqs)))
+            #sig_test1 = sig[595:600]
+            points_overlap = len(sig)*overlap_pct/100
+            points_nonoverlap = (len(sig)-points_overlap)
+            #print points_nonoverlap
+            for i in range(n_segments):  
+                sig = v_interp[i*points_nonoverlap:(i*points_nonoverlap)+freq_size] # i*#overlap points + freqs_size
+                #print (i*points_nonoverlap), (i*points_nonoverlap)+600
+                #sig_fft = fftpack.fft(sig)
+                sig_fft = accelerate.mkl.fftpack.fft(sig)  # MKL-accelerated is (2x) faster
+                powers = np.abs(sig_fft)[pidxs]
+                norm = len(sig)  # to normalize the power
+                powers = ((powers/norm)**2)*(1./(sig.std()**2))*2
+                avg_array += powers
+                      
+                orig_powerspec = powers
+                # Now Smooth the Power Spectra
+                orig = orig_powerspec.copy()		# make a copy            
+                window_len=7   # Keep this an odd number            
+                window='hanning'  # OTHER CHOICES =  'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
+                s=np.r_[orig[window_len-1:0:-1],orig,orig[-1:-window_len:-1]]            
+                if window == 'flat': #moving average
+                	w=np.ones(window_len,'d')
+                else:
+                	w=eval('np.'+window+'(window_len)')                        	
+                y=np.convolve(w/w.sum(),s,mode='valid')
+                y=y[( window_len/2+1): len(orig)+( window_len/2 +1)]	# Crop down the new TS            
+                # Now smooth the smooth...
+                y2c = y.copy()
+                s2=np.r_[y2c[window_len-1:0:-1],y2c,y2c[-1:-window_len:-1]]
+                y2=np.convolve(w/w.sum(),s2,mode='valid')
+                y2=y2[( window_len/2+1): len(orig)+( window_len/2 +1)]   # Crop down the new TS
+                avg_smooth += y2
+                
+                avg_raw = np.copy(avg_array)  # take the average of the segments
+                avg_raw = avg_raw / (i+1)
+                
+                avg_smooth2 = np.copy(avg_smooth)
+                avg_smooth2 = avg_smooth2 / (i+1)
+                
+                #spec_array[0][i] = powers
+                spec_array[i][ii][jj] = y2            
+        
+        
+        # estimate time remaining and print to screen
+        T = timer()
+        T2 = T - T1
+        if ii == 0:
+            T_init = T - start
+            T_est = T_init*(spec_array.shape[1])  
+            T_min, T_sec = divmod(T_est, 60)
+            T_hr, T_min = divmod(T_min, 60)
+            #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_seg.shape[0], T_est)
+            print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spec_array.shape[1], T_hr, T_min, T_sec)
+        else:
+            T_est2 = T2*(spec_array.shape[1]-ii)
+            T_min2, T_sec2 = divmod(T_est2, 60)
+            T_hr2, T_min2 = divmod(T_min2, 60)
+            #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_seg.shape[0], T_est2)
+            print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spec_array.shape[1], T_hr2, T_min2, T_sec2)
+        T1 = T
+        
+        
+    # print estimated and total program time to screen 
+    print "Beginning Estimated time = %i:%.2i:%.2i" % (T_hr, T_min, T_sec)
+    T_act = timer() - start
+    T_min3, T_sec3 = divmod(T_act, 60)
+    T_hr3, T_min3 = divmod(T_min3, 60)
+    print "Actual total time = %i:%.2i:%.2i" % (T_hr3, T_min3, T_sec3) 
+    
+    if pixel_box == True:
+        # initialize arrays to hold temporary results for calculating arithmetic average (changed from geometric)
+        temp = np.zeros((9,spec_array.shape[2]))  # maybe have 3x3 to be generalized   
+        p_avg = np.zeros((spec_array.shape[2]))  # would pre-allocating help? (seems to)
+        spectra_array = np.zeros((spec_array.shape[0]-2, spec_array.shape[1]-2, spec_array.shape[2]))  # would pre-allocating help? (seems to)
+                  
+        ### calculate 3x3 pixel-box arithmetic average.  start at 1 and end 1 before to deal with edges.
+        ## previously for geometric -- 10^[(log(a) + log(b) + log(c) + ...) / 9] = [a*b*c*...]^(1/9)
+        for k in range(((len(v_interp)-len(sig))/points_nonoverlap)+1):
+            for l in range(1,spec_array.shape[0]-1):
+            #for l in range(1,25):
+                #print l
+                for m in range(1,spec_array.shape[1]-1):
+                #for m in range(1,25):
+                               
+                    temp[0] = spec_array[k][l-1][m-1]
+                    temp[1] = spec_array[k][l-1][m]
+                    temp[2] = spec_array[k][l-1][m+1]
+                    temp[3] = spec_array[k][l][m-1]
+                    temp[4] = spec_array[k][l][m]
+                    temp[5] = spec_array[k][l][m+1]
+                    temp[6] = spec_array[k][l+1][m-1]
+                    temp[7] = spec_array[k][l+1][m]
+                    temp[8] = spec_array[k][l+1][m+1]
+        
+        
+                    temp9 = np.sum(temp, axis=0)
+                    p_avg = temp9 / 9.
+                    #spectra_array[l-1][m-1] = np.power(10,p_geometric)
+                    spectra_array[k][l-1][m-1] = p_avg
+                    
+                    spec_array = spectra_array
+            
+    np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spec_array)
     #return spectra_array
     
     
@@ -977,11 +1246,20 @@ def mem_map(directory, date, wavelength):
     # load original array 
     original = np.load('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength))
     print original.shape
-    orig_shape = np.array([original.shape[0], original.shape[1], original.shape[2]])
     
-    # create memory-mapped array with similar datatype and shape to original array
-    mmap_arr = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='w+', shape=(original.shape[0],original.shape[1],original.shape[2]))
-    
+    if original.ndim == 3:
+        orig_shape = np.array([original.shape[0], original.shape[1], original.shape[2]])
+        
+        # create memory-mapped array with similar datatype and shape to original array
+        mmap_arr = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='w+', shape=(original.shape[0],original.shape[1],original.shape[2]))
+        
+        
+    elif original.ndim == 4:
+        orig_shape = np.array([original.shape[0], original.shape[1], original.shape[2], original.shape[3]])
+        
+        # create memory-mapped array with similar datatype and shape to original array
+        mmap_arr = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='w+', shape=(original.shape[0],original.shape[1],original.shape[2], original.shape[3]))
+     
     # write data to memory-mapped array
     mmap_arr[:] = original[:]
     
