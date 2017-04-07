@@ -162,7 +162,7 @@ def heatmap(directory, date, wavelength):
     #fig_width = 10+3  # works better for 20130626 (with x/y labels)
     #fig_height = 10  # works better for 20130626
     
-    for i in range(0,len(titles)-1):
+    for i in range(len(titles)-1):
     #for i in range(4,5):
         
         #fig = plt.figure(figsize=(13,9))
@@ -629,7 +629,7 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     
     # loop through datacube and extract pixel data and time values
     """# this is probably another loop that I could take out and extract directly"""
-    for p in range(0,nf):
+    for p in range(nf):
         Ex = dr[p].exposure_time
         I[p] = Ex.value
         L = dr[p].data
@@ -807,10 +807,10 @@ def fft_avg(directory, date, wavelength, num_seg):
     start = timer()
     T1 = 0
     
-    for ii in range(0,spectra_seg.shape[0]):
+    for ii in range(spectra_seg.shape[0]):
     #for ii in range(0,5):
     
-        for jj in range(0,spectra_seg.shape[1]):
+        for jj in range(spectra_seg.shape[1]):
         #for jj in range(0,5):        
         
             #x1_box = 0+ii

@@ -41,12 +41,11 @@ from scipy.interpolate import interp1d
 from scipy import signal
 import scipy.misc
 import astropy.units as u
-from scipy import fftpack  # doesnt work in module when called here???
+from scipy import fftpack
 from astropy.convolution import convolve, Box1DKernel
 from numpy.random import randn
 from mpi4py import MPI
-
-from scipy import fftpack    
+from scipy.stats.stats import pearsonr   
 
 # define Power-Law-fitting function (Model M1)
 def PowerLaw(f, A, n, C):
@@ -81,7 +80,7 @@ def spec_fit( subcube ):
 
 
   # initialize arrays to hold parameter values, also each pixel's combined model fit - for tool
-  params = np.zeros((8, SPECTRA.shape[0], SPECTRA.shape[1]))
+  params = np.zeros((9, SPECTRA.shape[0], SPECTRA.shape[1]))
   # M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], (len(freqs)+1)/2))  # would save storage / memory space
   #M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], SPECTRA.shape[2]))
 
@@ -91,10 +90,10 @@ def spec_fit( subcube ):
   T1 = 0
 
     
-  for l in range(0,SPECTRA.shape[0]):
+  for l in range(SPECTRA.shape[0]):
   #for l in range(0,15):
     
-    for m in range(0,SPECTRA.shape[1]):
+    for m in range(SPECTRA.shape[1]):
     #for m in range(0,20):
         
                                         
@@ -204,6 +203,9 @@ def spec_fit( subcube ):
         #amp_scale = PowerLaw(np.exp(fp2), A2, n2, C2)  # to extract the gaussian-amplitude scaling factor
         amp_scale2 = PowerLaw(np.exp(fp22), A22, n22, C22)  # to extract the gaussian-amplitude scaling factor
         
+        r_temp = pearsonr(m2_fit2, s)  # calculate r-value correlation coefficient
+        r = r_temp[0]
+        
         # populate array with parameters
         params[0][l][m] = A22
         params[1][l][m] = n22
@@ -214,7 +216,7 @@ def spec_fit( subcube ):
         #params[6][l][m] = redchisqrM2
         params[6][l][m] = f_test2
         params[7][l][m] = P22 / amp_scale2
-        #params[8][l][m] = 
+        params[8][l][m] = r
         
         # populate array holding model fits
         #M2_fit[l][m] = m2_fit
@@ -300,7 +302,7 @@ if rank == 0:
 T_final = timer() - start
 T_min_final, T_sec_final = divmod(T_final, 60)
 T_hr_final, T_min_final = divmod(T_min_final, 60)
-print "Total program time = %i sec" % T_final   
+print "Total program time = %i:%.2i:%.2i" % (T_hr_final, T_min_final, T_sec_final)   
 
 #np.save('/mnt/data/Gallagher/DATA/Output/20130626/193/20130626_193_-500_500i_-500_600j_param_slope6_arthm', stack_p)
 np.save('%s/DATA/Output/%s/%i/param' % (directory, date, wavelength), stack_p)

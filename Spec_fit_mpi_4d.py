@@ -45,7 +45,7 @@ from scipy import fftpack  # doesnt work in module when called here???
 from astropy.convolution import convolve, Box1DKernel
 from numpy.random import randn
 from mpi4py import MPI
-
+from scipy.stats.stats import pearsonr
 from scipy import fftpack    
 
 # define Power-Law-fitting function (Model M1)
@@ -80,7 +80,7 @@ def spec_fit( subcube ):
 
 
   # initialize arrays to hold parameter values, also each pixel's combined model fit - for tool
-  params = np.zeros((SPECTRA.shape[0],8, SPECTRA.shape[1], SPECTRA.shape[2]))
+  params = np.zeros((SPECTRA.shape[0],9, SPECTRA.shape[1], SPECTRA.shape[2]))
   # M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], (len(freqs)+1)/2))  # would save storage / memory space
   #M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], SPECTRA.shape[2]))
 
@@ -90,10 +90,10 @@ def spec_fit( subcube ):
   T1 = 0
 
   for h in range(SPECTRA.shape[0]):  
-      for l in range(0,SPECTRA.shape[1]):
+      for l in range(SPECTRA.shape[1]):
       #for l in range(0,10):
         
-        for m in range(0,SPECTRA.shape[2]):
+        for m in range(SPECTRA.shape[2]):
         #for m in range(0,10):
             
                                             
@@ -222,6 +222,9 @@ def spec_fit( subcube ):
                 #amp_scale = PowerLaw(np.exp(fp2), A2, n2, C2)  # to extract the gaussian-amplitude scaling factor
                 amp_scale2 = PowerLaw(np.exp(fp22), A22, n22, C22)  # to extract the gaussian-amplitude scaling factor
                 
+                r_temp = pearsonr(m2_fit2, s)  # calculate r-value correlation coefficient
+                r = r_temp[0]
+                
                 # populate array with parameters
                 params[h][0][l][m] = A22
                 params[h][1][l][m] = n22
@@ -232,7 +235,7 @@ def spec_fit( subcube ):
                 #params[6][l][m] = redchisqrM2
                 params[h][6][l][m] = f_test2
                 params[h][7][l][m] = P22 / amp_scale2
-                #params[8][l][m] = 
+                params[h][8][l][m] = r
                 
                 # populate array holding model fits
                 #M2_fit[l][m] = m2_fit
