@@ -1,0 +1,39 @@
+#!/bin/bash
+
+echo "The process of this program:
+1) Load in .FITS files from desired wavelength
+2) Creates datacube and applies derotation algorithm
+3) Extracts pixel intensity values, and exposure duration from each .FITS image
+4) Power-spectra are computed from extracted timeseries via use of the Fast Fourier Transform
+5) A memory-mapped copy of the power-spectra array is created in order to be passed to MPI
+6) Two models, M1 and M2, are fitted to the spectra and the model parameters are extracted
+7) Heatmaps and histograms are generated from extracted model parameters" 
+
+read -p "Enter a directory [ex. /media/solar/Gallagher]: " directory
+read -p "Enter a date [ex. 20130626]: " date
+read -p "Enter the number of processors [ex. 16]: " num
+
+python SolSpec_Call.py $directory $date 171
+
+mpiexec -n $num python Spec_fit_mpi.py $directory $date 171
+:: mpiexec -n $num python Spec_fit_mpi_4d.py $directory $date 171
+
+python SolSpec_Call.py $directory $date 193
+
+mpiexec -n $num python Spec_fit_mpi.py $directory $date 193
+:: mpiexec -n $num python Spec_fit_mpi_4d.py $directory $date 193
+
+python SolSpec_Call.py $directory $date 211
+
+mpiexec -n $num python Spec_fit_mpi.py $directory $date 211
+:: mpiexec -n $num python Spec_fit_mpi_4d.py $directory $date 211
+
+python SolSpec_Call.py $directory $date 304
+
+mpiexec -n $num python Spec_fit_mpi.py $directory $date 304
+:: mpiexec -n $num python Spec_fit_mpi_4d.py $directory $date 304
+
+python SolSpec_Call.py $directory $date 1600
+
+mpiexec -n $num python Spec_fit_mpi.py $directory $date 1600
+:: mpiexec -n $num python Spec_fit_mpi_4d.py $directory $date 1600

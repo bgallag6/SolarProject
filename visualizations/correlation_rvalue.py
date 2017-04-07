@@ -17,18 +17,20 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
 #m2 = np.load('F:/Users/Brendan/Desktop/SolarProject/Older Datafiles/20130626/20130626_1600_-450_-200i_-200_200j_m2.npy')
 #spectra = np.load('F:/Users/Brendan/Desktop/SolarProject/Older Datafiles/20130626/20130626_193_-450_-200i_-200_200j_spectra.npy')
 #param = np.load('F:/Users/Brendan/Desktop/SolarProject/Older Datafiles/20130626/20130626_193_-450_-200i_-200_200j_param.npy')
-
+#"""
 from scipy.stats.stats import pearsonr
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20130815'
-wavelength = 193
+date = '20130626'
+wavelength = 304
 
-spectra = np.load('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength))
+spectra_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))
+spectra = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(spectra_shape[0], spectra_shape[1], spectra_shape[2]))
 param = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
 
 if wavelength == 1600:
     time_step = 24
+    #time_step = 12  # older
 else:
     time_step = 12  # add as argument, or leave in as constant?
 
@@ -48,12 +50,12 @@ sample_freq = fftpack.fftfreq(freq_size, d=time_step)
 pidxs = np.where(sample_freq > 0)    
 freqs = sample_freq[pidxs]
 
+
 m2 = np.zeros_like((spectra))
 
 for i in range(spectra.shape[0]):
     for j in range(spectra.shape[1]):
         m2[i][j] = GaussPowerBase(freqs, param[0][i][j], param[1][i][j], param[2][i][j], param[3][i][j], param[4][i][j], param[5][i][j]) 
-    
 
     
 
@@ -79,7 +81,7 @@ else:
     #fig_width = 10
     fig_width = 10+2  # works better for 20130626 (with no x/y labels)
     fig_height = 10*aspect_ratio  # works better for 20130626
-#"""
+
 
 #fig_width = 10+2  # works better for 20130626 (with no x/y labels)
 #fig_width = 10+3  # works better for 20130626 (with x/y labels)
@@ -91,9 +93,12 @@ font_size = 23
 fig = plt.figure(figsize=(fig_width,fig_height))
 ax = plt.gca()  # get current axis -- to set colorbar 
 #plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
-plt.title('Correlation: r-Value', y = 1.02, fontsize=font_size)  # no date / wavelength
+plt.title(r'Correlation Coefficient: $r$-value', y = 1.02, fontsize=font_size)  # no date / wavelength
 
 r = np.nan_to_num(r)
+
+np.save('%s/DATA/Output/%s/%i/%s_%i_correlation_rvalue.npy' % (directory, date, wavelength, date, wavelength), r)
+
 h_min = np.percentile(r,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
 h_max = np.percentile(r,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
 #cmap = 'jet'
@@ -125,5 +130,30 @@ cbar.ax.tick_params(labelsize=font_size, pad=5)
 #cbar.set_ticks(np.round(c_ticks,8))  # 8 for slope (or might as well be for all, format separately)
 cbar.set_ticks(c_ticks)  # 8 for slope (or might as well be for all, format separately)
 #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-#plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
+plt.savefig('%s/DATA/Output/%s/%i/%s_%i_correlation_rvalue.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
+#"""
 
+flat_param = np.reshape(r, (r.shape[0]*r.shape[1]))
+
+mean = np.mean(flat_param)
+std = np.std(flat_param)
+    
+fig = plt.figure(figsize=(fig_width+3,fig_height))
+plt.title(r'Correlation Coefficient: $r$-value', y = 1.02, fontsize=font_size)  # no date / wavelength
+#plt.title(r'%s: %i $\AA$  [Histogram - %s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
+plt.xlabel(r'$r$-value', fontsize=font_size, labelpad=10)
+plt.ylabel('Bin Count', fontsize=font_size, labelpad=10)
+plt.xticks(fontsize=font_size)
+plt.yticks(fontsize=font_size)
+#plt.xlim(0.5, 1.1)
+plt.xlim(h_min, h_max)
+y, x, _ = plt.hist(flat_param, bins=200, range=(h_min, h_max))
+#y, x, _ = plt.hist(flat_param, bins=200)
+plt.ylim(0, y.max()*1.1)
+plt.vlines(mean,y.min(),y.max()*1.1, linestyle='dashed', label='Mean')
+plt.vlines(mean+std,y.min(),y.max()*1.1, linestyle='dashed', label='+std')
+plt.vlines(mean-std,y.min(),y.max()*1.1, color='red', linestyle='dashed', label='-std')
+plt.legend()
+#plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
+#plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
+plt.savefig('%s/DATA/Output/%s/%i/%s_%i_Histogram_correlation.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
