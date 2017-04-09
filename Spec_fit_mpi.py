@@ -71,6 +71,7 @@ def spec_fit( subcube ):
   freq_size = ((num_freq)*2) + 1  # determined from FFT-averaging script
   if wavelength == 1600 or wavelength == 1700:
       time_step = 24  # 24 second cadence for these wavelengths
+      #time_step = 12  # Jacks dataset
   else:
       time_step = 12  # 12 second cadence for the others
       #time_step = 24  # for half-cadence test

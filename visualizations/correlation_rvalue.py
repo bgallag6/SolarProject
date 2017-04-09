@@ -28,6 +28,8 @@ spectra_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory
 spectra = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(spectra_shape[0], spectra_shape[1], spectra_shape[2]))
 param = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
 
+spectra = spectra[0:1662,:,:]
+
 if wavelength == 1600:
     time_step = 24
     #time_step = 12  # older
@@ -97,7 +99,7 @@ plt.title(r'Correlation Coefficient: $r$-value', y = 1.02, fontsize=font_size)  
 
 r = np.nan_to_num(r)
 
-np.save('%s/DATA/Output/%s/%i/%s_%i_correlation_rvalue.npy' % (directory, date, wavelength, date, wavelength), r)
+#np.save('%s/DATA/Output/%s/%i/%s_%i_correlation_rvalue.npy' % (directory, date, wavelength, date, wavelength), r)
 
 h_min = np.percentile(r,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
 h_max = np.percentile(r,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
@@ -130,7 +132,7 @@ cbar.ax.tick_params(labelsize=font_size, pad=5)
 #cbar.set_ticks(np.round(c_ticks,8))  # 8 for slope (or might as well be for all, format separately)
 cbar.set_ticks(c_ticks)  # 8 for slope (or might as well be for all, format separately)
 #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-plt.savefig('%s/DATA/Output/%s/%i/%s_%i_correlation_rvalue.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
+#plt.savefig('%s/DATA/Output/%s/%i/%s_%i_correlation_rvalue.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
 #"""
 
 flat_param = np.reshape(r, (r.shape[0]*r.shape[1]))
@@ -156,4 +158,4 @@ plt.vlines(mean-std,y.min(),y.max()*1.1, color='red', linestyle='dashed', label=
 plt.legend()
 #plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
 #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-plt.savefig('%s/DATA/Output/%s/%i/%s_%i_Histogram_correlation.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
+#plt.savefig('%s/DATA/Output/%s/%i/%s_%i_Histogram_correlation.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')

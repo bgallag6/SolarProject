@@ -50,6 +50,7 @@ from matplotlib import colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.stats import f as ff
 from matplotlib import cm
+from scipy import stats
 
 def heatmap(directory, date, wavelength):
 #def heatmap(heatmaps, visual, date, wavelength, path_name):
@@ -110,10 +111,10 @@ def heatmap(directory, date, wavelength):
     #x_ticks = [0,100,200,300,400,500]
     #y_ticks = [0,100,200,300]  
     
-    x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
-    y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
-    x_ind = [-800,-600,-400,-200,0,200,400,600,800]
-    y_ind = [800,600,400,200,0,-200,-400,-600,-800]
+    #x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
+    #y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
+    #x_ind = [-800,-600,-400,-200,0,200,400,600,800]
+    #y_ind = [800,600,400,200,0,-200,-400,-600,-800]
     
     
     # generate p-value heatmap + masked Gaussian component heatmaps
@@ -142,7 +143,6 @@ def heatmap(directory, date, wavelength):
                     
     loc_mask = (1./np.exp(loc_mask))/60.  # convert Gaussian location to minutes
     plots = [p_mask, amp_mask, loc_mask, wid_mask]  # make array of masked plots to iterate over
-
     
     #"""
     if h_map.shape[2] > h_map.shape[1]:
@@ -163,7 +163,7 @@ def heatmap(directory, date, wavelength):
     #fig_height = 10  # works better for 20130626
     
     for i in range(len(titles)-1):
-    #for i in range(4,5):
+    #for i in range(1,2):
         
         #fig = plt.figure(figsize=(13,9))
         fig = plt.figure(figsize=(fig_width,fig_height))
@@ -191,11 +191,11 @@ def heatmap(directory, date, wavelength):
             #cmap = 'jet'      
             cmap = cm.get_cmap('jet', 10)               
         else:
-            h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-            h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+            h_min = np.percentile(h_map[i],3)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+            h_max = np.percentile(h_map[i],98)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
             #cmap = 'jet'
             cmap = cm.get_cmap('jet', 10)
-        
+
         # specify colorbar ticks to be at boundaries of segments
         h_range = np.abs(h_max-h_min)
         h_step = h_range / 10.
@@ -246,6 +246,8 @@ def heatmap(directory, date, wavelength):
                 plt.title(r'$p-value$ < %0.3f | f_{masked} = %0.1f' % (mask_thresh, mask_percent), y = 1.02, fontsize=font_size)
             else:
                 plt.title(r'%s: $p$ < %0.3f | f_{masked} = %0.1f' % (titles[i], mask_thresh, mask_percent), y = 1.02, fontsize=font_size)
+                #plt.title(r'%i$\AA$ Gaussian Location [min]: | f_{masked} = %0.1f' % (wavelength, mask_percent), y = 1.02, fontsize=font_size)
+                #plt.title(r'%s: $p$ < %0.3f' % (titles[i], mask_thresh), y = 1.02, fontsize=font_size)
             if i == 4:
                 cmap = cm.get_cmap('jet_r', 10)
             else:
@@ -291,12 +293,19 @@ def heatmap(directory, date, wavelength):
             #cbar.set_ticks(np.round(c_ticks,8))  # 8 for slope
             cbar.set_ticks(c_ticks)  # 8 for slope
             #plt.tight_layout()
-            #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_m[k]))
+            #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.jpeg' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)))
             plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.pdf' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)), format='pdf')
         
         #"""
         flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
-    
+        
+        # calculate some statistics
+        mean = np.mean(flat_param)
+        #mode = stats.mode(flat_param)  # blows up the time
+        sigma = np.std(flat_param)   
+        upper_sigma = mean+sigma
+        lower_sigma = mean-sigma
+        
         fig = plt.figure(figsize=(fig_width+1,fig_height))
         plt.title('%s' % (titles[i]), y = 1.02, fontsize=font_size)  # no date / wavelength
         #plt.title(r'%s: %i $\AA$  [Histogram - %s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
@@ -305,8 +314,18 @@ def heatmap(directory, date, wavelength):
         plt.xticks(fontsize=font_size)
         plt.yticks(fontsize=font_size)
         plt.xlim(h_min, h_max)
+        #plt.xlim(0.,4.)
         y, x, _ = plt.hist(flat_param, bins=200, range=(h_min, h_max))
+        #y, x, _ = plt.hist(flat_param, bins=100)
         plt.ylim(0, y.max()*1.1)
+        plt.vlines(mean, 0, y.max()*1.1, color='red', linestyle='solid', linewidth=1.5, label='mean=%0.6f' % mean)
+        #plt.vlines(mode[0], 0, y.max()*1.1, color='red', linestyle='dashed', linewidth=1.5, label='mode=%0.6f' % mode[0])
+        plt.vlines(lower_sigma, 0, y.max()*1.1, color='blue', linestyle='dotted', linewidth=1.5, label='low 68=%0.6f' % lower_sigma)
+        plt.vlines(upper_sigma, 0, y.max()*1.1, color='blue', linestyle='dashed', linewidth=1.5, label='high 68=%0.6f' % upper_sigma)
+        legend = plt.legend(loc='upper right', prop={'size':20}, labelspacing=0.35)
+        for label in legend.get_lines():
+            label.set_linewidth(2.0)  # the legend line width
+        
         #plt.hist(flatten_slopes, bins='auto')  # try this (actually think we want constant bins throughout wavelengths)
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
         plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
@@ -350,10 +369,11 @@ def heatmap(directory, date, wavelength):
     #cbar.set_ticks(np.round(c_ticks,8))  # 8 for slope
     cbar.set_ticks(c_ticks)  # 8 for slope
     #plt.tight_layout()
+    #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.jpeg' % (directory, date, wavelength, date, wavelength))
     plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
     
     
-  
+    
     # generate visual images
     titles_vis = ['Average', 'Middle-File']
     names_vis = ['average', 'mid']
@@ -396,7 +416,7 @@ def heatmap(directory, date, wavelength):
         #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_vis[i]))
         plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
-
+    
 
 
 
@@ -829,6 +849,7 @@ def fft_avg(directory, date, wavelength, num_seg):
             pixmed = DATA[:,ii,jj] / Ex  # extract timeseries + normalize by exposure time
             #pixmed = pixmed/Ex  # normalize by exposure time    
             
+            """
             # The derotation introduces some bad data towards the end of the sequence. This trims that off
             bad = np.argmax(pixmed <= 0.)		# Look for values <= zero
             last_good_pos = bad - 1			# retain only data before the <=zero
@@ -840,7 +861,11 @@ def fft_avg(directory, date, wavelength, num_seg):
             else:
                 v=pixmed[0:last_good_pos]		
                 t=TIME[0:last_good_pos]
+            """
             
+            # maybe do this for all wavelengths?
+            v=pixmed
+            t=TIME
         
             v_interp = np.interp(t_interp,t,v)  # interpolate pixel-intensity values onto specified time grid
             
@@ -1086,6 +1111,7 @@ def fft_overlap(directory, date, wavelength, window_length, overlap_pct, pixel_b
             pixmed = DATA[:,ii,jj] / Ex  # extract timeseries + normalize by exposure time
             #pixmed = pixmed/Ex  # normalize by exposure time    
             
+            """
             # The derotation introduces some bad data towards the end of the sequence. This trims that off
             bad = np.argmax(pixmed <= 0.)		# Look for values <= zero
             last_good_pos = bad - 1			# retain only data before the <=zero
@@ -1097,7 +1123,11 @@ def fft_overlap(directory, date, wavelength, window_length, overlap_pct, pixel_b
             else:
                 v=pixmed[0:last_good_pos]		
                 t=TIME[0:last_good_pos]
+            """
             
+            # maybe do this for all wavelengths?
+            v=pixmed
+            t=TIME
         
             v_interp = np.interp(t_interp,t,v)  # interpolate pixel-intensity values onto specified time grid
             
@@ -1176,17 +1206,17 @@ def fft_overlap(directory, date, wavelength, window_length, overlap_pct, pixel_b
     
     if pixel_box == True:
         # initialize arrays to hold temporary results for calculating arithmetic average (changed from geometric)
-        temp = np.zeros((9,spec_array.shape[2]))  # maybe have 3x3 to be generalized   
-        p_avg = np.zeros((spec_array.shape[2]))  # would pre-allocating help? (seems to)
-        spectra_array = np.zeros((spec_array.shape[0]-2, spec_array.shape[1]-2, spec_array.shape[2]))  # would pre-allocating help? (seems to)
+        temp = np.zeros((9,spec_array.shape[3]))  # maybe have 3x3 to be generalized   
+        p_avg = np.zeros((spec_array.shape[3]))  # would pre-allocating help? (seems to)
+        spectra_array = np.zeros((spec_array.shape[0], spec_array.shape[1]-2, spec_array.shape[2]-2, spec_array.shape[3]))  # would pre-allocating help? (seems to)
                   
         ### calculate 3x3 pixel-box arithmetic average.  start at 1 and end 1 before to deal with edges.
         ## previously for geometric -- 10^[(log(a) + log(b) + log(c) + ...) / 9] = [a*b*c*...]^(1/9)
-        for k in range(((len(v_interp)-len(sig))/points_nonoverlap)+1):
-            for l in range(1,spec_array.shape[0]-1):
+        for k in range(spec_array.shape[0]):
+            for l in range(1,spec_array.shape[1]-1):
             #for l in range(1,25):
                 #print l
-                for m in range(1,spec_array.shape[1]-1):
+                for m in range(1,spec_array.shape[2]-1):
                 #for m in range(1,25):
                                
                     temp[0] = spec_array[k][l-1][m-1]
@@ -1205,9 +1235,10 @@ def fft_overlap(directory, date, wavelength, window_length, overlap_pct, pixel_b
                     #spectra_array[l-1][m-1] = np.power(10,p_geometric)
                     spectra_array[k][l-1][m-1] = p_avg
                     
-                    spec_array = spectra_array
-            
-    np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spec_array)
+        spec_array = spectra_array
+        np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_array)
+    else:
+        np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spec_array)
     #return spectra_array
     
     

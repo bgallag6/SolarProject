@@ -208,8 +208,8 @@ def Gauss(f, P, fp, fw):
     return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) 
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20141025'
-wavelength = 304
+date = '20160426'
+wavelength = 1600
 
 
 cube_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))
@@ -227,6 +227,8 @@ t_interp = np.linspace(0, TIME[len(TIME)-1], TIME[len(TIME)-1]/12)
 
 if date == '20120923':   
     n_segments = 3  # break data into 12 segments of equal length
+elif date == '20160426':
+    n_segments = 12
 else:
     n_segments = 6
 n = len(t_interp)
