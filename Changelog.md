@@ -19,3 +19,6 @@
 - added 3x3 pixel-box averaging spectra example + 3x3 pixel box visual example to Example_process_6_segments_FFT.py
 
 - added 3x3 pixel-box averaging to fft_overlap in SolSpec.py
+
+4/10 :
+- changed heatmaps_4d.py colorscale to continuous vs discrete

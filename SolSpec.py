@@ -163,7 +163,7 @@ def heatmap(directory, date, wavelength):
     #fig_height = 10  # works better for 20130626
     
     for i in range(len(titles)-1):
-    #for i in range(1,2):
+    #for i in range(1,4):
         
         #fig = plt.figure(figsize=(13,9))
         fig = plt.figure(figsize=(fig_width,fig_height))
@@ -191,8 +191,8 @@ def heatmap(directory, date, wavelength):
             #cmap = 'jet'      
             cmap = cm.get_cmap('jet', 10)               
         else:
-            h_min = np.percentile(h_map[i],3)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-            h_max = np.percentile(h_map[i],98)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+            h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+            h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
             #cmap = 'jet'
             cmap = cm.get_cmap('jet', 10)
 
@@ -211,6 +211,8 @@ def heatmap(directory, date, wavelength):
         #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
         #plt.xticks(x_ticks,fontsize=font_size)
         #plt.yticks(y_ticks,fontsize=font_size)
+        plt.xticks(fontsize=font_size)
+        plt.yticks(fontsize=font_size)
         #plt.xticks(x_ticks,x_ind,fontsize=font_size)
         #plt.yticks(y_ticks,y_ind,fontsize=font_size)
         ax.tick_params(axis='both', which='major', pad=10)
@@ -405,6 +407,8 @@ def heatmap(directory, date, wavelength):
         #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
         #plt.xticks(x_ticks,fontsize=font_size)
         #plt.yticks(y_ticks,fontsize=font_size)
+        plt.xticks(fontsize=font_size)
+        plt.yticks(fontsize=font_size)
         #plt.xticks(x_ticks,x_ind,fontsize=font_size)
         #plt.yticks(y_ticks,y_ind,fontsize=font_size)
         ax.tick_params(axis='both', which='major', pad=10)
@@ -1175,7 +1179,8 @@ def fft_overlap(directory, date, wavelength, window_length, overlap_pct, pixel_b
                 avg_smooth2 = avg_smooth2 / (i+1)
                 
                 #spec_array[0][i] = powers
-                spec_array[i][ii][jj] = y2            
+                spec_array[i][ii][jj] = powers
+                #spec_array[i][ii][jj] = y2            
         
         
         # estimate time remaining and print to screen

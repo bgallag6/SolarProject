@@ -43,8 +43,14 @@ def Gauss(f, P, fp, fw):
 def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
     
+directory = 'F:/Users/Brendan/Desktop/SolarProject'
+date = '20130626'
+wavelength = 171
+    
 #spectra_array = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/193/20130626_193_-450_-200i_-200_200j_spectra.npy')
-spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
+#spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
+cube_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))
+spectra_array = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
 #spectra_array = np.load('C:/Users/Brendan/Desktop/20160905/193_1000.npy')
 #spectra_array = np.load('C:/Users/Brendan/Desktop/1600/spectra.npy')
 ## load in array of segment-averaged pixel FFTs
@@ -104,18 +110,18 @@ point_label = ['A', 'B', 'C', 'D']
 m2_title = ['Tail Dominated w/o Gaussian', 'Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/ Gaussian', 'Tail Dominated w/ Gaussian']
 """
 
-#m2 = [187, 188, 189, 726, 727, 722, 722] # 867, 765, 757, 525, 708, 743, 790, 790, 790, 794, 796, 797, 798, 858, 861, 863, 872, 872, 876]
-#l2 = [524, 523, 522, 328, 323, 1441, 1427] # 864, 325, 319, 551, 352, 322, 650, 653, 659, 642, 648, 667, 669, 866, 867, 863, 865, 875, 879]
+m2 = [188, 726, 722, 872] # 727, 722, 189, 187, 867, 765, 757, 525, 708, 743, 790, 790, 790, 794, 796, 797, 798, 858, 861, 863, 872, 872, 876]
+l2 = [523, 328, 1427, 875] # 323, 1441, 522, 524, 864, 325, 319, 551, 352, 322, 650, 653, 659, 642, 648, 667, 669, 866, 867, 863, 865, 875, 879]
 
-m2 = [867, 765, 757, 525, 708, 743, 790, 790, 790, 794, 796, 797, 798, 858, 861, 863, 872, 872, 876]
-l2 = [864, 325, 319, 551, 352, 322, 650, 653, 659, 642, 648, 667, 669, 866, 867, 863, 865, 875, 879]
+#m2 = [867, 765, 757, 525, 708, 743, 790, 790, 790, 794, 796, 797, 798, 858, 861, 863, 872, 872, 876]
+#l2 = [864, 325, 319, 551, 352, 322, 650, 653, 659, 642, 648, 667, 669, 866, 867, 863, 865, 875, 879]
 
-#m2_title = ['Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/ Gaussian', 'Power-Law Dominated w/ Gaussian','Tail Dominated w/o Gaussian', 'Tail Dominated w/o Gaussian']
+m2_title = ['Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/ Gaussian', 'Tail Dominated w/o Gaussian', 'Tail Dominated w/o Gaussian']
 
-#point_label = ['C', 'C', 'C', 'D', 'D', 'A', 'A']
+point_label = ['C', 'D', 'A', 'B']
 
-m2_title = ['Tail Dominated w/o Gaussian']
-point_label = ['B']
+#m2_title = ['Tail Dominated w/o Gaussian']
+#point_label = ['B']
 
 
 #for l in range(321,322):
@@ -123,8 +129,8 @@ for l in range(1):
     
     #for m in range(0,10):
     #for m in range(900,901):
-    #for m in range(len(m2)):  
-    for m in range(17,18):
+    for m in range(len(m2)):  
+    #for m in range(17,18):
         
                                         
         f = freqs  # frequencies
@@ -297,21 +303,26 @@ for l in range(1):
         #plt.title('Power-Law Dominated : Pixel %ii, %ij' % (l2[m],m2[m]), y = 1.01, fontsize=25)
         #plt.title('%s: Pixel %ix, %iy' % (m2_title[m], m2[m],l2[m]), y = 1.01, fontsize=30)
         #plt.title('171: %ix, %iy' % (m2[m],l2[m]), y = 1.01, fontsize=30)
-        plt.title('%s: Point %s' % (m2_title[m-17], point_label[m-17]), y = 1.01, fontsize=30)
+        plt.title('%s: Point %s' % (m2_title[m], point_label[m]), y = 1.01, fontsize=30)
+        #plt.title('%s: Point %s' % (m2_title[m-17], point_label[m-17]), y = 1.01, fontsize=30)
         plt.ylim((10**-4.7,10**0))
         plt.xlim((10**-4.,10**-1.3))
         plt.xticks(fontsize=30)
         plt.yticks(fontsize=30)
         ax.tick_params(axis='both', which='major', pad=10)
         plt.loglog(f,s,'k')
-        plt.loglog(f, m1_fit, label='M1 - Power Law', linewidth=1.3)
-        plt.loglog(f, m2P_fit, 'g', label='M2 - Power Law', linewidth=1.3)
-        plt.loglog(f, m2G_fit, 'g--', label='M2 - Gaussian', linewidth=1.3)
-        plt.loglog(f, m2_fit2, 'purple', label='M2 - Combined', linewidth=1.3)
+        #plt.loglog(f, m1_fit, label='M1 - Power Law', linewidth=1.3)
+        #plt.loglog(f, m2P_fit, 'g', label='M2 - Power Law', linewidth=1.3)
+        #plt.loglog(f, m2G_fit, 'g--', label='M2 - Gaussian', linewidth=1.3)
+        #plt.loglog(f, m2_fit2, 'purple', label='M2 - Combined', linewidth=1.3)
+        plt.loglog(f, m1_fit, linewidth=1.3)
+        plt.loglog(f, m2P_fit, 'g', label='Power Law', linewidth=1.3)
+        plt.loglog(f, m2G_fit, 'g--', label='Gaussian', linewidth=1.3)
+        plt.loglog(f, m2_fit2, 'purple', label='Combined Model', linewidth=1.3)
         plt.xlabel('Frequency [Hz]', fontsize=30, labelpad=10)
         plt.ylabel('Power', fontsize=30, labelpad=10)
-        plt.vlines((1.0/300.),10**-8,10**1, linestyles='dashed', label='5 minutes')
-        plt.vlines((1.0/180.),10**-8,10**1, linestyles='dotted', label='3 minutes')
+        #plt.vlines((1.0/300.),10**-8,10**1, linestyles='dashed', label='5 minutes')
+        #plt.vlines((1.0/180.),10**-8,10**1, linestyles='dotted', label='3 minutes')
         
         #rect = patches.Rectangle((0.005,0.05), 0.03, 0.6, color='white', fill=True)
         #ax.add_patch(rect)
@@ -347,7 +358,8 @@ for l in range(1):
         plt.legend(loc='upper right', prop={'size':23})
         """
         #plt.show()
-        plt.savefig('C:/Users/Brendan/Desktop/171_final_points/171_%ix_%iy.pdf' % (m2[m],l2[m]), format='pdf')
+        plt.savefig('C:/Users/Brendan/Desktop/171_final_points/171_%ix_%iy.jpeg' % (m2[m],l2[m]))
+        #plt.savefig('C:/Users/Brendan/Desktop/171_final_points/171_%ix_%iy.pdf' % (m2[m],l2[m]), format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/171_slice2_double_optimize/171A_%ii_%ij.jpeg' % (l,m))
         #plt.savefig('C:/Users/Brendan/Desktop/171_points_square/pixel_%ii_%ij_new.jpeg' % (l2[m],m2[m]))
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))

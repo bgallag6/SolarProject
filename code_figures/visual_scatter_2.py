@@ -20,10 +20,10 @@ import numpy as np
 import astropy.units as u
 import matplotlib.patches as patches
 
-#v171 = np.load('F:/Users/Brendan/Desktop/SolarProject/1600/visual_1600.npy')
-#p171 = np.load('F:/Users/Brendan/Desktop/SolarProject/1600/param_1600.npy')
-v171 = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_visual.npy')
-p171 = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_param_slope6_arthm.npy')
+v171 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/visual.npy')
+p171 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param.npy')
+#v171 = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_visual.npy')
+#p171 = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_param_slope6_arthm.npy')
 #v1600 = np.load('C:/Users/Brendan/Desktop/1600/visual_1600.npy')
 
 
@@ -162,12 +162,13 @@ for i in range(1):
     #plt.scatter(m2, l2, s=75, c='red', marker='*')
     plt.xlim(0, vis[0].shape[1])
     plt.ylim(vis[0].shape[0], 0)
-    plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
-    plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
+    #plt.xlabel('X-Position [Pixels]', fontsize=23, labelpad=10)
+    #plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
     #plt.xticks([0,200,400,600,800,1000,1200,1400,1600],fontsize=23)
     #plt.yticks([0,200,400,600,800,1000,1200,1400,1600],fontsize=23)
     plt.xticks(x_ticks,x_ind,fontsize=23)
     plt.yticks(y_ticks,y_ind,fontsize=23)
+    ax1.tick_params(axis='both', which='major', pad=10)
     rect = patches.Rectangle((610,140), 70, 90, color='white', fill=True)
     ax1.add_patch(rect)
     ax1.text(623.2,209, 'A', fontsize=27)
@@ -215,4 +216,5 @@ for i in range(1):
     rect9 = patches.Rectangle((1,1), 298, 1598, color='white', fill=False, linewidth=3)
     ax2.add_patch(rect9)
     """
-    plt.savefig('C:/Users/Brendan/Desktop/171_visual_%s_points_overlay_revised6.pdf' % names_vis[i], format='pdf')
+    plt.savefig('C:/Users/Brendan/Desktop/171_final_points/171_visual_%s_points_overlay_revised7.jpeg' % names_vis[i])
+    #plt.savefig('C:/Users/Brendan/Desktop/171_final_points/171_visual_%s_points_overlay_revised6.pdf' % names_vis[i], format='pdf')
