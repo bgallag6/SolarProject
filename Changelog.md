@@ -22,3 +22,13 @@
 
 4/10 :
 - changed heatmaps_4d.py colorscale to continuous vs discrete
+
+4/12 : 
+- added final printout of region and wavelength to Spec_fit_mpi.py and Spec_fit_mpi_4d.py
+- commented-out uncertainty calculation in Spec_fit_mpi.py and Spec_fit_mpi_4d.py
+
+- removed the prompt for the date with and without slashes from download_fits.sh
+- replaced date-slash variable in create_arr_need.py and mpi2_download_fits.py with string creation with slashes from regular date
+
+4/13 : 
+- added r-value plot w/ stats to heatmap routine in SolSpec.py  (older parameter arrays won't work with this - since the r-values were extracted until recently)

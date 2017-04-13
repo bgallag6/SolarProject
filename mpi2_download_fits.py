@@ -57,9 +57,7 @@ wavelength = int(sys.argv[3])
 
 arr_rem = np.load('%s/FITS/%s/%i/arr_need.npy' % (directory, date, wavelength))
 
-date_slash = sys.argv[4]
-
-Y1 = str(date_slash) 
+Y1 = '%s/%s/%s' % (date[0:4],date[4:6],date[6:8])
 
 counter = 0
 

@@ -375,6 +375,46 @@ def heatmap(directory, date, wavelength):
     plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
     
     
+    # generate 'r-value coefficient correlation' heatmap
+    fig = plt.figure(figsize=(fig_width,fig_height))
+    ax = plt.gca()  # get current axis -- to set colorbar 
+    #plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
+    plt.title(r'$r$-Value: Correlation Coefficient', y = 1.02, fontsize=font_size)  # no date / wavelength
+    #roll_freq = np.nan_to_num(roll_freq)  # deal with NaN's causing issues
+    h_min = np.percentile(h_map[8],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+    h_max = np.percentile(h_map[8],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+    h_range = np.abs(h_max-h_min)
+    h_step = h_range / 10.
+    #h1 = h_min + (h_step/2.)
+    c_ticks = np.zeros((11))
+    for h in range(11):
+        #c_ticks[h] = h1 + h_step*h
+        c_ticks[h] = h_min + h_step*h
+    #cmap = 'jet'      
+    cmap = cm.get_cmap('jet', 10)    
+    
+    #im = ax.imshow(roll_freq, cmap = cmap, vmin=h_min, vmax=h_max)
+    im = ax.imshow(np.flipud(h_map[8]), cmap = cmap, vmin=h_min, vmax=h_max)
+    #im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=(1./10**-1.), vmax=(1./10**-3.5))  # should bounds be set at frequency range
+    #plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
+    #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
+    #plt.xticks(x_ticks,fontsize=font_size)
+    #plt.yticks(y_ticks,fontsize=font_size)
+    #plt.xticks(x_ticks,x_ind,fontsize=font_size)
+    #plt.yticks(y_ticks,y_ind,fontsize=font_size)
+    ax.tick_params(axis='both', which='major', pad=10)
+    divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
+    cax = divider.append_axes("right", size="3%", pad=0.07)
+    cbar = plt.colorbar(im,cax=cax,format='%0.3f')
+    #cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
+    cbar.ax.tick_params(labelsize=font_size, pad=5) 
+    #cbar.set_ticks(np.round(c_ticks,8))  # 8 for slope
+    cbar.set_ticks(c_ticks)  # 8 for slope
+    #plt.tight_layout()
+    #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.jpeg' % (directory, date, wavelength, date, wavelength))
+    plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_r_value.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
+    
+    
     
     # generate visual images
     titles_vis = ['Average', 'Middle-File']

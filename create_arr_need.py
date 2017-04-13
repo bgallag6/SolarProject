@@ -15,24 +15,25 @@ import numpy as np
 import sys
 
 directory = sys.argv[1]
-date_slash = sys.argv[2]
-date_reg = sys.argv[3]
-time_begin = sys.argv[4]
-time_end = sys.argv[5]
-wavelength = int(sys.argv[6])
+date = sys.argv[2]
+time_begin = sys.argv[3]
+time_end = sys.argv[4]
+wavelength = int(sys.argv[5])
 
 print "Please wait while request is being processed."
 
 client=vso.VSOClient()  # establish connection to VSO database
 
 # extract yyyy/mm/dd, hour, minute, and second values from start of time-range
-Y1 = str(date_slash)   
+#Y1 = str(date_slash)   
+Y1 = '%s/%s/%s' % (date[0:4],date[4:6],date[6:8])
 H1 = int(time_begin[0:2])
 M1 = int(time_begin[3:5])
 S1 = int(time_begin[6:8])
 
 # extract yyyy/mm/dd, hour, minute, and second values from end of time-range
-Y2 = str(date_slash)   
+#Y2 = str(date_slash)  
+Y2 = '%s/%s/%s' % (date[0:4],date[4:6],date[6:8]) 
 H2 = int(time_end[0:2])
 M2 = int(time_end[3:5])
 S2 = int(time_end[6:8])
@@ -62,7 +63,7 @@ num_files = len(qr)
 print num_files
 #cadence = cadence  # set cadence to specified value *took out because extracting times from query
     
-flist = glob.glob('%s/FITS/%s/%i/*.fits' % (directory, date_reg, wavelength))
+flist = glob.glob('%s/FITS/%s/%i/*.fits' % (directory, date, wavelength))
 
 l = len(flist)
    
@@ -99,4 +100,4 @@ for i in range(0,num_files):  # changed from range(0,l)
 print ""
 print "Query request completed, %d files are needed." % len(arr_need)
 
-np.save('%s/FITS/%s/%i/arr_need.npy' % (directory, date_reg, wavelength), arr_need)
+np.save('%s/FITS/%s/%i/arr_need.npy' % (directory, date, wavelength), arr_need)

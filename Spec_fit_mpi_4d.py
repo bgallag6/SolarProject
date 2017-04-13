@@ -134,7 +134,7 @@ def spec_fit( subcube ):
                 A, n, C = nlfit_l  # unpack fitting parameters
                 
                 # unpack uncertainties in fitting parameters from diagonal of covariance matrix
-                dA, dn, dC = [np.sqrt(nlpcov_l[j,j]) for j in range(nlfit_l.size)]
+                #dA, dn, dC = [np.sqrt(nlpcov_l[j,j]) for j in range(nlfit_l.size)]
             except:
                 pass
     
@@ -162,7 +162,7 @@ def spec_fit( subcube ):
                 A2, n2, C2, P2, fp2, fw2 = nlfit_gp  # unpack fitting parameters
                 
                 # unpack uncertainties in fitting parameters from diagonal of covariance matrix
-                dA2, dn2, dC2, dP2, dfp2, dfw2 = [np.sqrt(nlpcov_gp[j,j]) for j in range(nlfit_gp.size)]
+                #dA2, dn2, dC2, dP2, dfp2, dfw2 = [np.sqrt(nlpcov_gp[j,j]) for j in range(nlfit_gp.size)]
             except:
                 pass
             
@@ -193,7 +193,7 @@ def spec_fit( subcube ):
             
             try:
                 A22, n22, C22, P22, fp22, fw22 = nlfit_gp2  # unpack fitting parameters     
-                dA22, dn22, dC22, dP22, dfp22, dfw22 = [np.sqrt(nlpcov_gp[j,j]) for j in range(nlfit_gp.size)]
+                #dA22, dn22, dC22, dP22, dfp22, dfw22 = [np.sqrt(nlpcov_gp[j,j]) for j in range(nlfit_gp.size)]
             
                 #m2_param = A22, n22, C22, P22, fp22, fw22  # could have used this for params array : = params[0:6,l-1,m-1]
                 #uncertainties = dA22, dn22, dC22, dP22, dfp22, dfw22  # do we want to keep a global array of uncertainties?
@@ -325,6 +325,7 @@ T_final = timer() - start
 T_min_final, T_sec_final = divmod(T_final, 60)
 T_hr_final, T_min_final = divmod(T_min_final, 60)
 print "Total program time = %i:%.2i:%.2i" % (T_hr_final, T_min_final, T_sec_final)   
+print "Just finished region: %s %iA" % (date, wavelength)
 
 #np.save('/mnt/data/Gallagher/DATA/Output/20130626/193/20130626_193_-500_500i_-500_600j_param_slope6_arthm', stack_p)
 #np.save('C:/Users/Brendan/Desktop/fft_overlap/20130626_171_PCB/param', stack_p)
