@@ -343,6 +343,7 @@ def heatmap(directory, date, wavelength):
     roll_freq = np.nan_to_num(roll_freq)  # deal with NaN's causing issues
     h_min = np.percentile(roll_freq,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
     h_max = np.percentile(roll_freq,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+    #h_max = np.percentile(roll_freq,99.9)  # for 1600 sunspot rollover - to show gradient 
     h_range = np.abs(h_max-h_min)
     h_step = h_range / 10.
     #h1 = h_min + (h_step/2.)

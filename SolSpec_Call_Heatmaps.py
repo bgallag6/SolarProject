@@ -17,8 +17,8 @@ import SolSpec as ss
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
 #directory = 'C:/Users/Brendan/Desktop/FileTree'
-date = '20140910'
-wavelength = 171
+date = '20130626'
+wavelength = 1600
 
 """
 import sys
