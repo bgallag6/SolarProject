@@ -67,23 +67,23 @@ cax = divider.append_axes("right", size="3%", pad=0.07)
 cbar = plt.colorbar(im,cax=cax)
 #cbar.set_label('Intensity', size=20, labelpad=10)
 cbar.ax.tick_params(labelsize=15, pad=5) 
-rect = patches.Rectangle((6,5), 1, 1, color='red', alpha=.80, fill=True)
+rect = patches.Rectangle((6,5), 1, 1, color='white', alpha=.80, fill=True)
 ax.add_patch(rect)
-rect = patches.Rectangle((7,6), 1, 1, color='red', fill=False)
+rect = patches.Rectangle((7,6), 1, 1, color='white', fill=False)
 ax.add_patch(rect)  
-rect = patches.Rectangle((5,4), 1, 1, color='red', fill=False)
+rect = patches.Rectangle((5,6), 1, 1, color='white', fill=False)
 ax.add_patch(rect)
-rect = patches.Rectangle((5,6), 1, 1, color='red', fill=False)
-ax.add_patch(rect)
-rect = patches.Rectangle((7,5), 1, 1, color='red', fill=False)
+rect = patches.Rectangle((7,5), 1, 1, color='white', fill=False)
 ax.add_patch(rect)  
-rect = patches.Rectangle((7,4), 1, 1, color='red', fill=False)
+rect = patches.Rectangle((7,4), 1, 1, color='white', fill=False)
 ax.add_patch(rect)
-rect = patches.Rectangle((5,5), 1, 1, color='red', fill=False)
+rect = patches.Rectangle((5,5), 1, 1, color='white', fill=False)
 ax.add_patch(rect)
-rect = patches.Rectangle((6,4), 1, 1, color='red', fill=False)
+rect = patches.Rectangle((6,4), 1, 1, color='white', fill=False)
 ax.add_patch(rect)  
-rect = patches.Rectangle((6,6), 1, 1, color='red', fill=False)
+rect = patches.Rectangle((6,6), 1, 1, color='white', fill=False)
+ax.add_patch(rect)
+rect = patches.Rectangle((5,4), 1, 1, color='white', fill=False)
 ax.add_patch(rect)
 plt.savefig('C:/Users/Brendan/Desktop/3x3_visualB.jpeg')
 
@@ -95,7 +95,7 @@ spectra_seg = np.zeros((3,3,299))
 t_interp = np.linspace(0, TIME[len(TIME)-1], (TIME[len(TIME)-1]/12)+1)  #  <-- use this (might be correct method) - not sure if matters
 
 
-"""
+#"""
 for ii in range(139,140):
     for jj in range(288,289):
 
@@ -157,7 +157,7 @@ for ii in range(139,140):
              powers = ((powers/norm)**2)*(1./(sig.std()**2))*2
              avg_array += powers
             
-             
+             """
              plt.figure(figsize=(20,15))
              plt.suptitle('Timeseries w/ FFT - 6 Segment Averaging', fontsize=20, fontweight='bold')
                             
@@ -184,13 +184,15 @@ for ii in range(139,140):
   
              #plt.savefig('C:/Users/Brendan/Desktop/PHYS 326/6_segment_averaging_%i.jpeg' % i)
              #plt.close()
+             """
   
           
         avg_array /= n_segments
-        plt.figure(figsize=(20,15))
-        plt.suptitle('6-Segment Averaging', fontsize=23, fontweight='bold')
+        """
+        plt.figure(figsize=(15,3))
+        #plt.suptitle('6-Segment Averaging', fontsize=23, fontweight='bold')
                    
-        ax1 = plt.subplot2grid((16,3), (0,0), rowspan=4, colspan=3) 
+        ax1 = plt.subplot2grid((1,1), (0,0), rowspan=1, colspan=1) 
         plt.plot(t_interp, v_interp, 'k')
         ax1.set_xlim([0, t_interp[len(t_interp)-1]])
         ax1.axvline(7196, color='r', linewidth=3)
@@ -204,10 +206,24 @@ for ii in range(139,140):
         ax1.text(500 + (7196*3), 900, '%i' % (3+1), color='r', fontsize=20)
         ax1.text(500 + (7196*4), 900, '%i' % (4+1), color='r', fontsize=20)
         ax1.text(500 + (7196*5), 900, '%i' % (5+1), color='r', fontsize=20)
-        plt.title('Time Series', fontsize=20, y=1.01)
-        plt.xlabel('Time [Seconds]', fontsize=20)
+        plt.title('Time Series', fontsize=20, y=1.02)
+        plt.xlabel('Time [seconds]', fontsize=20)
         plt.ylabel('Intensity', fontsize=20)
-                             
+        plt.tight_layout()
+        """          
+        plt.figure(figsize=(20,10))        
+        plt.loglog(freqss, powers, 'r', label = 'Single Segment')
+        plt.loglog(freqss, avg_array, 'k', label = '6-Segment Averaged')
+        plt.title('FFT-Derived Power Spectra', fontsize=30, y=1.02)
+        plt.xlabel('Frequency [Hz]', fontsize=27)
+        plt.ylabel('Power', fontsize=27)
+        plt.xlim([10**-4,10**-1])
+        plt.ylim([10**-6,10**-0])
+        legend = plt.legend(loc='upper right', prop={'size':30}, labelspacing=0.35)
+        for label in legend.get_lines():
+            label.set_linewidth(2.5)  # the legend line width
+        plt.savefig('C:/Users/Brendan/Desktop/segment_averaging.jpeg')           
+        """
         ax2 = plt.subplot2grid((16,3), (6,0), rowspan=10, colspan=3)
         plt.loglog(freqss, powers, 'r', label = 'Single Segment')
         plt.loglog(freqss, avg_array, 'k', label = '6-Segment Averaged')
@@ -219,18 +235,19 @@ for ii in range(139,140):
         legend = ax2.legend(loc='upper right', prop={'size':25}, labelspacing=0.35)
         for label in legend.get_lines():
             label.set_linewidth(2.5)  # the legend line width
-  
-        #plt.savefig('C:/Users/Brendan/Desktop/6_segment_averaging_full.jpeg')
+        """
+
+        #plt.savefig('C:/Users/Brendan/Desktop/time_series.jpeg')
         #plt.close()
-        """  
-"""  
-        avg_array /= n_segments  # take the average of the segments
+        #"""  
+
+        #avg_array /= n_segments  # take the average of the segments
             
         avg_array = np.transpose(avg_array)  # take transpose of array to fit more cleanly in 3D array  
   
         spectra_seg[ii-138][jj-287] = avg_array  # construct 3D array with averaged FFTs from each pixel
         
-        
+"""        
 # initialize arrays to hold temporary results for calculating arithmetic average (changed from geometric)
 temp = np.zeros((9,spectra_seg.shape[2]))  # maybe have 3x3 to be generalized   
 p_avg = np.zeros((spectra_seg.shape[2]))  # would pre-allocating help? (seems to)
@@ -265,16 +282,16 @@ for l in range(1,spectra_seg.shape[0]-1):
         spectra_array[l-1][m-1] = p_avg
         
         
-        plt.figure(figsize=(20,15))        
+        plt.figure(figsize=(20,10))         
         plt.loglog(freqss, spectra_seg[l][m], 'r', label='Single Pixel')
         plt.loglog(freqss, p_avg, 'k', label='3x3 Averaged')
         plt.xlim([10**-4,10**-1])
-        plt.ylim([10**-5,10**0])
-        plt.title('3x3 Pixel-Box Averaging', fontsize=30, fontweight='bold', y=1.02)
-        plt.xlabel('Frequency [Hz]', fontsize=20)
-        plt.ylabel('Power', fontsize=20)
+        plt.ylim([10**-6,10**-0])
+        #plt.title('3x3 Pixel-Box Averaging', fontsize=30, y=1.02)
+        plt.xlabel('Frequency [Hz]', fontsize=27)
+        plt.ylabel('Power', fontsize=27)
         legend = plt.legend(loc='upper right', prop={'size':30}, labelspacing=0.35)
         for label in legend.get_lines():
             label.set_linewidth(2.5)  # the legend line width
-        plt.savefig('C:/Users/Brendan/Desktop/3x3_averaging.jpeg')
+        #plt.savefig('C:/Users/Brendan/Desktop/3x3_averaging.jpeg')
 """
