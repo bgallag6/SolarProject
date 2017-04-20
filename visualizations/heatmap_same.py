@@ -24,22 +24,22 @@ from matplotlib import cm
 #h_new = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_304_-500_500i_-500_600j_param_slope6_arthm.npy')
 
 
-h1 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param1.npy')
-h2 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param2.npy')
-h3 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param3.npy')
-h4 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param4.npy')
-h5 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param5.npy')
-h6 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param6.npy')
-h7 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param7.npy')
-h8 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param8.npy')
-h9 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param9.npy')
-h10 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param10.npy')
-h11 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param11.npy')
+h1 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/2hrs_9_11/param.npy')
+h2 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/2hrs_11_13/param.npy')
+h3 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/2hrs_13_15/param.npy')
+h4 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/2hrs_preflare/param.npy')
+h5 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/4hrs_preflare/param.npy')
+h6 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/8hrs_preflare/param.npy')
+#h7 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param7.npy')
+#h8 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param8.npy')
+#h9 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param9.npy')
+#h10 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param10.npy')
+#h11 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param11.npy')
 
     
-date = '20130626'
+date = '20140910'
 #path_name = 'F:/Users/Brendan/Desktop/SolarProject/data/20130626'
-path_name = 'C:/Users/Brendan/Desktop/171_segments'
+path_name = 'C:/Users/Brendan/Desktop/flare_segments'
 
 # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
 #titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', '$\chi^2$']
@@ -56,11 +56,11 @@ cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'L
 #wavelengths = [171,193,211,304]
 
 #heatmap = [h171,h171_new]
-heatmap = [h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11]
+heatmap = [h1,h2,h3,h4,h5,h6]
 #wavelengths = [171,171]
 #wavelengths = [193,193]
 #wavelengths = [211,211]
-wavelengths = [171,171,171,171,171,171,171,171,171,171,171]
+wavelengths = [193 for i in range(len(heatmap))]
 
 #h_map2 = h_new
 
@@ -183,11 +183,15 @@ for c in range(len(heatmap)):
         #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
         plt.savefig('%s/%s_%i_%s_diff_%i.pdf' % (path_name, date, wavelength, names[i], c), format='pdf')
         """
+        
+        seg = ['9_11', '11_13', '13_15', '15_17', '4hr_13_17', '8hr_9_17']        
+        
         #fig = plt.figure(figsize=(13,9))
         fig = plt.figure(figsize=(fig_width,fig_height))
         ax = plt.gca()  # get current axis -- to set colorbar 
         #plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
-        plt.title('%s -- Segment %i' % (titles[i], c), y = 1.01, fontsize=25)  # no date / wavelength
+        #plt.title('%s -- Segment %i' % (titles[i], c), y = 1.01, fontsize=25)  # no date / wavelength
+        plt.title('%s -- Segment Hours: %s' % (titles[i], seg[c]), y = 1.01, fontsize=25)  # no date / wavelength
         
         im = ax.imshow(np.flipud(h_map[i]), cmap = cmap, vmin=vmin[i], vmax=vmax[i])
         #im = ax.imshow(np.flipud(h_map2[i]), cmap = cmap, vmin=M2_low[i], vmax=M2_high[i])
@@ -206,7 +210,8 @@ for c in range(len(heatmap)):
         #plt.tight_layout()
         #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
         #plt.savefig('%s/%s_%i_%s_same_%i.jpeg' % (path_name, date, wavelength, names[i], c))
-        plt.savefig('%s/%s_%i_%s_same_%i.pdf' % (path_name, date, wavelength, names[i], c), format='pdf')
+        #plt.savefig('%s/%s_%i_%s_same_%s.jpeg' % (path_name, date, wavelength, names[i], seg[c]))
+        plt.savefig('%s/%s_%i_%s_same_%s.pdf' % (path_name, date, wavelength, names[i], seg[c]), format='pdf')
         """
         if c == 0:
             if i != 6:

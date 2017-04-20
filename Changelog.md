@@ -32,3 +32,10 @@
 
 4/13 : 
 - added r-value plot w/ stats to heatmap routine in SolSpec.py  (older parameter arrays won't work with this - since the r-values were extracted until recently)
+
+4/17 : 
+- indented the printout of the program time and saving of the parameter array in Spec_fit_mpi.py
+(I guess it was trying to save the stacked array 16 times, and it wasn't defined for 15/16 processors.)
+
+4/18 : 
+- commented out upper/lower sigma + added 'mode' excluding 1st/last bins to histograms in SolSpec.py

@@ -45,7 +45,7 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
 date = '20130626'
-wavelength = 171
+wavelength = 1600
     
 #spectra_array = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/193/20130626_193_-450_-200i_-200_200j_spectra.npy')
 #spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
@@ -64,7 +64,8 @@ num_freq = 299
     
 # determine frequency values that FFT will evaluate
 freq_size = ((num_freq)*2) + 1  # determined from FFT-averaging script
-time_step = 12  # add as argument, or leave in as constant?
+#time_step = 12  # add as argument, or leave in as constant?
+time_step = 24  # add as argument, or leave in as constant?
 sample_freq = fftpack.fftfreq(freq_size, d=time_step)
 pidxs = np.where(sample_freq > 0)
 freqs = sample_freq[pidxs]
@@ -327,21 +328,22 @@ for l in range(1):
         #rect = patches.Rectangle((0.005,0.05), 0.03, 0.6, color='white', fill=True)
         #ax.add_patch(rect)
         #"""
-        #plt.text(0.0045, 10**-0.31, r'$A$ = {0:0.2e} [$flux$]'.format(m2_param[0]), fontsize=30)
-        #plt.text(0.0046, 10**-0.51, r'$n$ = {0:0.2f}'.format(m2_param[1]), fontsize=30)
+        plt.text(0.0045, 10**-0.31, r'$A$ = {0:0.2e} [$flux$]'.format(m2_param[0]), fontsize=30)
+        plt.text(0.0046, 10**-0.51, r'$n$ = {0:0.2f}'.format(m2_param[1]), fontsize=30)
         #plt.text(0.008, 10**-0.75, r'$C$ =  {0:0.3e}'.format(m2_param[2]), fontsize=25)
-        #plt.text(0.007, 10**-0.73, r'$(C/A)^{-\frac{1}{n}}$ = %i [s]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
-        #plt.text(0.0045, 10**-0.73, r'$R$ = %1.0f [min]' % ((1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1]))/60.), fontsize=30)
+        #plt.text(0.007, 10**-0.73, r'$(C/A)^{-\frac{1}{n}}$ = %f [s]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
+        plt.text(0.0045, 10**-0.73, r'$R$ = %1.0f [min]' % ((1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1]))/60.), fontsize=30)
         #plt.text(0.007, 10**-0.73, r'$r$ = %i [s]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
-        #plt.text(0.0046, 10**-0.95, r'$\alpha$ = {0:0.2e} [$flux$]'.format(m2_param[3]), fontsize=30)
+        plt.text(0.0046, 10**-0.95, r'$\alpha$ = {0:0.2e} [$flux$]'.format(m2_param[3]), fontsize=30)
         #plt.text(0.007, 10**-1.09, r'$\beta$ = {0:0.3f}'.format(m2_param[4]), fontsize=25)
-        #plt.text(0.0046, 10**-1.15, r'$\beta$ = {0:1.0f} [min]'.format((1./np.exp(m2_param[4]))/60.), fontsize=30)
-        #plt.text(0.0046, 10**-1.35, r'$\sigma$ = {0:0.3f}'.format(m2_param[5]), fontsize=30)
+        plt.text(0.0046, 10**-1.15, r'$\beta$ = {0:1.0f} [min]'.format((1./np.exp(m2_param[4]))/60.), fontsize=30)
+        plt.text(0.0046, 10**-1.35, r'$\sigma$ = {0:0.3f}'.format(m2_param[5]), fontsize=30)
         #plt.text(0.007, 10**-1.55, r'$\chi^2$ = {0:0.3f}'.format(chisqrM22), fontsize=30)
         #plt.text(0.007, 10**-1.75, r'$p$ = {0:0.2e}'.format(p_val), fontsize=30)
-        #plt.text(0.0047, 10**-1.55, r'$p$ = {0:0.3g}'.format(p_val), fontsize=30)
-        #plt.text(0.0047, 10**-1.75, r'$r$ = {0:0.3g}'.format(r_val[0]), fontsize=30)
-        legend = ax.legend(loc='upper right', prop={'size':30}, labelspacing=0.35)
+        plt.text(0.0047, 10**-1.55, r'$p$ = {0:0.3g}'.format(p_val), fontsize=30)
+        plt.text(0.0047, 10**-1.75, r'$r$ = {0:0.3g}'.format(r_val[0]), fontsize=30)
+        #legend = ax.legend(loc='upper right', prop={'size':30}, labelspacing=0.35)
+        legend = ax.legend(loc='lower left', prop={'size':30}, labelspacing=0.35)
         for label in legend.get_lines():
             label.set_linewidth(3.0)  # the legend line width
         #"""
@@ -358,7 +360,7 @@ for l in range(1):
         plt.legend(loc='upper right', prop={'size':23})
         """
         #plt.show()
-        plt.savefig('C:/Users/Brendan/Desktop/171_final_points/171_%ix_%iyR.jpeg' % (m2[m],l2[m]))
+        #plt.savefig('C:/Users/Brendan/Desktop/171_final_points/171_%ix_%iyR.jpeg' % (m2[m],l2[m]))
         #plt.savefig('C:/Users/Brendan/Desktop/171_final_points/171_%ix_%iy.pdf' % (m2[m],l2[m]), format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/171_slice2_double_optimize/171A_%ii_%ij.jpeg' % (l,m))
         #plt.savefig('C:/Users/Brendan/Desktop/171_points_square/pixel_%ii_%ij_new.jpeg' % (l2[m],m2[m]))

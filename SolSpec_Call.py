@@ -36,7 +36,7 @@ import SolSpec as ss
 #y1 = 2000
 #y2 = 2900
 
-#ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/FITS/20170329/171/aia_lev1_171a_2017_03_29t06_00_21_35z_image_lev1.fits')
+#ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/FITS/20140606/1600/aia_lev1_1600a_2014_06_06t18_00_16_12z_image_lev1.fits')
 #ss.pix2arc(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/data/20140902/193/aia_lev1_193a_2014_09_02t05_59_54_84z_image_lev1.fits.fits')
 
 #"""
@@ -54,8 +54,8 @@ wavelength = int(sys.argv[3])
 ## create derotated region datacube
 """
 #ss.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20120923/304', date='20120923', wavelength=304, sub_reg_coords=[-528,-132,-100,100], coords_type='arc', bin_frac=1)
-#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[50,550,-500,-100], coords_type='arc', bin_frac=1) # 20141025 PCB
-#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-250,150,-450,-150], coords_type='arc', bin_frac=1) # 20130626 PCB
+ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[50,550,-500,-100], coords_type='arc', bin_frac=1) # 20141025 PCB
+#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[245,455,-100,-0], coords_type='arc', bin_frac=1) # 20130626 PCB
 #ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-425,425,-375,375], coords_type='arc', bin_frac=4)
 #ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[1950,2950,1000,1600], coords_type='pix', bin_frac=2)
 #ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-528,-132,-100,100], coords_type='arc', bin_frac=1)  #20120923
@@ -68,7 +68,7 @@ wavelength = int(sys.argv[3])
 #TIME = np.load('%s/DATA/Temp/%s/%i/*time.npy')
 #EXPOSURE = np.load('%s/DATA/Temp/%s/%i/*exposure.npy')
 
-ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, num_seg = 3)  # 3 seg for 20120923, 6 seg for rest
+ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, num_seg = 6)  # 3 seg for 20120923, 6 seg for rest
 #spectra_array = ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= '%i' % (wavelength), datacube = DATA, timeseries = TIME, exposure_array = EXPOSURE, num_seg = 6)
 #np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/304/20120923_304_-100_100i_-528_-132j_spectra', spectra_array)
 #np.save('C:/Users/Brendan/Desktop/SDO/spectra_20130530_193_2300_2600_2200_3000', spectra)  # now this

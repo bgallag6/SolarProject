@@ -305,8 +305,8 @@ def heatmap(directory, date, wavelength):
         mean = np.mean(flat_param)
         #mode = stats.mode(flat_param)  # blows up the time
         sigma = np.std(flat_param)   
-        upper_sigma = mean+sigma
-        lower_sigma = mean-sigma
+        #upper_sigma = mean+sigma
+        #lower_sigma = mean-sigma
         
         fig = plt.figure(figsize=(fig_width+1,fig_height))
         plt.title('%s' % (titles[i]), y = 1.02, fontsize=font_size)  # no date / wavelength
@@ -318,12 +318,19 @@ def heatmap(directory, date, wavelength):
         plt.xlim(h_min, h_max)
         #plt.xlim(0.,4.)
         y, x, _ = plt.hist(flat_param, bins=200, range=(h_min, h_max))
+        #n, bins, patches = plt.hist(flat_param, bins=200, range=(h_min, h_max))
+        n=y[1:-2]
+        bins=x[1:-2]
+        elem = np.argmax(n)
+        bin_max = bins[elem]
+        plt.vlines(bin_max, 0, y.max()*1.1, color='blue', linestyle='dotted', linewidth=1.5, label='mode=%0.6f' % bin_max)      
         #y, x, _ = plt.hist(flat_param, bins=100)
         plt.ylim(0, y.max()*1.1)
         plt.vlines(mean, 0, y.max()*1.1, color='red', linestyle='solid', linewidth=1.5, label='mean=%0.6f' % mean)
+        plt.vlines(0, 0, y.max()*1.1, color='white', linestyle='dashed', linewidth=1.5, label='sigma=%0.6f' % sigma) 
         #plt.vlines(mode[0], 0, y.max()*1.1, color='red', linestyle='dashed', linewidth=1.5, label='mode=%0.6f' % mode[0])
-        plt.vlines(lower_sigma, 0, y.max()*1.1, color='blue', linestyle='dotted', linewidth=1.5, label='low 68=%0.6f' % lower_sigma)
-        plt.vlines(upper_sigma, 0, y.max()*1.1, color='blue', linestyle='dashed', linewidth=1.5, label='high 68=%0.6f' % upper_sigma)
+        #plt.vlines(lower_sigma, 0, y.max()*1.1, color='blue', linestyle='dotted', linewidth=1.5, label='low 68=%0.6f' % lower_sigma)
+        #plt.vlines(upper_sigma, 0, y.max()*1.1, color='blue', linestyle='dashed', linewidth=1.5, label='high 68=%0.6f' % upper_sigma)
         legend = plt.legend(loc='upper right', prop={'size':20}, labelspacing=0.35)
         for label in legend.get_lines():
             label.set_linewidth(2.0)  # the legend line width
