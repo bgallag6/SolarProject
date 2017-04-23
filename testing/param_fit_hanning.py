@@ -297,7 +297,7 @@ for ii in range(1):
         #plt.text(0.0047, 10**-1.55, r'$p$ = {0:0.3g}'.format(p_val), fontsize=30)
         #plt.text(0.0047, 10**-1.75, r'$r$ = {0:0.3g}'.format(r_val[0]), fontsize=30)
         #plt.savefig('C:/Users/Brendan/Desktop/param_fits/example_hanning_fit_%s.pdf' % ex, format='pdf')
-        plt.savefig('C:/Users/Brendan/Desktop/example_fit_%s_ds_ds_%0.1f.pdf' % (ex,k), format='pdf')
+        #plt.savefig('C:/Users/Brendan/Desktop/example_fit_%s_ds_ds_%0.1f.pdf' % (ex,k), format='pdf')
         
         """
         plt.figure(figsize=(15,15))
