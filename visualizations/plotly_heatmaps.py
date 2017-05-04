@@ -5,6 +5,7 @@ Created on Fri Jan 20 00:07:06 2017
 @author: Brendan
 """
 
+import numpy as np
 import plotly.plotly as py
 from plotly.graph_objs import *
 from plotly import tools

@@ -23,13 +23,20 @@ from matplotlib import cm
 #h_old = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_304_-500_500i_-500_500j_param.npy')
 #h_new = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_304_-500_500i_-500_600j_param_slope6_arthm.npy')
 
-
-h1 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/2hrs_9_11/param.npy')
-h2 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/2hrs_11_13/param.npy')
-h3 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/2hrs_13_15/param.npy')
-h4 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/2hrs_preflare/param.npy')
-h5 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/4hrs_preflare/param.npy')
-h6 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/8hrs_preflare/param.npy')
+directory = 'F:/Users/Brendan/Desktop/SolarProject'
+date = '20141227'
+h1 = np.load('%s/DATA/Output/%s/171/param.npy' % (directory, date))
+h2 = np.load('%s/DATA/Output/%s/193/param.npy' % (directory, date))
+h3 = np.load('%s/DATA/Output/%s/211/param.npy' % (directory, date))
+h4 = np.load('%s/DATA/Output/%s/304/param.npy' % (directory, date))
+h5 = np.load('%s/DATA/Output/%s/1600/param.npy' % (directory, date))
+#h6 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/8hrs_preflare/param.npy')
+#h1 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/2hrs_9_11/param.npy')
+#h2 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/2hrs_11_13/param.npy')
+#h3 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/2hrs_13_15/param.npy')
+#h4 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/2hrs_preflare/param.npy')
+#h5 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/4hrs_preflare/param.npy')
+#h6 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/8hrs_preflare/param.npy')
 #h7 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param7.npy')
 #h8 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param8.npy')
 #h9 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param9.npy')
@@ -37,9 +44,9 @@ h6 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/8hr
 #h11 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param11.npy')
 
     
-date = '20140910'
+#date = '20140910'
 #path_name = 'F:/Users/Brendan/Desktop/SolarProject/data/20130626'
-path_name = 'C:/Users/Brendan/Desktop/flare_segments'
+path_name = 'C:/Users/Brendan/Desktop/same_scale'
 
 # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
 #titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', '$\chi^2$']
@@ -56,11 +63,12 @@ cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'L
 #wavelengths = [171,193,211,304]
 
 #heatmap = [h171,h171_new]
-heatmap = [h1,h2,h3,h4,h5,h6]
+heatmap = [h1,h2,h3,h4,h5]
 #wavelengths = [171,171]
 #wavelengths = [193,193]
 #wavelengths = [211,211]
-wavelengths = [193 for i in range(len(heatmap))]
+#wavelengths = [193 for i in range(len(heatmap))]
+wavelengths = [17100,1930,211,30400,160000]
 
 #h_map2 = h_new
 
@@ -130,7 +138,7 @@ for c in range(len(heatmap)):
     
     
     for i in range(7):
-    #for i in range(0,2):
+    #for i in range(1):
         
         
         if i == 6:
@@ -138,26 +146,30 @@ for c in range(len(heatmap)):
             h_min = np.percentile(NaN_replace,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(NaN_replace,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
             #cmap = 'jet'
-            cmap = cm.get_cmap('jet', 10)
+            #cmap = cm.get_cmap('jet', 10)
+            cmap = cm.get_cmap('jet')
         elif i == 4:
             h_map[i] = 1./(np.exp(h_map[i]))
             #h_map2[i] = 1./(np.exp(h_map2[i]))
             h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
             #cmap = 'jet_r'  # reverse color-scale for Gaussian Location, because of flipped frequencies to seconds
-            cmap = cm.get_cmap('jet_r', 10)
+            #cmap = cm.get_cmap('jet_r', 10)
+            cmap = cm.get_cmap('jet_r')
         elif i == 8:
             df1, df2 = 3, 6
             h_map[6] = ff.sf(h_map[6], df1, df2)
             h_min = np.percentile(h_map[6],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(h_map[6],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
             #cmap = 'jet'      
-            cmap = cm.get_cmap('jet', 10)               
+            #cmap = cm.get_cmap('jet', 10)      
+            cmap = cm.get_cmap('jet')
         else:
             h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
             #cmap = 'jet'
-            cmap = cm.get_cmap('jet', 10)
+            #cmap = cm.get_cmap('jet', 10)
+            cmap = cm.get_cmap('jet')
         """    
         #fig = plt.figure(figsize=(13,9))
         fig = plt.figure(figsize=(fig_width,fig_height))
@@ -184,14 +196,14 @@ for c in range(len(heatmap)):
         plt.savefig('%s/%s_%i_%s_diff_%i.pdf' % (path_name, date, wavelength, names[i], c), format='pdf')
         """
         
-        seg = ['9_11', '11_13', '13_15', '15_17', '4hr_13_17', '8hr_9_17']        
+        #seg = ['9_11', '11_13', '13_15', '15_17', '4hr_13_17', '8hr_9_17']        
         
         #fig = plt.figure(figsize=(13,9))
         fig = plt.figure(figsize=(fig_width,fig_height))
         ax = plt.gca()  # get current axis -- to set colorbar 
-        #plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
+        plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
         #plt.title('%s -- Segment %i' % (titles[i], c), y = 1.01, fontsize=25)  # no date / wavelength
-        plt.title('%s -- Segment Hours: %s' % (titles[i], seg[c]), y = 1.01, fontsize=25)  # no date / wavelength
+        #plt.title('%s -- Segment Hours: %s' % (titles[i], seg[c]), y = 1.01, fontsize=25)  # no date / wavelength
         
         im = ax.imshow(np.flipud(h_map[i]), cmap = cmap, vmin=vmin[i], vmax=vmax[i])
         #im = ax.imshow(np.flipud(h_map2[i]), cmap = cmap, vmin=M2_low[i], vmax=M2_high[i])
@@ -210,8 +222,9 @@ for c in range(len(heatmap)):
         #plt.tight_layout()
         #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
         #plt.savefig('%s/%s_%i_%s_same_%i.jpeg' % (path_name, date, wavelength, names[i], c))
-        #plt.savefig('%s/%s_%i_%s_same_%s.jpeg' % (path_name, date, wavelength, names[i], seg[c]))
-        plt.savefig('%s/%s_%i_%s_same_%s.pdf' % (path_name, date, wavelength, names[i], seg[c]), format='pdf')
+        plt.savefig('%s/%s_%s_same_%i.jpeg' % (path_name, date, names[i], wavelength))
+        #plt.savefig('%s/%s_%i_%s_same_%s.pdf' % (path_name, date, wavelength, names[i], seg[c]), format='pdf')
+        #plt.close()
         """
         if c == 0:
             if i != 6:
@@ -243,14 +256,15 @@ for c in range(len(heatmap)):
                 plt.savefig('%s/%s_%i_Histogram_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
         """
         
-    """
-    # generate p-value heatmap
-    df1, df2 = 3, 6
+    #"""
+    
+    # generate p-value heatmap + masked Gaussian component heatmaps
+    df1, df2 = 3, 6  # degrees of freedom for model M1, M2
     p_val = ff.sf(h_map[6], df1, df2)
     
     p_mask = np.copy(p_val)
     
-    mask_thresh = 0.005    
+    mask_thresh = 0.005  # significance threshold - masked above this value
        
     p_mask = np.copy(p_val)
     amp_mask = np.copy(h_map[3])
@@ -260,18 +274,21 @@ for c in range(len(heatmap)):
     h_min_amp = np.percentile(h_map[3],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
     h_max_amp = np.percentile(h_map[3],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
     
-    for i in range(p_val.shape[0]):
-            for j in range(p_val.shape[1]):
-                if p_val[i][j] > mask_thresh:
-                    p_mask[i][j] = np.NaN
-                    amp_mask[i][j] = np.NaN
-                    loc_mask[i][j] = np.NaN
-                    wid_mask[i][j] = np.NaN
-                    
-    plots = [p_mask, amp_mask, loc_mask, wid_mask]
-    names_f = ['P-Value Mask', 'Gaussian Amplitude', 'Gaussian Location', 'Gaussian Width']
-    names_m = ['p_mask', 'amp', 'loc', 'wid']
+    # mask the Gaussian component arrays with NaNs if above threshold 
+    p_mask[p_val > mask_thresh] = np.NaN  # for every element in p_mask, if the corresponding element in p_val is greater than the threshold, set that value to NaN
+    amp_mask[p_val > mask_thresh] = np.NaN
+    loc_mask[p_val > mask_thresh] = np.NaN
+    wid_mask[p_val > mask_thresh] = np.NaN
     
+    # determine percentage of region masked 
+    count = np.count_nonzero(np.isnan(p_mask))   
+    total_pix = p_val.shape[0]*p_val.shape[1]
+    mask_percent = ((np.float(count))/total_pix)*100
+                    
+    loc_mask = (1./np.exp(loc_mask))/60.  # convert Gaussian location to minutes
+    plots = [p_mask, amp_mask, loc_mask, wid_mask]  # make array of masked plots to iterate over
+    
+            
    
     for k in range(4):           
     
@@ -280,7 +297,7 @@ for c in range(len(heatmap)):
         if k == 0:
             plt.title('P-Value < %0.3f' % (mask_thresh), y = 1.01, fontsize=25)
         else:
-            plt.title('%s: P-Value < %0.3f' % (names_f[k], mask_thresh), y = 1.01, fontsize=25)
+            plt.title('%s: P-Value < %0.3f' % (names[k+2], mask_thresh), y = 1.01, fontsize=25)
         if k == 2:
             #cmap = 'jet_r'
             cmap = cm.get_cmap('jet_r', 10)
@@ -332,6 +349,6 @@ for c in range(len(heatmap)):
     #plt.tight_layout()
     #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
     #plt.savefig('%s/%s_%i_roll_freq.pdf' % (path_name, date, wavelength), format='pdf')
-    """
+    #"""
     
   

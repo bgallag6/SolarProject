@@ -39,3 +39,11 @@
 
 4/18 : 
 - commented out upper/lower sigma + added 'mode' excluding 1st/last bins to histograms in SolSpec.py
+
+4/28 : 
+- changed the method of extracting time from FITS files in SolSpec.py
+
+4/30:
+- corrected time-estimation method in Spec_fit_mpi_4d.py
+- added list sort function to glob list of FITS images in SolSpec.py
+

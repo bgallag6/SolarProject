@@ -43,16 +43,18 @@ ax1 = plt.subplot2grid((3,5),(0, 0), colspan=5, rowspan=1)
 #s = np.loadtxt('C:/Users/Brendan/Desktop/PHYS 326/older/values.txt')
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20120909'
-wavelength = 171
+date = '20140818'
+wavelength = 1600
 
 derotated = np.load('%s/DATA/Temp/%s/%i/derotated.npy' % (directory, date, wavelength))
 #num_freq = derotated.shape[2]/2  # determine nubmer of frequencies that are used
 #freq_size = ((num_freq)*2) + 1  # determined from FFT-averaging script
 
-t = np.array([12*i for i in range(3600)]) 
+#t = np.array([12*i for i in range(3600)])
+t = np.array([24*i for i in range(1797)])  
 
-s = derotated[0][0]
+#s = derotated[200][380]
+s = derotated[:,202,380]
 
 ax1.plot(t, s, '-')
 ax1.set_title('Timeseries -- (Select segment to compute FFT)', fontsize=20, y=1.01)
@@ -63,8 +65,8 @@ ax1.set_ylim(s.min(), s.max())
 ax2 = plt.subplot2grid((3,5),(1, 0), colspan=5, rowspan=2)
 
 if wavelength == 1600 or wavelength == 1700:
-    #time_step = 24  # 24 second cadence for these wavelengths
-    time_step = 12  # Jacks dataset
+    time_step = 24  # 24 second cadence for these wavelengths
+    #time_step = 12  # Jacks dataset
 else:
     time_step = 12  # 12 second cadence for the others
     #time_step = 24  # for half-cadence test

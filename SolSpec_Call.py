@@ -54,7 +54,7 @@ wavelength = int(sys.argv[3])
 ## create derotated region datacube
 """
 #ss.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20120923/304', date='20120923', wavelength=304, sub_reg_coords=[-528,-132,-100,100], coords_type='arc', bin_frac=1)
-ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-95,195,-30,100], coords_type='arc', bin_frac=1) # 20141025 PCB
+ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[145,405,225,375], coords_type='arc', bin_frac=1) # 20141025 PCB
 #ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[245,455,-100,-0], coords_type='arc', bin_frac=1) # 20130626 PCB
 #ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-425,425,-375,375], coords_type='arc', bin_frac=4)
 #ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[1950,2950,1000,1600], coords_type='pix', bin_frac=2)
@@ -96,30 +96,11 @@ ss.mem_map(directory='%s' % (directory), date='%s' % (date), wavelength= wavelen
 """
 ## spectra fitting
 """
-#SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/20130530_193_2300_2600i_2200_3000j_rebin1_spectra_mpi.npy')
-#SPECTRA = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/335/20130626_335_170_375i_-180_0j_spectra.npy')
-#SPECTRA = spectra_array
-#params, M2_fit = ss.spec_fit(spectra_array = SPECTRA)
-
-#np.save('F:/Users/Brendan/Desktop/SolarProject/data/20130626/335/20130626_335_170_375i_-180_0j_param', params)
-#np.save('C:/Users/Brendan/Desktop/SDO/M2_20130530_1700_2300_2600i_2200_3000j', M2_fit)
-#np.save('C:/Users/Brendan/Desktop/SDO/uncertainties_20130815_193_1000_1600i_1950_2950j_rebin2', Uncertainties)  # if want to keep?
-#np.save('C:/Users/Brendan/Desktop/SDO/diffm1m2_20130815_193_1000_1600i_1950_2950j_rebin2', diffM1M2)  # if want to keep?
+ss.spec_fit(spectra_array = SPECTRA)
 
 
 """
 ## generate heatmaps
 """
-#with h5py.File("D:/Users/Brendan/Desktop/SolarProject/hdf5/20141025_1600_1350_1650i_2150_3150j_float_dogbox_24hr.hdf5",'r') as f:
-    
-    #HEATMAPS = np.array(f['params'])
-    #VISUAL = np.array(f['visual'])
-    #r = fm.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20141025', wavelength=1600, path_name='C:/Users/Brendan/Desktop/PDFs')
-    
-#HEATMAPS = np.load('C:/Users/Brendan/Desktop/20130626_193_-500_500i_-500_600j_param.npy')
-#HEATMAPS = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_param.npy')
-#VISUAL = np.load('C:/Users/Brendan/Desktop/20130626_193_-500_500i_-500_600j_visual.npy')
-#VISUAL = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_visual.npy')
 #ss.heatmap(directory= '%s' % (directory), date='%s' % (date), wavelength= '%i' % (wavelength))
-#r = ss.heatmap(heatmaps = HEATMAPS, visual = VISUAL, date = '20130626', wavelength=193, path_name='C:/Users/Brendan/Desktop/test_delete/')
 """

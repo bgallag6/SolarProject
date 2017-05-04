@@ -208,8 +208,8 @@ def Gauss(f, P, fp, fw):
     return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) 
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20120909'
-wavelength = 304
+date = '20141227'
+wavelength = 1600
 
 
 cube_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))

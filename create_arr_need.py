@@ -19,6 +19,7 @@ date = sys.argv[2]
 time_begin = sys.argv[3]
 time_end = sys.argv[4]
 wavelength = int(sys.argv[5])
+cadnce = 1  # add as argument to call
 
 print "Please wait while request is being processed."
 
@@ -48,18 +49,18 @@ qr=client.query(vso.attrs.Time(T1,T2), vso.attrs.Instrument('aia'), vso.attrs.Wa
 
 arr_all = [] 
 
-for i in range(len(qr)):
-    sec = qr[i].time[1][12:14]
-    minute = qr[i].time[1][10:12]
-    hour = qr[i].time[1][8:10]
-    day = qr[i].time[1][6:8]
-    month = qr[i].time[1][4:6]
-    year = qr[i].time[1][0:4]
+for i in range(len(qr)/cadnce):
+    sec = qr[i*cadnce].time[1][12:14]
+    minute = qr[i*cadnce].time[1][10:12]
+    hour = qr[i*cadnce].time[1][8:10]
+    day = qr[i*cadnce].time[1][6:8]
+    month = qr[i*cadnce].time[1][4:6]
+    year = qr[i*cadnce].time[1][0:4]
     time = '%s/%s/%s' ' %s:%s:%s' % (year, month, day, hour, minute, sec)
     time = time.encode('utf8')
     arr_all = np.append(arr_all, time)
 
-num_files = len(qr)
+num_files = len(qr)/cadnce
 print num_files
 #cadence = cadence  # set cadence to specified value *took out because extracting times from query
     

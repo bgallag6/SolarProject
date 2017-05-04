@@ -98,10 +98,17 @@ def heatmap(directory, date, wavelength):
 
     #h_map = h_map[:,0:h_map.shape[1]-1,0:h_map.shape[2]-1]  # trim last row and column from array (originally needed since went one past)
     
+    """
     # trim x/y dimensions equally so that resulting region is 1600x1600    
     trim_y = (h_map.shape[1]-1600)/2
     trim_x = (h_map.shape[2]-1600)/2
-    #h_map = h_map[:, trim_y:h_map.shape[1]-trim_y, trim_x:h_map.shape[2]-trim_x]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
+    h_map = h_map[:, trim_y:h_map.shape[1]-trim_y, trim_x:h_map.shape[2]-trim_x]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
+    
+    x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
+    y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
+    x_ind = [-800,-600,-400,-200,0,200,400,600,800]
+    y_ind = [800,600,400,200,0,-200,-400,-600,-800]    
+    """
     
     #h_map = h_map[:, 0:h_map.shape[1]-50, 0:500]  # for 20130626 blobs      
     #x_ticks = [0,100,200,300,400,500]
@@ -110,11 +117,6 @@ def heatmap(directory, date, wavelength):
     
     #x_ticks = [0,100,200,300,400,500]
     #y_ticks = [0,100,200,300]  
-    
-    #x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
-    #y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
-    #x_ind = [-800,-600,-400,-200,0,200,400,600,800]
-    #y_ind = [800,600,400,200,0,-200,-400,-600,-800]
     
     
     # generate p-value heatmap + masked Gaussian component heatmaps
@@ -211,8 +213,8 @@ def heatmap(directory, date, wavelength):
         #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
         #plt.xticks(x_ticks,fontsize=font_size)
         #plt.yticks(y_ticks,fontsize=font_size)
-        plt.xticks(fontsize=font_size)
-        plt.yticks(fontsize=font_size)
+        #plt.xticks(fontsize=font_size)
+        #plt.yticks(fontsize=font_size)
         #plt.xticks(x_ticks,x_ind,fontsize=font_size)
         #plt.yticks(y_ticks,y_ind,fontsize=font_size)
         ax.tick_params(axis='both', which='major', pad=10)
@@ -348,8 +350,8 @@ def heatmap(directory, date, wavelength):
     #plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
     plt.title(r'Rollover Period [min] - $(C/A)^{\frac{1}{n}}$', y = 1.02, fontsize=font_size)  # no date / wavelength
     roll_freq = np.nan_to_num(roll_freq)  # deal with NaN's causing issues
-    h_min = np.percentile(roll_freq,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-    h_max = np.percentile(roll_freq,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+    h_min = np.percentile(roll_freq,1.)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+    h_max = np.percentile(roll_freq,99.)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
     #h_max = np.percentile(roll_freq,99.9)  # for 1600 sunspot rollover - to show gradient 
     h_range = np.abs(h_max-h_min)
     h_step = h_range / 10.
@@ -382,7 +384,7 @@ def heatmap(directory, date, wavelength):
     #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.jpeg' % (directory, date, wavelength, date, wavelength))
     plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
     
-    
+    #"""
     # generate 'r-value coefficient correlation' heatmap
     fig = plt.figure(figsize=(fig_width,fig_height))
     ax = plt.gca()  # get current axis -- to set colorbar 
@@ -421,7 +423,7 @@ def heatmap(directory, date, wavelength):
     #plt.tight_layout()
     #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.jpeg' % (directory, date, wavelength, date, wavelength))
     plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_r_value.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
-    
+    #"""
     
     
     # generate visual images
@@ -429,8 +431,8 @@ def heatmap(directory, date, wavelength):
     names_vis = ['average', 'mid']
     
     vis = visual
-    trim_yv = (vis.shape[1]-1600)/2
-    trim_xv = (vis.shape[2]-1600)/2
+    #trim_yv = (vis.shape[1]-1600)/2
+    #trim_xv = (vis.shape[2]-1600)/2
     #vis = vis[:, trim_yv:vis.shape[1]-trim_yv, trim_xv:vis.shape[2]-trim_xv]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
     
     #vis = vis[:, 0:vis.shape[1]-50, 0:500]  # for 20130626 blobs     
@@ -455,8 +457,8 @@ def heatmap(directory, date, wavelength):
         #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
         #plt.xticks(x_ticks,fontsize=font_size)
         #plt.yticks(y_ticks,fontsize=font_size)
-        plt.xticks(fontsize=font_size)
-        plt.yticks(fontsize=font_size)
+        #plt.xticks(fontsize=font_size)
+        #plt.yticks(fontsize=font_size)
         #plt.xticks(x_ticks,x_ind,fontsize=font_size)
         #plt.yticks(y_ticks,y_ind,fontsize=font_size)
         ax.tick_params(axis='both', which='major', pad=10)
@@ -588,6 +590,7 @@ from sunpy.image.coalignment import mapcube_coalign_by_match_template
 from sunpy.physics.transforms.solar_rotation import mapcube_solar_derotate
 import numpy as np
 import astropy.units as u
+from astropy.time import Time
 
 
 
@@ -637,7 +640,7 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     y2 = sub_reg_coords[3]  # i2
     
     # create a list of all the files. This is USER-DEFINED
-    flist = glob.glob('%s/FITS/%s/%i/aia*.fits' % (directory,date,wavelength))
+    flist = sorted(glob.glob('%s/FITS/%s/%i/aia*.fits' % (directory,date,wavelength)))
     nf = len(flist)
 
     # Select the image that is the "middle" of our selection.
@@ -691,8 +694,8 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     mc_list = np.zeros((1,2,3))  # free up memory
     new_mapcube = np.zeros((1,2,3))  # free up memory
     
-    t = dr[0].date  # extract the date / time from the first image
-    base_time = (t.hour * 3600.) + (t.minute * 60.) + t.second  # convert date / time to seconds
+    #t = dr[0].date  # extract the date / time from the first image
+    #base_time = (t.hour * 3600.) + (t.minute * 60.) + t.second  # convert date / time to seconds
 
     # initialize arrays to hold exposure time, pixel data, and time values
     I = np.empty((nf))  # exposure time
@@ -709,10 +712,13 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
         small_L = rebin(L_trim, L_trim.shape[0]/bin_frac, L_trim.shape[1]/bin_frac)
         DATA[p][:][:] = small_L  # normalize by exposure time
         T = dr[p].date
-        curr_time=(T.hour * 3600.)+(T.minute * 60.)+T.second	
-        TIME[p] = curr_time - base_time  # calculate running time of image
+        #curr_time=(T.hour * 3600.)+(T.minute * 60.)+T.second	
+        #TIME[p] = curr_time - base_time  # calculate running time of image
+        TIME[p] = Time(T).jd  # extract julian day time from each image
         
-    TIME[TIME < 0] += 86400  # for times that cross from 23:59 - 00:01 --> add 1 day to correct for discrepancy
+    #TIME[TIME < 0] += 86400  # for times that cross from 23:59 - 00:01 --> add 1 day to correct for discrepancy
+    TIME -= TIME[0]  # set all values equal to time since first entry
+    TIME = np.around(TIME*86400)  # get the time value in seconds, and round to nearest whole number
     
     # save the pixel-value, time-array, and exposure-time datacubes as numpy files
     #np.save('%s/DATA/Temp/%s/%i/%i_%ii_%i_%ij_data_rebin%i.npy' % (directory, date, wavelength, y1, y2, x1, x2, bin_frac), DATA)

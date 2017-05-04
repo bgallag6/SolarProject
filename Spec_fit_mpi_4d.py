@@ -253,7 +253,7 @@ def spec_fit( subcube ):
             #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est)
             print "Currently on row %i of %i (%i of %i), estimated time remaining: %i:%.2i:%.2i" % (l, SPECTRA.shape[1], h, SPECTRA.shape[0], T_hr, T_min, T_sec)
         else:
-            T_est2 = T2*((SPECTRA.shape[0]*SPECTRA.shape[1])-(l+(h*l)))
+            T_est2 = T2*((SPECTRA.shape[0]*SPECTRA.shape[1])-(l+(h*SPECTRA.shape[1])))
             T_min2, T_sec2 = divmod(T_est2, 60)
             T_hr2, T_min2 = divmod(T_min2, 60)
             #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est2)
