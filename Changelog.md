@@ -47,3 +47,5 @@
 - corrected time-estimation method in Spec_fit_mpi_4d.py
 - added list sort function to glob list of FITS images in SolSpec.py
 
+5/5:
+- added center weighted averaging to 3x3 pixel averaging in SolSpec.py

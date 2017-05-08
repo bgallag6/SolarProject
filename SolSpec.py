@@ -984,18 +984,21 @@ def fft_avg(directory, date, wavelength, num_seg):
     
     
     # initialize arrays to hold temporary results for calculating arithmetic average (changed from geometric)
-    temp = np.zeros((9,spectra_seg.shape[2]))  # maybe have 3x3 to be generalized   
+    #temp = np.zeros((9,spectra_seg.shape[2]))  # maybe have 3x3 to be generalized   
+    temp = np.zeros((25,spectra_seg.shape[2]))  # maybe have 3x3 to be generalized
     p_avg = np.zeros((spectra_seg.shape[2]))  # would pre-allocating help? (seems to)
-    spectra_array = np.zeros((spectra_seg.shape[0]-2, spectra_seg.shape[1]-2, spectra_seg.shape[2]))  # would pre-allocating help? (seems to)
-        
+    #spectra_array = np.zeros((spectra_seg.shape[0]-2, spectra_seg.shape[1]-2, spectra_seg.shape[2]))  # would pre-allocating help? (seems to)
+    spectra_array = np.zeros((spectra_seg.shape[0]-4, spectra_seg.shape[1]-4, spectra_seg.shape[2]))  # would pre-allocating help? (seems to)    
     
     ### calculate 3x3 pixel-box arithmetic average.  start at 1 and end 1 before to deal with edges.
     ## previously for geometric -- 10^[(log(a) + log(b) + log(c) + ...) / 9] = [a*b*c*...]^(1/9)
 
-    for l in range(1,spectra_seg.shape[0]-1):
+    #for l in range(1,spectra_seg.shape[0]-1):
+    for l in range(2,spectra_seg.shape[0]-2):
     #for l in range(1,25):
         #print l
-        for m in range(1,spectra_seg.shape[1]-1):
+        #for m in range(1,spectra_seg.shape[1]-1):
+        for m in range(2,spectra_seg.shape[1]-2):
         #for m in range(1,25):
         
             """
@@ -1009,7 +1012,8 @@ def fft_avg(directory, date, wavelength, num_seg):
             temp[7] = np.log10(spectra_seg[l+1][m])
             temp[8] = np.log10(spectra_seg[l+1][m+1])
             """
-                       
+            
+            """
             temp[0] = spectra_seg[l-1][m-1]
             temp[1] = spectra_seg[l-1][m]
             temp[2] = spectra_seg[l-1][m+1]
@@ -1019,12 +1023,60 @@ def fft_avg(directory, date, wavelength, num_seg):
             temp[6] = spectra_seg[l+1][m-1]
             temp[7] = spectra_seg[l+1][m]
             temp[8] = spectra_seg[l+1][m+1]
+            """
+            
+            """            
+            w = 0.08
+            wc = 1. - (8*w)
+            
+            temp[0] = spectra_seg[l-1][m-1]*w
+            temp[1] = spectra_seg[l-1][m]*w
+            temp[2] = spectra_seg[l-1][m+1]*w
+            temp[3] = spectra_seg[l][m-1]*w
+            temp[4] = spectra_seg[l][m]*wc
+            temp[5] = spectra_seg[l][m+1]*w
+            temp[6] = spectra_seg[l+1][m-1]*w
+            temp[7] = spectra_seg[l+1][m]*w
+            temp[8] = spectra_seg[l+1][m+1]*w
+            """
+            
+            w = 0.02
+            wm = 0.05
+            wc = 1. - (16*w) - (8*wm)
+            temp[0] = spectra_seg[l-2][m-2]*w
+            temp[1] = spectra_seg[l-2][m-1]*w
+            temp[2] = spectra_seg[l-2][m]*w
+            temp[3] = spectra_seg[l-2][m+1]*w
+            temp[4] = spectra_seg[l-2][m+2]*w
+            temp[5] = spectra_seg[l-1][m-2]*w
+            temp[6] = spectra_seg[l-1][m-1]*wm
+            temp[7] = spectra_seg[l-1][m]*wm
+            temp[8] = spectra_seg[l-1][m+1]*wm
+            temp[9] = spectra_seg[l-1][m+2]*w
+            temp[10] = spectra_seg[l][m-2]*w
+            temp[11] = spectra_seg[l][m-1]*wm
+            temp[12] = spectra_seg[l][m]*wc
+            temp[13] = spectra_seg[l][m+1]*wm
+            temp[14] = spectra_seg[l][m+2]*w
+            temp[15] = spectra_seg[l+1][m-2]*w
+            temp[16] = spectra_seg[l+1][m-1]*wm
+            temp[17] = spectra_seg[l+1][m]*wm
+            temp[18] = spectra_seg[l+1][m+1]*wm
+            temp[19] = spectra_seg[l+1][m+2]*w
+            temp[20] = spectra_seg[l+2][m-2]*w
+            temp[21] = spectra_seg[l+2][m-1]*w
+            temp[22] = spectra_seg[l+2][m]*w
+            temp[23] = spectra_seg[l+2][m+1]*w
+            temp[24] = spectra_seg[l+2][m+2]*w
 
+            
 
             temp9 = np.sum(temp, axis=0)
-            p_avg = temp9 / 9.
+            #p_avg = temp9 / 9.
+            p_avg = temp9
             #spectra_array[l-1][m-1] = np.power(10,p_geometric)
-            spectra_array[l-1][m-1] = p_avg
+            #spectra_array[l-1][m-1] = p_avg
+            spectra_array[l-2][m-2] = p_avg
             
     np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_array)
     #np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_seg)  # for no 3x3 pixel box averaging

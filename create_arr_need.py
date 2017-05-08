@@ -24,6 +24,7 @@ cadnce = 1  # add as argument to call
 print "Please wait while request is being processed."
 
 client=vso.VSOClient()  # establish connection to VSO database
+#client=vso.VSOClient(url='https://vso.nascom.nasa.gov/API/VSOi_rpc_literal.wsdl') # temporary fix
 
 # extract yyyy/mm/dd, hour, minute, and second values from start of time-range
 #Y1 = str(date_slash)   

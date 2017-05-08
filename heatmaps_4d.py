@@ -24,14 +24,14 @@ from matplotlib import cm
 #h_old = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_304_-500_500i_-500_500j_param.npy')
 #h_new = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_304_-500_500i_-500_600j_param_slope6_arthm.npy')
 
-date = '20141101'
-wavelength0 = 304
+date = '20140924'
+wavelength0 = 1600
 
 h = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/%s/%i/param.npy' % (date, wavelength0))
     
 
 #path_name = 'F:/Users/Brendan/Desktop/SolarProject/data/20130626'
-path_name = 'C:/Users/Brendan/Desktop/20141101_emergence_304'
+path_name = 'C:/Users/Brendan/Desktop/20140924_emergence_1600'
 
 # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
 #titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', '$\chi^2$']

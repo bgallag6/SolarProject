@@ -16,6 +16,7 @@ def get_data_fill(arr_need, wavelength, directory):
     print "Please wait while request is being processed."
 
     client=vso.VSOClient()  # establish connection to VSO database
+    #client=vso.VSOClient(url='https://vso.nascom.nasa.gov/API/VSOi_rpc_literal.wsdl') # temporary fix
         
     # loop through the array of needed files, requesting them one at a time         
     for i in range(0,len(arr_need)):
