@@ -87,6 +87,7 @@ def heatmap(directory, date, wavelength):
     # load parameter array and visual images from file tree structure 
     heatmaps = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
     visual = np.load('%s/DATA/Output/%s/%i/visual.npy'% (directory, date, wavelength))  
+    visual = visual[:,1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
     h_map = heatmaps
     
     #heatmaps = np.load('%s/DATA/Output/%s/%i/*param.npy' % (directory, date, wavelength))
@@ -131,12 +132,14 @@ def heatmap(directory, date, wavelength):
     amp_mask = np.copy(h_map[3])
     loc_mask = np.copy(h_map[4])
     wid_mask = np.copy(h_map[5])
+    v_mask = np.copy(visual[0])
     
     # mask the Gaussian component arrays with NaNs if above threshold 
     p_mask[p_val > mask_thresh] = np.NaN  # for every element in p_mask, if the corresponding element in p_val is greater than the threshold, set that value to NaN
     amp_mask[p_val > mask_thresh] = np.NaN
     loc_mask[p_val > mask_thresh] = np.NaN
     wid_mask[p_val > mask_thresh] = np.NaN
+    v_mask[p_val < mask_thresh] = 1.  # invert mask, set equal to 1. -- so can make contour
     
     # determine percentage of region masked 
     count = np.count_nonzero(np.isnan(p_mask))   
@@ -470,6 +473,54 @@ def heatmap(directory, date, wavelength):
         #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_vis[i]))
         plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
+
+        # create inverted p-value mask - to plot as contour 
+        delta = 1.
+        x = np.arange(0., v_mask.shape[1], delta)
+        y = np.arange(0., v_mask.shape[0], delta)
+        X, Y = np.meshgrid(x, y)
+        Z1 = np.flipud(v_mask)
+        
+    
+        dates = ['20111210','20121018', '20131118', '20140112', '20140606', '20140818', '20140910', '20141227', '20150104','20160414', '20160426', '20160520', '20160905', '20170329']
+        contours = [125., 95., 110., 67., 95., 75., 115., 75., 113., 87., 60., 60., 95., 83.]
+        
+        if date in dates:
+            k = dates.index(date)
+            print contours[k]
+    
+            #fig = plt.figure(figsize=(12,9))
+            fig = plt.figure(figsize=(fig_width,fig_height))
+            
+            ax = plt.gca()
+            plt.title('Visual: %s' % (titles_vis[i]), y = 1.02, fontsize=font_size)  # no date / wavelength
+            #im = ax.imshow(h_map[i], vmin=vmin[i], vmax=vmax[i])
+            #im = ax.imshow(vis[i], cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
+            #cmap = cm.get_cmap('sdoaia%i' % wavelength, 10)    
+            #im = ax.imshow(np.flipud(vis[i]), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
+            im = ax.imshow(np.flipud(vis[i]), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
+            CS = plt.contour(X, Y, Z1, levels=[2.], linewidths=2, colors='red', linestyles='solid')
+            CS = plt.contour(X, Y, Z1, levels=[2.], linewidths=2, colors='white', linestyles='dotted')
+            CS = plt.contour(X, Y, np.flipud(vis[i]), levels=[contours[k]], linewidths=2, colors='black', linestyles='solid')
+            CS = plt.contour(X, Y, np.flipud(vis[i]), levels=[contours[k]], linewidths=2, colors='white', linestyles='dashed')
+            #im = ax.imshow(np.flipud(v_mask), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
+            #plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
+            #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
+            #plt.xticks(x_ticks,fontsize=font_size)
+            #plt.yticks(y_ticks,fontsize=font_size)
+            #plt.xticks(fontsize=font_size)
+            #plt.yticks(fontsize=font_size)
+            #plt.xticks(x_ticks,x_ind,fontsize=font_size)
+            #plt.yticks(y_ticks,y_ind,fontsize=font_size)
+            ax.tick_params(axis='both', which='major', pad=10)
+            divider = make_axes_locatable(ax)
+            cax = divider.append_axes("right", size="3%", pad=0.07)
+            cbar = plt.colorbar(im,cax=cax)
+            #cbar.set_label('Intensity', size=20, labelpad=10)
+            cbar.ax.tick_params(labelsize=font_size, pad=5) 
+            #plt.tight_layout()
+            #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_vis[i]))
+            #plt.savefig('C:/Users/Brendan/Desktop/pvalue_mask_contour_overlay.pdf', format='pdf')
     
 
 

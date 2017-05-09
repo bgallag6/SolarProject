@@ -49,3 +49,7 @@
 
 5/5:
 - added center weighted averaging to 3x3 pixel averaging in SolSpec.py
+
+5/8:
+- added p-value inversion mask contour overlay to visual images in SolSpec.py
+- added sunspot umbra contour line to SolSpec.py

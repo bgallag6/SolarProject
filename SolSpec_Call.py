@@ -54,11 +54,7 @@ wavelength = int(sys.argv[3])
 ## create derotated region datacube
 """
 #ss.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20120923/304', date='20120923', wavelength=304, sub_reg_coords=[-528,-132,-100,100], coords_type='arc', bin_frac=1)
-#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[145,405,225,375], coords_type='arc', bin_frac=1) # 20141025 PCB
-#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[245,455,-100,-0], coords_type='arc', bin_frac=1) # 20130626 PCB
-#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-425,425,-375,375], coords_type='arc', bin_frac=4)
-#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[1950,2950,1000,1600], coords_type='pix', bin_frac=2)
-#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-528,-132,-100,100], coords_type='arc', bin_frac=1)  #20120923
+#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[145,405,225,375], coords_type='arc', bin_frac=1)
 
 
 """
