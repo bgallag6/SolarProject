@@ -58,9 +58,9 @@ plot([
 """    
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20160905'
+date = '20101208'
 wavelength1 = 1600
-wavelength2 = 304
+wavelength2 = 1600 # 304...
 
 H_1600 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength1))
 H_304 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength2))
@@ -72,8 +72,8 @@ names = ['slope_coeff', 'index', 'tail', 'gauss_amp', 'gauss_loc', 'gauss_wid', 
 p1 = 1
 p2 = 2
 
-H_1600 = H_1600[:,150:-200,200:-100]
-H_304 = H_304[:,150:-200,200:-100]
+H_1600 = H_1600[:,50:-50,70:-70]
+H_304 = H_304[:,50:-50,70:-70]
 
 
 #param1 = H_1600[p1,0:,0:] # for 20160520

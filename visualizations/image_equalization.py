@@ -11,13 +11,13 @@ from skimage import data, img_as_float
 from skimage import exposure
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20140819'
-wavelength = 304
+date = '20101208'
+wavelength = 1600
 #D = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20141227/304/param.npy')
 D = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory,date,wavelength))
 
-k = 4
-D1 = D[k,60:115,75:140]
+k = 0
+D1 = D[k,50:-50,70:-70]
 #D1 = D[k,165:240,350:425] # 20140818
 #D1 = D[k,115:200,115:215] # 20140606
 #D1 = D[4,90:175,100:210] # 20141227

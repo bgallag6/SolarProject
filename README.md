@@ -43,6 +43,24 @@
 
 - **SolSpecShell.sh** : takes derotated cube + computes power spectra + memory maps result for fitting + fits spectra
 
+- **SolSpecShell_Multi.sh** : same as SolSpecShell.sh, but allows for specification of multiple wavelengths to process - passes them through all steps sequentially
+
+- **create_arr_need.py** + **mpi2_download_fits.py** : uses MPI for multithreaded downloaded requests
+
+- **FFT_avg_mpi.py** : MPI implementation of FFT-computing of power spectra (not currently in use)
+
+- **SolSpec.py** : module containing functions: heatmap generation, derotation, FFT-computation, and memory-map creation of spectra cube
+
+- **SolSpec_Call.py** : script calling the latter 3 functions in SolSpec.py
+
+- **SolSpec_Call_Heatmaps.py** : script calling the heatmap generation function in SolSpec.py
+
+- **Spec_fit_mpi.py** : spectra-fitting routine, called by SolSpecShell.sh
+
+- **Spec_fit_mpi_4d.py** : spectra-fitting routine for time-evolution of regions, called by SolSpecShell.sh
+
+
+
 
 ### 'code_figures' Folder: ###
 

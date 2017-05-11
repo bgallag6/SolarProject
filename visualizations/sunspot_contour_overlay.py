@@ -21,22 +21,22 @@ from matplotlib import cm
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
 #date = '20141227'
 
-dates = ['20111210','20121018', '20131118', '20140112', '20140606', '20140818', '20140910', '20141227', '20150104','20160414', '20160426', '20160520', '20160905', '20170329']
-contours = [125., 95., 110., 67., 95., 75., 115., 75., 113., 87., 60., 60., 95., 83.]
-circ1_center_x = [0, 0, 520.,0,  163.5, 99.,0,  154., 0, 540., 141., 327., 661., 512.]
-circ2_center_x = [0, 0, 520.,0,  0, 99.,0,  154., 0, 0., 0., 327., 0., 0.]
-circ1_center_y = [0, 0, 290.,0,  158., 81.,0,  131., 0, 433., 113., 245., 285., 350.]
-circ2_center_y = [0, 0, 290.,0,  0, 81.,0,  131.,0,  0., 0., 245., 0., 0.]
-circ1_radi = [0, 0, 55.,0,  50., 20.,0,  24., 0, 85., 26., 50., 51., 37.]
-circ2_radi = [0, 0, 73.,0,  0., 39.,0,  38., 0, 0., 0., 73., 0., 0.]
+dates = ['20101208','20111210','20121018', '20131118', '20140112', '20140606', '20140818', '20140910', '20141227', '20150104','20160414', '20160426', '20160520', '20160905', '20170329']
+contours = [85.,125., 95., 110., 67., 95., 75., 115., 75., 113., 87., 60., 60., 95., 83.]
+circ1_center_x = [0,0, 0, 520.,0,  163.5, 99.,0,  154., 0, 540., 141., 327., 661., 512.]
+circ2_center_x = [0,0, 0, 520.,0,  0, 99.,0,  154., 0, 0., 0., 327., 0., 0.]
+circ1_center_y = [0,0, 0, 290.,0,  158., 81.,0,  131., 0, 433., 113., 245., 285., 350.]
+circ2_center_y = [0,0, 0, 290.,0,  0, 81.,0,  131.,0,  0., 0., 245., 0., 0.]
+circ1_radi = [0,0, 0, 55.,0,  50., 20.,0,  24., 0, 85., 26., 50., 51., 37.]
+circ2_radi = [0,0, 0, 73.,0,  0., 39.,0,  38., 0, 0., 0., 73., 0., 0.]
 
-l = 8
+l = 0
 date = dates[l]    
 
-h1 = np.load('%s/DATA/Output/%s/171/param.npy' % (directory, date))
-h2 = np.load('%s/DATA/Output/%s/193/param.npy' % (directory, date))
-h3 = np.load('%s/DATA/Output/%s/211/param.npy' % (directory, date))
-h4 = np.load('%s/DATA/Output/%s/304/param.npy' % (directory, date))
+#h1 = np.load('%s/DATA/Output/%s/171/param.npy' % (directory, date))
+#h2 = np.load('%s/DATA/Output/%s/193/param.npy' % (directory, date))
+#h3 = np.load('%s/DATA/Output/%s/211/param.npy' % (directory, date))
+#h4 = np.load('%s/DATA/Output/%s/304/param.npy' % (directory, date))
 h5 = np.load('%s/DATA/Output/%s/1600/param.npy' % (directory, date))
 vis = np.load('%s/DATA/Output/%s/1600/visual.npy' % (directory, date))
 
@@ -48,10 +48,10 @@ path_name = 'C:/Users/Brendan/Desktop/same_scale'
 titles = [r'Power Law Slope-Coefficient -- [$A$]', r'Power Law Index -- [$n$]', r'Power Law Tail -- [$C$]', r'Gaussian Amplitude -- [$\alpha$]', r'Gaussian Location [Seconds] -- [$\beta$]', r'Gaussian Width -- [$\sigma$]', 'F-Statistic', r'Gaussian Amplitude Scaled -- [$\alpha$]', 'P-Value']
 names = ['slope_coeff', 'index', 'tail', 'gauss_amp', 'gauss_loc', 'gauss_wid', 'f_test', 'gauss_amp_scaled', 'p_value']
 
-heatmap = [h1,h2,h3,h4,h5]
-#heatmap = [h1,h3,h4,h5]
-wavelengths = [17100,1930,211,30400,160000]
-#wavelengths = [17100,211,30400,160000]
+#heatmap = [h1,h2,h3,h4,h5]
+heatmap = [h5]
+#wavelengths = [17100,1930,211,30400,160000]
+wavelengths = [160000]
 #wavelengths = [171,193,211,304,1600]
 
 year = date[0:4]
@@ -276,7 +276,7 @@ cbar.ax.tick_params(labelsize=17, pad=5)
 #plt.tight_layout()
 #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
 #plt.savefig('%s/%s_%i_%s_same_%i.jpeg' % (path_name, date, wavelength, names[i], c))
-plt.savefig('%s/%s_visual_average_%i.jpeg' % (path_name, date, wavelength))
+#plt.savefig('%s/%s_visual_average_%i.jpeg' % (path_name, date, wavelength))
 #plt.savefig('%s/%s_%i_%s_same_%s.pdf' % (path_name, date, wavelength, names[i], seg[c]), format='pdf')
 #plt.close()
 

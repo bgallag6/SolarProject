@@ -53,3 +53,6 @@
 5/8:
 - added p-value inversion mask contour overlay to visual images in SolSpec.py
 - added sunspot umbra contour line to SolSpec.py
+
+5/9:
+- indented last 10 lines of Spec_fit_mpi.py - so only rank 0 is trying to save param.npy

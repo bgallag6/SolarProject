@@ -300,12 +300,12 @@ if rank == 0:
   #print stack_m.shape  # Verify we have a summed version of the input cube
  
 
-T_final = timer() - start
-T_min_final, T_sec_final = divmod(T_final, 60)
-T_hr_final, T_min_final = divmod(T_min_final, 60)
-print "Total program time = %i:%.2i:%.2i" % (T_hr_final, T_min_final, T_sec_final)   
-print "Just finished region: %s %iA" % (date, wavelength)
+  T_final = timer() - start
+  T_min_final, T_sec_final = divmod(T_final, 60)
+  T_hr_final, T_min_final = divmod(T_min_final, 60)
+  print "Total program time = %i:%.2i:%.2i" % (T_hr_final, T_min_final, T_sec_final)   
+  print "Just finished region: %s %iA" % (date, wavelength)
 
-#np.save('/mnt/data/Gallagher/DATA/Output/20130626/193/20130626_193_-500_500i_-500_600j_param_slope6_arthm', stack_p)
-np.save('%s/DATA/Output/%s/%i/param' % (directory, date, wavelength), stack_p)
-#np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_param', stack_p)
+  #np.save('/mnt/data/Gallagher/DATA/Output/20130626/193/20130626_193_-500_500i_-500_600j_param_slope6_arthm', stack_p)
+  np.save('%s/DATA/Output/%s/%i/param' % (directory, date, wavelength), stack_p)
+  #np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_param', stack_p)
