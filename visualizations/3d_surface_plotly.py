@@ -58,9 +58,10 @@ plot([
 """    
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20101208'
+date = '20111210'
 wavelength1 = 1600
-wavelength2 = 1600 # 304...
+#wavelength2 = 1600 # 304...
+wavelength2 = 304
 
 H_1600 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength1))
 H_304 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength2))
@@ -135,45 +136,68 @@ p304_6 = np.ndarray.tolist(H_304[6])
 p304_7 = np.ndarray.tolist(H_304[7])
 """
 
+c = 5
+
+if c == 4:
+    H_1600[c] = (1./np.exp(H_1600[c])) / 60.
+
 h1600 = np.ndarray.tolist(H_1600)
 h304 = np.ndarray.tolist(H_304)
 
+
+
 p0_1600 = Surface(
     z=h1600[0],
+    surfacecolor=h1600[c],
+    #surfacecolor=h304[0],
     visible=False,
 )
 
 p1_1600 = Surface(
     z=h1600[1],
+    surfacecolor=h1600[c],
+    #surfacecolor=h304[1]
 ) 
 
 p2_1600 = Surface(
     z=h1600[2],
+    surfacecolor=h1600[c],
+    #surfacecolor=h304[2],
     visible=False,
 )
 
 p3_1600 = Surface(
     z=h1600[3],
+    surfacecolor=h1600[c],
+    #surfacecolor=h304[3],
     visible=False,
 )
 
 p4_1600 = Surface(
     z=h1600[4],
+    surfacecolor=h1600[c],
+    #surfacecolor=h304[4],
     visible=False,
 )
 
 p5_1600 = Surface(
     z=h1600[5],
+    surfacecolor=h1600[c],
+    #surfacecolor=h304[5],
     visible=False,
 )
 
 p6_1600 = Surface(
     z=h1600[6],
+    surfacecolor=h1600[c],
+    #surfacecolor=h304[6],
     visible=False,
 )
 
 p7_1600 = Surface(
     z=h1600[7],
+    surfacecolor=h1600[c],
+    #surfacecolor=h304[7],
     visible=False,
 )
 

@@ -25,7 +25,7 @@ from matplotlib import cm
 #h_new = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_304_-500_500i_-500_600j_param_slope6_arthm.npy')
 
 date = '20140924'
-wavelength0 = 1600
+wavelength0 = 304
 
 h = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/%s/%i/param.npy' % (date, wavelength0))
     
