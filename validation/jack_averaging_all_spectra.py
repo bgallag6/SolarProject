@@ -29,7 +29,7 @@ from matplotlib.ticker import LogFormatterMathtext
 from timeit import default_timer as timer
 from scipy.stats import f
 import matplotlib.patches as patches
-
+from scipy.stats.stats import pearsonr 
 
 from scipy import fftpack    
 
@@ -46,6 +46,7 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
 
 spec = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Temp/20120909/1600/spectra.npy')
+spec_std = np.load('C:/Users/Brendan/Desktop/spec_std.npy')
 
 # determine frequency values that FFT will evaluate
 num_freq = spec.shape[2]  # determine nubmer of frequencies that are used
@@ -55,26 +56,28 @@ sample_freq = fftpack.fftfreq(freq_size, d=time_step)
 pidxs = np.where(sample_freq > 0)
 freqs = sample_freq[pidxs]
 
-spec3x3 = spec[0:3,0:3,:]
+i = 6
+
+spec3x3 = spec[i:i+3,i:i+3,:]
 spec3x3 = np.reshape(spec3x3, (9,1799))
 spec3x3_avg = np.average(spec3x3, axis=0)
 
-spec100x100 = np.reshape(spec, (10000,1799))
+#spec100x100 = np.reshape(spec, (10000,1799))
 #spec100x100_avg = np.log10(spec100x100)
 #spec100x100_avg = np.sum(spec100x100_avg, axis=0) / 10000.
 #spec100x100_avg = np.power(10,spec100x100_avg)
-spec100x100_avg = np.average(spec100x100, axis=0)
+#spec100x100_avg = np.average(spec100x100, axis=0)
 
 #plt.loglog(freqs, spec[1][1])
 #plt.loglog(freqs, spec3x3_avg)
 #plt.loglog(freqs, spec100x100_avg)
-
+w = 82
 #"""                            
 f = freqs  # frequencies
 #s = spectra_array[l][m]  # fourier power
-#s = spec[72][53]  # fourier power
+s = spec[w][w]  # fourier power
 #s = spec3x3_avg  # fourier power
-s = spec100x100_avg  # fourier power
+#s = spec100x100_avg  # fourier power
 
    
 # assign equal weights to all parts of the curve
@@ -82,8 +85,9 @@ df = np.log10(f[1:len(f)]) - np.log10(f[0:len(f)-1])
 df2 = np.zeros_like(f)
 df2[0:len(df)] = df
 df2[len(df2)-1] = df2[len(df2)-2]
-ds = df2
+#ds = df2
 #ds = 0.1*s
+ds = spec_std
 
                                        
 ### fit data to models using SciPy's Levenberg-Marquart method
@@ -108,10 +112,10 @@ dA, dn, dC = [np.sqrt(nlpcov_l[j,j]) for j in range(nlfit_l.size)]
 ## possibly use previous pixel's parameters as initial guesses for current pixel (issues creating wierd banding in images)
 
 ## fit data to combined power law plus gaussian component model
-        
+indx = 595      
 try:                                 
     M2_low = [-0.002, 0.3, -0.01, 0.000001, -6.5, 0.05]
-    M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
+    M2_high = [0.002, indx/100, 0.01, 0.2, -4.6, 0.8]
     #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]  # see what happens if force middle of range above where slopes are
     
     # change method to 'dogbox' and increase max number of function evaluations to 3000
@@ -146,7 +150,8 @@ uncertainties = dA2, dn2, dC2, dP2, dfp2, dfw2  # do we want to keep a global ar
 #diffM1M2_temp = (m2_fit - m1_fit)**2  # differences squared
 #diffM1M2[l][m] = np.sum(diffM1M2_temp)  # sum of squared differences 
 
-
+#M2_low = [0., 0.2, 0., 0., -6.5, 0.05]
+#M2_high = [0.002, 6., 0.001, 0.2, -4.6, 0.8]
 nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
 #nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
 A22, n22, C22, P22, fp22, fw22 = nlfit_gp2  # unpack fitting parameters     
@@ -180,13 +185,18 @@ redchisqrM22 = ((residsM22/ds)**2).sum()/float(f.size-6)
 f_test = ((chisqrM1-chisqrM2)/(6-3))/((chisqrM2)/(f.size-6))
 f_test2 = ((chisqrM1-chisqrM22)/(6-3))/((chisqrM22)/(f.size-6))
 
+  
+r_temp = pearsonr(m2_fit2, s)  # calculate r-value correlation coefficient
+r = r_temp[0]
 #actual = GaussPowerBase(f, 1.3e-12, 2.45, 3.45e-4, 1e-7, -5.5, 0.05)  # only need if plotting
 
-
+plt.rcParams["font.family"] = "Times New Roman"
+font_size = 27
+        
 fig = plt.figure(figsize=(15,15))
 ax = plt.gca()  # get current axis -- to set colorbar 
 #plt.title('Power-Law Dominated : Pixel %ii, %ij' % (l2[m],m2[m]), y = 1.01, fontsize=25)
-plt.title('Jacks Dataset: Index = 2.5 | No Segment-Averaging | 100x100 Pixels Averaged', y = 1.01, fontsize=25)
+plt.title('Jacks Dataset: Index = 3.0 | No Segment-Averaging | No Pixels Averaged \n Index Upper Bound = %0.2f' % (indx/100.) , y = 1.01, fontsize=25)
 plt.ylim((10**-4.7,10**0))
 plt.xlim((10**-5.,10**-1.3))
 plt.xticks(fontsize=19)
@@ -208,11 +218,12 @@ plt.text(0.008, 10**-0.92, r'$\alpha$ =  {0:0.3f}'.format(m2_param[3]), fontsize
 plt.text(0.008, 10**-1.09, r'$\beta$ = {0:0.3f}'.format(m2_param[4]), fontsize=25)
 plt.text(0.008, 10**-1.26, r'$\sigma$ =  {0:0.3f}'.format(m2_param[5]), fontsize=25)
 plt.text(0.008, 10**-1.43, r'$\chi^2$ = {0:0.4f}'.format(redchisqrM2), fontsize=25)
+plt.text(0.008, 10**-1.60, r'$r$ = {0:0.4f}'.format(r), fontsize=25)
 plt.legend(loc='lower left', prop={'size':23})
 #plt.show()
 #plt.savefig('C:/Users/Brendan/Desktop/test_format/171_%ix_%iy_4_one.jpeg' % (m2[m],l2[m]))
 #plt.savefig('C:/Users/Brendan/Desktop/171_slice2_double_optimize/171A_%ii_%ij.jpeg' % (l,m))
 #plt.savefig('C:/Users/Brendan/Desktop/171_points_square/pixel_%ii_%ij_new.jpeg' % (l2[m],m2[m]))
-#plt.savefig('C:/Users/Brendan/Desktop/jacks_3.0_geo_averaged.pdf', format='pdf')
+#plt.savefig('C:/Users/Brendan/Desktop/jacks_3.0_no_averaging_index_%i_ds_std_dev.pdf' % indx, format='pdf')
 #plt.close()
 #"""

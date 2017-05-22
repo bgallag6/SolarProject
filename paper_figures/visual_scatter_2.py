@@ -20,6 +20,8 @@ import numpy as np
 import astropy.units as u
 import matplotlib.patches as patches
 
+plt.rcParams["font.family"] = "Times New Roman"
+
 v171 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/visual.npy')
 p171 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param.npy')
 #v171 = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_visual.npy')
@@ -51,8 +53,7 @@ cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'L
 #[743]
 #[322]
 
-m2 = [722, 188, 726, 872]
-l2 = [v171[0].shape[0]-1427, v171[0].shape[0]-523, v171[0].shape[0]-328, v171[0].shape[0]-875]
+
 
 m3 = [100]
 l3 = [1600-900]
@@ -85,8 +86,11 @@ names_vis = ['average', 'mid']
 vis = v171
 trim_yv = (vis.shape[1]-1600)/2
 trim_xv = (vis.shape[2]-1600)/2
-#vis = vis[:, trim_yv:vis.shape[1]-trim_yv, trim_xv:vis.shape[2]-trim_xv]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)  
+vis = vis[:, trim_yv:vis.shape[1]-trim_yv, trim_xv:vis.shape[2]-trim_xv]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)  
 #vis1600 = v1600[:, 19:v1600.shape[1]-19, 12:v1600.shape[2]-11]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)  
+
+m2 = [722-trim_xv, 188-trim_xv, 726-trim_xv, 872-trim_xv]
+l2 = [v171[0].shape[0]-1427-trim_yv, v171[0].shape[0]-523-trim_yv, v171[0].shape[0]-328-trim_yv, v171[0].shape[0]-875-trim_yv]
 
 #vis1600_trim = vis1600[:, :, 1100:1400] 
 
@@ -151,11 +155,14 @@ for i in range(1):
     x_ind = [-800,-600,-400,-200,0,200,400,600,800]
     y_ind = [800,600,400,200,0,-200,-400,-600,-800]
    
-
-    fig = plt.figure(figsize=(15,15))
+    font_size = 27    
+    
+    fig = plt.figure(figsize=(12,10))
     #ax1 = plt.subplot2grid((1,6),(0, 0), colspan=5, rowspan=1)  
     ax1 = plt.gca()
-    plt.title(r'171$\AA$  Visual: %s w/ Points' % (titles_vis[i]), y = 1.02, fontsize=23)  # no date / wavelength
+    #plt.title(r'171$\AA$  Visual: %s w/ Points' % (titles_vis[i]), y = 1.02, fontsize=23)  # no date / wavelength
+    #plt.title(r'(a) 171 $\AA$ w/ Points', y = 1.02, fontsize=23)  # no date / wavelength
+    plt.title(r'(a) 171 $\AA$ - Showing Sample Locations', y = 1.02, fontsize=font_size, fontname="Times New Roman")  # no date / wavelength
     im = ax1.imshow(np.flipud(vis[i]), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
     plt.scatter(m2, l2, s=100, c='red')
     plt.scatter(m2, l2, s=50, c='white')
@@ -166,37 +173,37 @@ for i in range(1):
     #plt.ylabel('Y-Position [Pixels]', fontsize=23, labelpad=10)
     #plt.xticks([0,200,400,600,800,1000,1200,1400,1600],fontsize=23)
     #plt.yticks([0,200,400,600,800,1000,1200,1400,1600],fontsize=23)
-    plt.xticks(x_ticks,x_ind,fontsize=23)
-    plt.yticks(y_ticks,y_ind,fontsize=23)
+    plt.xticks(x_ticks,x_ind,fontsize=font_size, fontname="Times New Roman")
+    plt.yticks(y_ticks,y_ind,fontsize=font_size, fontname="Times New Roman")
     ax1.tick_params(axis='both', which='major', pad=10)
-    rect = patches.Rectangle((610,140), 70, 90, color='white', fill=True)
+    rect = patches.Rectangle((610-trim_xv-0.5,140-trim_yv), 70, 90, color='white', fill=True)
     ax1.add_patch(rect)
-    ax1.text(623.2,209, 'A', fontsize=27)
-    rect = patches.Rectangle((220,1160), 70, 90, color='white', fill=True)
+    ax1.text(623.2-trim_xv-7,209-trim_yv+1, 'A', fontsize=font_size+2, fontname="Times New Roman")
+    rect = patches.Rectangle((220-trim_xv,1160-trim_yv), 70, 90, color='white', fill=True)
     ax1.add_patch(rect)
-    ax1.text(231,1229.5, 'C', fontsize=27)   
-    rect = patches.Rectangle((770,1230), 70, 90, color='white', fill=True)
+    ax1.text(231-trim_xv-5.5,1229.5-trim_yv+2, 'C', fontsize=font_size+2, fontname="Times New Roman")   
+    rect = patches.Rectangle((770-trim_xv,1230-trim_yv), 70, 90, color='white', fill=True)
     ax1.add_patch(rect)
-    ax1.text(782.2,1298.7, 'D', fontsize=27)
-    rect = patches.Rectangle((905,810), 70, 90, color='white', fill=True)
+    ax1.text(782.2-trim_xv-6.,1298.7-trim_yv+4, 'D', fontsize=font_size+2, fontname="Times New Roman")
+    rect = patches.Rectangle((905-trim_xv,810-trim_yv), 70, 90, color='white', fill=True)
     ax1.add_patch(rect)
-    ax1.text(918.3,877.6, 'B', fontsize=27)
+    ax1.text(918.3-trim_xv-5,877.6-trim_yv+4, 'B', fontsize=font_size+2, fontname="Times New Roman")
     #rect6 = patches.Rectangle((1100,1), 300, 1600, color='white', fill=False, linewidth=3)
     #ax1.add_patch(rect6)
     #ax1.text(1180, 110, ' Inset\nRegion', fontsize=21, color='white')
-    rect = patches.Rectangle((906,811), 68, 88, color='red', fill=False, linewidth=2)
+    rect = patches.Rectangle((906-trim_xv,811-trim_yv), 68, 88, color='red', fill=False, linewidth=2)
     ax1.add_patch(rect)
-    rect = patches.Rectangle((221,1161), 68, 88, color='red', fill=False, linewidth=2)
+    rect = patches.Rectangle((221-trim_xv,1161-trim_yv), 68, 88, color='red', fill=False, linewidth=2)
     ax1.add_patch(rect)
-    rect = patches.Rectangle((771,1231), 68, 88, color='red', fill=False, linewidth=2)
+    rect = patches.Rectangle((771-trim_xv,1231-trim_yv), 68, 88, color='red', fill=False, linewidth=2)
     ax1.add_patch(rect)
-    rect = patches.Rectangle((611,141), 68, 88, color='red', fill=False, linewidth=2)
+    rect = patches.Rectangle((611-trim_xv,141-trim_yv), 68, 88, color='red', fill=False, linewidth=2)
     ax1.add_patch(rect)
-    divider = make_axes_locatable(ax1)
-    cax = divider.append_axes("right", size="3%", pad=0.07)
-    cbar = plt.colorbar(im,cax=cax)
+    #divider = make_axes_locatable(ax1)
+    #cax = divider.append_axes("right", size="3%", pad=0.07)
+    #cbar = plt.colorbar(im,cax=cax)
     #cbar.set_label('Intensity', size=20, labelpad=10)
-    cbar.ax.tick_params(labelsize=23, pad=5)
+    #cbar.ax.tick_params(labelsize=font_size, pad=5)
 
     """
     ax2 = plt.subplot2grid((1,6),(0, 5), colspan=1, rowspan=1)  
@@ -216,5 +223,5 @@ for i in range(1):
     rect9 = patches.Rectangle((1,1), 298, 1598, color='white', fill=False, linewidth=3)
     ax2.add_patch(rect9)
     """
-    plt.savefig('C:/Users/Brendan/Desktop/171_final_points/171_visual_%s_points_overlay_revised7.jpeg' % names_vis[i])
-    #plt.savefig('C:/Users/Brendan/Desktop/171_final_points/171_visual_%s_points_overlay_revised6.pdf' % names_vis[i], format='pdf')
+    #plt.savefig('C:/Users/Brendan/Desktop/171_final_points/171_visual_%s_points_overlay_revised7.jpeg' % names_vis[i])
+    plt.savefig('C:/Users/Brendan/Desktop/vis_pointsF.pdf', format='pdf')

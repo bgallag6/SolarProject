@@ -23,14 +23,14 @@ directory = 'F:/Users/Brendan/Desktop/SolarProject'
 
 dates = ['20101208','20111210','20121018', '20131118', '20140112', '20140606', '20140818', '20140910', '20141227', '20150104','20160414', '20160426', '20160520', '20160905', '20170329']
 contours = [85.,125., 95., 110., 67., 95., 75., 115., 75., 113., 87., 60., 60., 95., 83.]
-circ1_center_x = [0,0, 0, 520.,0,  163.5, 99.,0,  154., 0, 540., 141., 327., 661., 512.]
-circ2_center_x = [0,0, 0, 520.,0,  0, 99.,0,  154., 0, 0., 0., 327., 0., 0.]
-circ1_center_y = [0,0, 0, 290.,0,  158., 81.,0,  131., 0, 433., 113., 245., 285., 350.]
-circ2_center_y = [0,0, 0, 290.,0,  0, 81.,0,  131.,0,  0., 0., 245., 0., 0.]
-circ1_radi = [0,0, 0, 55.,0,  50., 20.,0,  24., 0, 85., 26., 50., 51., 37.]
-circ2_radi = [0,0, 0, 73.,0,  0., 39.,0,  38., 0, 0., 0., 73., 0., 0.]
+circ1_center_x = [154,0, 0, 520.,0,  163.5, 99.,0,  154., 0, 540., 141., 327., 661., 512.]
+circ2_center_x = [154,0, 0, 520.,0,  0, 99.,0,  154., 0, 0., 0., 327., 0., 0.]
+circ1_center_y = [125,0, 0, 290.,0,  158., 81.,0,  131., 0, 433., 113., 245., 285., 350.]
+circ2_center_y = [125,0, 0, 290.,0,  0, 81.,0,  131.,0,  0., 0., 245., 0., 0.]
+circ1_radi = [40,0, 0, 55.,0,  50., 20.,0,  24., 0, 85., 26., 50., 51., 37.]
+circ2_radi = [55,0, 0, 73.,0,  0., 39.,0,  38., 0, 0., 0., 73., 0., 0.]
 
-l = 0
+l = 6
 date = dates[l]    
 
 #h1 = np.load('%s/DATA/Output/%s/171/param.npy' % (directory, date))
@@ -39,6 +39,7 @@ date = dates[l]
 #h4 = np.load('%s/DATA/Output/%s/304/param.npy' % (directory, date))
 h5 = np.load('%s/DATA/Output/%s/1600/param.npy' % (directory, date))
 vis = np.load('%s/DATA/Output/%s/1600/visual.npy' % (directory, date))
+vis = vis[:,1:-1,1:-1]
 
 #date = '20140910'
 #path_name = 'F:/Users/Brendan/Desktop/SolarProject/data/20130626'
@@ -104,7 +105,7 @@ for c in range(len(heatmap)):
     h_map = heatmap[c]
     wavelength = wavelengths[c]
 
-    h_map = h_map[:,0:h_map.shape[1]-1,0:h_map.shape[2]-1]  # trim last row and column from array (originally needed since went one past)
+    #h_map = h_map[:,0:h_map.shape[1]-1,0:h_map.shape[2]-1]  # trim last row and column from array (originally needed since went one past)
     
     if h_map.shape[2] > h_map.shape[1]:
         aspect_ratio = float(h_map.shape[2]) / float(h_map.shape[1])
@@ -137,8 +138,8 @@ for c in range(len(heatmap)):
     v_min = np.percentile(visual,1)
     v_max = np.percentile(visual,99)
     
-    for i in range(7):
-    #for i in range(1,2):
+    #for i in range(7):
+    for i in range(5,6):
         
         
         if i == 6:
@@ -234,7 +235,8 @@ for c in range(len(heatmap)):
         #plt.tight_layout()
         #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
         #plt.savefig('%s/%s_%i_%s_same_%i.jpeg' % (path_name, date, wavelength, names[i], c))
-        plt.savefig('%s/%s_%s_same_%i.jpeg' % (path_name, date, names[i], wavelength))
+        #plt.savefig('%s/%s_%s_same_%i.jpeg' % (path_name, date, names[i], wavelength))
+        #plt.savefig('%s/%s_%s_same_%iA.pdf' % (path_name, date, names[i], wavelength), format='pdf')
         #plt.savefig('%s/%s_%i_%s_same_%s.pdf' % (path_name, date, wavelength, names[i], seg[c]), format='pdf')
         #plt.close()
 
@@ -277,6 +279,7 @@ cbar.ax.tick_params(labelsize=17, pad=5)
 #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
 #plt.savefig('%s/%s_%i_%s_same_%i.jpeg' % (path_name, date, wavelength, names[i], c))
 #plt.savefig('%s/%s_visual_average_%i.jpeg' % (path_name, date, wavelength))
+#plt.savefig('%s/%s_%s_same_%iB.pdf' % (path_name, date, names[i], wavelength), format='pdf')
 #plt.savefig('%s/%s_%i_%s_same_%s.pdf' % (path_name, date, wavelength, names[i], seg[c]), format='pdf')
 #plt.close()
 

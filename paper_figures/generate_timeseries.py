@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 from pylab import *
 from scipy.interpolate import interp1d
 
+
+
 #DATA = np.load('/mnt/data-solar/Gallagher/DATA/Temp/20130626/171/derotated.npy')
 #DATA = np.load('F:/Users/Brendan/Desktop/SolarProject/data_sort/20130626/20130626_193_-450_-200i_-200_200j_data_rebin1.npy')
 DATA = np.load('C:/Users/Brendan/Desktop/time_series_171.npy')
@@ -56,7 +58,7 @@ match = [1,3,6,24]
 #m2 = [867, 765, 757, 525, 708, 743, 790, 790, 790, 794, 796, 797, 798, 858, 861, 863, 872, 872, 876]
 #l2 = [864, 325, 319, 551, 352, 322, 650, 653, 659, 642, 648, 667, 669, 866, 867, 863, 865, 875, 879]
 
-m2_title = ['Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/ Gaussian', 'Tail Dominated w/o Gaussian', 'Tail Dominated w/o Gaussian']
+m2_title = ['(c) Power Law Dominated w/o Gaussian', '(d) Power Law Dominated w/ Gaussian', '(a) Tail Dominated w/o Gaussian', '(b) Tail Dominated w/o Gaussian']
 
 point_label = ['C', 'D', 'A', 'B']
 
@@ -89,27 +91,30 @@ for l in range(1):
         t=TIME
         """
         #v_interp = np.interp(t_interp,t,v)  # interpolate pixel-intensity values onto specified time grid
- 
+        
+        plt.rcParams["font.family"] = "Times New Roman"
+        font_size = 27        
+        
         # Plot models + display combined-model parameters + uncertainties
         #"""
-        fig = plt.figure(figsize=(15,15))
+        fig = plt.figure(figsize=(12,10))
         ax = plt.gca()
         #plt.title('%s: Pixel %ix, %iy' % (m2_title[m], x2[m], y2[m]), y = 1.01, fontsize=30)
-        plt.title('%s: Point %s' % (m2_title[m], point_label[m]), y = 1.01, fontsize=30)
+        plt.title('%s: Point %s' % (m2_title[m], point_label[m]), y = 1.01, fontsize=font_size, fontname="Times New Roman")
         #plt.title('Pixel (%i, %i)' % (x2[m], y2[m]), y = 1.01, fontsize=25)
         #plt.plot(t_interp,v_interp,'k')
         #plt.plot(t_interp,v_interp,'k')
         ax.tick_params(axis='both', which='major', pad=10)
         plt.xlim(0,720)
         plt.plot(TIME/60., DATA[match[m]]/ex_interp, 'k')
-        plt.xlabel(r'Time [min]', fontsize=30, labelpad=10)
-        plt.ylabel('Intensity', fontsize=30, labelpad=10)
-        plt.xticks([0,120,240,360,480,600,720], fontsize=30)
-        plt.yticks(fontsize=30)
+        plt.xlabel(r'Time [min]', fontsize=font_size, labelpad=10, fontname="Times New Roman")
+        plt.ylabel('Normalized Intensity', fontsize=font_size, labelpad=10, fontname="Times New Roman")
+        plt.xticks([0,120,240,360,480,600,720], fontsize=font_size, fontname="Times New Roman")
+        plt.yticks(fontsize=font_size, fontname="Times New Roman")
         #plt.show()
         #plt.savefig('/mnt/data-solar/Gallagher/171_timeseries_%ix_%iy.pdf' % (x2[m], y2[m]), format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/test_format/171_%ix_%iy_timeseries.pdf' % (x2[m],y2[m]), format='pdf')
-        #plt.savefig('C:/Users/Brendan/Desktop/171_final_points2/171_%ix_%iy_timeseriesB.pdf' % (m2[m],l2[m]), format='pdf')
+        plt.savefig('C:/Users/Brendan/Desktop/171_%ix_%iy_timeseriesF.pdf' % (m2[m],l2[m]), format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/title25_labels21_tick17.pdf', format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))
         #plt.close()

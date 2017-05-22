@@ -8,24 +8,11 @@ Created on Sat Jan 28 12:15:32 2017
 """
 ######################
 # run with:
-# $ mpiexec -n 8 python Spec_fit_mpi.py    (8 = number of processors)
+# $ mpiexec -n # python Spec_fit_mpi.py    (# = number of processors)
 ######################
 """
 
-# dont absolutely need M2_fit
-# can get rid of M2_gauss, M2_powerlaw, s_fit_gp
-
-# param + m2_fit both generated perfectly
-
-# 1/29:
-# took out f_fit, replaced with f, since were the same
-
-# maybe print param bounds?
-
 # maybe save results to text file - param bounds, region, fail-count... 
-
-# commenting-out the M2_fits.  for large regions they become way to big.  
-# include back when need them?
 
 # 2/3:
 # manually assign chunks to processors - to overcome 'Overflow error'
@@ -60,7 +47,8 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
 
 # this function receives a 3D cube and sums over the z axis, returning the [x,y] sum array
-def spec_fit( subcube ):
+#def spec_fit( subcube ):
+def spec_fit( subcube, subcube_StdDev ):
     
   SPECTRA = subcube
   spectra_array = SPECTRA
@@ -80,10 +68,8 @@ def spec_fit( subcube ):
   freqs = sample_freq[pidxs]
 
 
-  # initialize arrays to hold parameter values, also each pixel's combined model fit - for tool
+  # initialize arrays to hold parameter values
   params = np.zeros((9, SPECTRA.shape[0], SPECTRA.shape[1]))
-  # M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], (len(freqs)+1)/2))  # would save storage / memory space
-  #M2_fit = np.zeros((SPECTRA.shape[0], SPECTRA.shape[1], SPECTRA.shape[2]))
 
   # Uncertainties = np.zeros((6, SPECTRA.shape[0], SPECTRA.shape[1]))  # not using right now
   
@@ -107,10 +93,8 @@ def spec_fit( subcube ):
         df2 = np.zeros_like(f)
         df2[0:len(df)] = df
         df2[len(df2)-1] = df2[len(df2)-2]
-        ds = df2
-        
-        # create points to fit model with final parameters 
-        #f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],(len(freqs)+1)/2)  # would save storage / memory space?      
+        #ds = df2
+        ds = subcube_StdDev[l][m]
         
                                                
         ### fit data to models using SciPy's Levenberg-Marquart method
@@ -141,7 +125,6 @@ def spec_fit( subcube ):
         try:                                 
             M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
             M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
-            #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]  # see what happens if force middle of range above where slopes are
             
             # change method to 'dogbox' and increase max number of function evaluations to 3000
             nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000) # replaced #'s with arrays
@@ -163,6 +146,13 @@ def spec_fit( subcube ):
         
         
         try:
+            #if wavelength == 1600 or wavelength == 1700:
+            #    M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]  # try constraining further, now that are specifying initial guess
+            #    M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
+            #else:
+            #    M2_low = [0., 0.3, 0., 0., -6.5, 0.05]  # try constraining further, now that are specifying initial guess
+            #    M2_high = [0.002, 6., 0.01, 0.1, -4.6, 0.8]
+            
             nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
             #nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
        
@@ -272,15 +262,18 @@ wavelength = int(sys.argv[3])
 # load memory-mapped array as read-only
 cube_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))
 cube = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
+cube_StdDev = np.memmap('%s/DATA/Temp/%s/%i/uncertainties_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
 #cube = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(1658,1481,299))
 #cube = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_spectra.npy')
 
 chunks = np.array_split(cube, size)  # Split the data based on no. of processors
+chunks_StdDev = np.array_split(cube_StdDev, size)  # Split the data based on no. of processors
 
 # specify which chunks should be handled by each processor
 for i in range(size):
     if rank == i:
         subcube = chunks[i]
+        subcube_StdDev = chunks_StdDev[i]
 
 # verify each processor received subcube with correct dimensions
 ss = np.shape(subcube)  # Validation	
@@ -288,7 +281,7 @@ print "Processor", rank, "received an array with dimensions", ss  # Validation
 print "Height = %i, Width = %i, Total pixels = %i" % (subcube.shape[0], subcube.shape[1], subcube.shape[0]*subcube.shape[1])
 
 #params_T, M2_fit_T = spec_fit( subcube )  # Do something with the array
-params_T = spec_fit( subcube )  # Do something with the array
+params_T = spec_fit( subcube, subcube_StdDev )  # Do something with the array
 newData_p = comm.gather(params_T, root=0)  # Gather all the results
 #newData_m = comm.gather(M2_fit_T, root=0)  # Gather all the results
 

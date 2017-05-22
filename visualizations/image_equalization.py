@@ -11,13 +11,13 @@ from skimage import data, img_as_float
 from skimage import exposure
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20101208'
+date = '20130815'
 wavelength = 1600
 #D = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20141227/304/param.npy')
 D = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory,date,wavelength))
 
-k = 0
-D1 = D[k,50:-50,70:-70]
+k = 5
+D1 = D[k,290:-220,580:-175]
 #D1 = D[k,165:240,350:425] # 20140818
 #D1 = D[k,115:200,115:215] # 20140606
 #D1 = D[4,90:175,100:210] # 20141227
@@ -28,6 +28,7 @@ D1 = D[k,50:-50,70:-70]
 #D1 = D[1,180:420,400:680] # 20131118
 #D1 = D[1,40:125,50:145] # 20131118
 #D1 = D[k,50:-80,100:-100] # 20121018
+#D1 = D[k,135:-165,175:-175] # 20121018
 #D1 = D[k,135:-165,175:-175] # 20121018
 
 #param1 = H[p1,180:-175,350:-80] # for 20140818
@@ -171,8 +172,8 @@ ax_cdf.set_ylabel('Fraction of total intensity')
 ax_cdf.set_yticks(np.linspace(0, 1, 5))
 
 # prevent overlap of y-axis labels
-plt.subplots_adjust(wspace=0.4)
+plt.subplots_adjust(wspace=0.1)
 plt.show()
 #plt.savefig('C:/Users/Brendan/Desktop/1600_segments_20140818/equalizations_20140818_param_%i_seg_%i_zoom.jpeg' % (j,i))
 #plt.close()
-#plt.savefig('C:/Users/Brendan/Desktop/4_22/image_hist_equalizations_20130626_1600_gauss_loc.pdf', format='pdf')
+#plt.savefig('C:/Users/Brendan/Desktop/20130815_1600_image_equalizations.pdf', format='pdf')

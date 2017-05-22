@@ -34,6 +34,14 @@ from scipy.stats.stats import pearsonr
 # define Power-Law-fitting function (Model M1)
 def PowerLaw(f, A, n, C):
     return A*f**-n + C
+    
+# define Gaussian-fitting function
+def Gauss(f, P, fp, fw):
+    return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2)
+
+# define combined-fitting function (Model M2)
+def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
+    return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
 
 fig = plt.figure(figsize=(16, 12))
 #ax = fig.add_subplot(211)
@@ -81,7 +89,9 @@ powers = ((powers/norm)**2)*(1./(sig.std()**2))*2
 
 
 ax2.set_xlim(10**-4.5, 10**-1)
-ax2.set_ylim(10**-7, 10**0)        
+ax2.set_ylim(10**-7, 10**0)      
+ax2.vlines((1./180.),10**-7,10**0,linestyle='dotted')  
+ax2.vlines((1./300.),10**-7,10**0,linestyle='dashed') 
 line2, = ax2.loglog(freqs, powers, '-')
 line3, = ax2.loglog(0)
 
@@ -116,8 +126,25 @@ def onselect(tmin, tmax):
     M1_high = [0.002, 6., 0.01]
     nlfit_l, nlpcov_l = scipy.optimize.curve_fit(PowerLaw, this_freqss, this_powers, bounds=(M1_low, M1_high), sigma=ds, method='dogbox')  # replaced #'s with arrays
     A, n, C = nlfit_l  # unpack fitting parameters
-    m1_fit = PowerLaw(f, A, n, C)  
-    line3.set_data(f,m1_fit)
+                                  
+    M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
+    M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]   
+
+    nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, this_freqss, this_powers, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000) # replaced #'s with arrays    
+    
+    A2, n2, C2, P2, fp2, fw2 = nlfit_gp  # unpack fitting parameters
+    
+    nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, this_freqss, this_powers, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
+               
+    A22, n22, C22, P22, fp22, fw22 = nlfit_gp2  # unpack fitting parameters     
+    
+    m2_param = A22, n22, C22, P22, fp22, fw22  # could have used this for params array : = params[0:6,l-1,m-1]
+                   
+    # create model functions from fitted parameters
+    #m1_fit = PowerLaw(f, A, n, C)        
+    #m2_fit = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)
+    m2_fit2 = GaussPowerBase(f, A22,n22,C22,P22,fp22,fw22)
+    line3.set_data(f,m2_fit2)
     
    
     #fig.canvas.draw()

@@ -119,7 +119,7 @@ class Index(object):
         plt.draw()
         
     def fstat(self, event):
-        param = h_map[6]
+        param = h_map[8]
         NaN_replace = np.nan_to_num(param)  # NaN's in chi^2 heatmap were causing issue, replace with 0?
         h_min = np.percentile(NaN_replace,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         h_max = np.percentile(NaN_replace,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
@@ -154,19 +154,22 @@ class Index(object):
 # Simple mouse click function to store coordinates
 def onclick(event):
     global ix, iy, c
-    ix, iy = event.xdata, event.ydata
+    ixx, iyy = event.xdata, event.ydata
     ax2.clear()
     plt.draw()
-    print ('x = %d, y = %d' % ( ix, iy))  # print location of pixel
-    
+    print ('x = %d, y = %d' % ( ixx, iyy))  # print location of pixel
+    ix = int(ixx)
+    iy = int(iyy)
+
     s = np.zeros((spectra.shape[2]))
     m = np.zeros((spectra.shape[2]))
     g = np.zeros((spectra.shape[2]))
     pl = np.zeros((spectra.shape[2]))
     
-    for i in range(0,cpy_arr_spec.shape[2]):
-        s[i] = cpy_arr_spec[iy][ix][i]
-
+    s[:] = spectra[iy][ix][:]
+    #for i in range(0,spectra.shape[2]):
+    #    s[i] = cpy_arr_spec[iy][ix][i]
+    
     m = GaussPowerBase(f_fit, param1[0][iy][ix], param1[1][iy][ix], param1[2][iy][ix], param1[3][iy][ix], param1[4][iy][ix], param1[5][iy][ix]) 
     g = Gauss(f_fit, param1[3][iy][ix], param1[4][iy][ix], param1[5][iy][ix])
     pl = PowerLaw(f_fit, param1[0][iy][ix], param1[1][iy][ix], param1[2][iy][ix])
@@ -208,22 +211,29 @@ def Gauss(f, P, fp, fw):
     return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) 
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20141227'
-wavelength = 1600
+date = '20130626'
+wavelength = 193
 
+global spectra
 
 cube_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))
 spectra = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
 
-global cpy_arr_spec
-cpy_arr_spec = np.copy(spectra)
+#global cpy_arr_spec
+#cpy_arr_spec = np.copy(spectra)
 
 global param1
 param1 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
 
+"""
 TIME = np.load('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength))
 
-t_interp = np.linspace(0, TIME[len(TIME)-1], TIME[len(TIME)-1]/12)
+if wavelength == 1600:
+    time_step = 24
+else:
+    time_step = 12  # add as argument, or leave in as constant?
+    
+t_interp = np.linspace(0, TIME[len(TIME)-1], int(TIME[len(TIME)-1]/time_step))
 
 if date == '20120923':   
     n_segments = 3  # break data into 12 segments of equal length
@@ -236,12 +246,13 @@ else:
 n = len(t_interp)
 rem = n % n_segments  # n_segments is argument in module call (default to 1?)
 freq_size = (n - rem) / n_segments
-
+"""
 ### determine frequency values that FFT will evaluate
 if wavelength == 1600:
     time_step = 24
 else:
     time_step = 12  # add as argument, or leave in as constant?
+freq_size = (cube_shape[2]*2)+1
 sample_freq = fftpack.fftfreq(freq_size, d=time_step)
 pidxs = np.where(sample_freq > 0)    
 
@@ -251,8 +262,8 @@ if 1:
     global f_fit
     
     freqs = sample_freq[pidxs]
-    
-    f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],spectra.shape[2])
+    print len(freqs)
+    f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],int(spectra.shape[2]))
         
     global toggle
     toggle = 0

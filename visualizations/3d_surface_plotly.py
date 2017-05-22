@@ -58,7 +58,7 @@ plot([
 """    
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20111210'
+date = '20101208'
 wavelength1 = 1600
 #wavelength2 = 1600 # 304...
 wavelength2 = 304
@@ -73,8 +73,8 @@ names = ['slope_coeff', 'index', 'tail', 'gauss_amp', 'gauss_loc', 'gauss_wid', 
 p1 = 1
 p2 = 2
 
-H_1600 = H_1600[:,50:-50,70:-70]
-H_304 = H_304[:,50:-50,70:-70]
+H_1600 = H_1600[:,:,:]
+H_304 = H_304[:,:,:]
 
 
 #param1 = H_1600[p1,0:,0:] # for 20160520
@@ -103,38 +103,10 @@ H_304 = H_304[:,50:-50,70:-70]
 #param2 = H[p2,375:475,625:750] # for 20141025
 #param1 = H[p1,170:320,170:320] # for 20130626
 #param2 = H[p2,170:320,170:320] # for 20130626
-
-"""
-#param1 = H[p1,180:-175,350:-80] # for 20140818
-#param2 = H[p2,180:-175,350:-80] # for 20140818
-param0 = H[0,0:, 0:] # for 20130626 full
-param1 = H[1,0:, 0:] # for 20130626 full
-param2 = H[2,0:, 0:] # for 20130626 full
-param3 = H[3,0:, 0:] # for 20130626 full
-param4 = H[4,0:, 0:] # for 20130626 full
-param5 = H[5,0:, 0:] # for 20130626 full
-param6 = H[6,0:, 0:] # for 20130626 full
-param7 = H[7,0:, 0:] # for 20130626 full
-
-plist0 = np.ndarray.tolist(param0)
-plist1 = np.ndarray.tolist(param1)
-plist2 = np.ndarray.tolist(param2)
-plist3 = np.ndarray.tolist(param3)
-plist4 = np.ndarray.tolist(param4)
-plist5 = np.ndarray.tolist(param5)
-plist6 = np.ndarray.tolist(param6)
-plist7 = np.ndarray.tolist(param7)
-
-
-p304_0 = np.ndarray.tolist(H_304[0])
-p304_1 = np.ndarray.tolist(H_304[1])
-p304_2 = np.ndarray.tolist(H_304[2])
-p304_3 = np.ndarray.tolist(H_304[3])
-p304_4 = np.ndarray.tolist(H_304[4])
-p304_5 = np.ndarray.tolist(H_304[5])
-p304_6 = np.ndarray.tolist(H_304[6])
-p304_7 = np.ndarray.tolist(H_304[7])
-"""
+#param1 = H[p1,170:320,170:320] # for 20101208
+#param2 = H[p2,170:320,170:320] # for 20101208
+#H_1600 = H_1600[:,50:-50,70:-70] # for 20111210
+#H_304 = H_304[:,50:-50,70:-70] # for 20111210
 
 c = 5
 
@@ -148,55 +120,55 @@ h304 = np.ndarray.tolist(H_304)
 
 p0_1600 = Surface(
     z=h1600[0],
-    surfacecolor=h1600[c],
+    #surfacecolor=h1600[c],
     #surfacecolor=h304[0],
     visible=False,
 )
 
 p1_1600 = Surface(
     z=h1600[1],
-    surfacecolor=h1600[c],
+    #surfacecolor=h1600[c],
     #surfacecolor=h304[1]
 ) 
 
 p2_1600 = Surface(
     z=h1600[2],
-    surfacecolor=h1600[c],
+    #surfacecolor=h1600[c],
     #surfacecolor=h304[2],
     visible=False,
 )
 
 p3_1600 = Surface(
     z=h1600[3],
-    surfacecolor=h1600[c],
+    #surfacecolor=h1600[c],
     #surfacecolor=h304[3],
     visible=False,
 )
 
 p4_1600 = Surface(
     z=h1600[4],
-    surfacecolor=h1600[c],
+    #surfacecolor=h1600[c],
     #surfacecolor=h304[4],
     visible=False,
 )
 
 p5_1600 = Surface(
     z=h1600[5],
-    surfacecolor=h1600[c],
+    #surfacecolor=h1600[c],
     #surfacecolor=h304[5],
     visible=False,
 )
 
 p6_1600 = Surface(
     z=h1600[6],
-    surfacecolor=h1600[c],
+    #surfacecolor=h1600[c],
     #surfacecolor=h304[6],
     visible=False,
 )
 
 p7_1600 = Surface(
     z=h1600[7],
-    surfacecolor=h1600[c],
+    #surfacecolor=h1600[c],
     #surfacecolor=h304[7],
     visible=False,
 )

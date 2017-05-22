@@ -8,30 +8,9 @@ Created on Fri Mar 24 21:13:49 2017
 """
 ######################
 # run with:
-# $ mpiexec -n 8 python Spec_fit_mpi.py    (8 = number of processors)
+# $ mpiexec -n # python Spec_fit_mpi.py    (# = number of processors)
 ######################
 """
-
-# dont absolutely need M2_fit
-# can get rid of M2_gauss, M2_powerlaw, s_fit_gp
-
-# param + m2_fit both generated perfectly
-
-# 1/29:
-# took out f_fit, replaced with f, since were the same
-
-# maybe print param bounds?
-
-# maybe save results to text file - param bounds, region, fail-count... 
-
-# commenting-out the M2_fits.  for large regions they become way to big.  
-# include back when need them?
-
-# 2/3:
-# manually assign chunks to processors - to overcome 'Overflow error'
-
-# 2/12
-# changed ds from 0.1*s to new method
 
 from timeit import default_timer as timer
 

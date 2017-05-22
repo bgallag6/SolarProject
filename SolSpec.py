@@ -77,7 +77,8 @@ def heatmap(directory, date, wavelength):
     """
     
     # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
-    titles = [r'Power Law Slope-Coefficient [flux] - $A$', r'Power Law Index - $n$', r'Power Law Tail - $C$', r'Gaussian Amplitude [flux] - $\alpha$', r'Gaussian Location [min] - $\beta$', r'Gaussian Width - $\sigma$', 'F-Statistic', r'Gaussian Amplitude Scaled - $\alpha$', 'p-Value']
+    titles = [r'Power Law Slope-Coefficient [flux] - $A$', r'(b) Power Law Index $n$', r'Power Law Tail - $C$', r'Gaussian Amplitude [flux] - $\alpha$', r'(c) Gauss. Loc. $\beta$ [min]', r'Gaussian Width - $\sigma$', 'F-Statistic', r'Gaussian Amplitude Scaled - $\alpha$', 'p-Value']
+    #titles = [r'Power Law Slope-Coefficient [flux] - $A$', r'Power Law Index $n$', r'Power Law Tail - $C$', r'Gaussian Amplitude [flux] - $\alpha$', r'Gauss. Loc. $\beta$ [min] - ', r'Gaussian Width - $\sigma$', 'F-Statistic', r'Gaussian Amplitude Scaled - $\alpha$', 'p-Value']
     names = ['slope_coeff', 'index', 'tail', 'gauss_amp', 'gauss_loc', 'gauss_wid', 'f_test', 'gauss_amp_scaled', 'p_value']
     cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [min]', 'Width', 'F-Statistic', 'Amplitude Scaled', 'p-Value']
     
@@ -87,13 +88,28 @@ def heatmap(directory, date, wavelength):
     # load parameter array and visual images from file tree structure 
     heatmaps = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
     visual = np.load('%s/DATA/Output/%s/%i/visual.npy'% (directory, date, wavelength))  
+    
+    #visual = visual[1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
     visual = visual[:,1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
     h_map = heatmaps
+    
+    v1600 = np.load('%s/DATA/Output/%s/1600/visual.npy'% (directory, date))  
+    #v1600 = v1600[:,1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
+    p1600 = np.load('%s/DATA/Output/%s/1600/param.npy'% (directory, date)) 
+    xdif = v1600.shape[2] - p1600.shape[2]
+    ydif = v1600.shape[1] - p1600.shape[1]
+    v1600 = v1600[:,ydif/2:-ydif/2,xdif/2:-xdif/2]
+    #print v1600.shape[1], v1600.shape[2]
+    #print p1600.shape[1], p1600.shape[2]
+    
+    #h_map = h_map[:,:p1600.shape[1],:p1600.shape[2]]
+    #visual = visual[:,:v1600.shape[1],:v1600.shape[2]]
     
     #heatmaps = np.load('%s/DATA/Output/%s/%i/*param.npy' % (directory, date, wavelength))
     #visual = np.load('%s/DATA/Output/%s/%i/*visual.npy'% (directory, date, wavelength))    
     
-    font_size = 23  # set the font size to be used for all text - titles, tick marks, text, labels
+    plt.rcParams["font.family"] = "Times New Roman"
+    font_size = 27  # set the font size to be used for all text - titles, tick marks, text, labels
     
     wavelength = wavelength    
 
@@ -114,9 +130,17 @@ def heatmap(directory, date, wavelength):
     #h_map = h_map[:, 0:h_map.shape[1]-50, 0:500]  # for 20130626 blobs      
     #x_ticks = [0,100,200,300,400,500]
     #y_ticks = [0,100,200,300,400]   
+    #x_ind = [0,100,200,300,400,500]
+    #y_ind = [0,100,200,300,400]   
     #y_ticks = [0,100,200,300] # 20120923
     
-    #x_ticks = [0,100,200,300,400,500]
+    xdim = int(np.floor(h_map.shape[2]/100))
+    ydim = int(np.floor(h_map.shape[1]/100))
+    
+    x_ticks = [100*i for i in range(xdim+1)]
+    y_ticks = [100*i for i in range(ydim+1)]
+    
+    #x_ticks = [0,100,200,300]
     #y_ticks = [0,100,200,300]  
     
     
@@ -124,7 +148,7 @@ def heatmap(directory, date, wavelength):
     df1, df2 = 3, 6  # degrees of freedom for model M1, M2
     p_val = ff.sf(h_map[6], df1, df2)
     
-    p_mask = np.copy(p_val)
+    #p_mask = np.copy(p_val)
     
     mask_thresh = 0.005  # significance threshold - masked above this value
        
@@ -132,14 +156,17 @@ def heatmap(directory, date, wavelength):
     amp_mask = np.copy(h_map[3])
     loc_mask = np.copy(h_map[4])
     wid_mask = np.copy(h_map[5])
-    v_mask = np.copy(visual[0])
+    #v_mask = np.copy(visual[0])
+    p1600_val = ff.sf(p1600[6], df1, df2)
+    #p1600_mask = np.copy(p1600_val)
+    v_mask = np.copy(v1600[0])
     
     # mask the Gaussian component arrays with NaNs if above threshold 
     p_mask[p_val > mask_thresh] = np.NaN  # for every element in p_mask, if the corresponding element in p_val is greater than the threshold, set that value to NaN
     amp_mask[p_val > mask_thresh] = np.NaN
     loc_mask[p_val > mask_thresh] = np.NaN
     wid_mask[p_val > mask_thresh] = np.NaN
-    v_mask[p_val < mask_thresh] = 1.  # invert mask, set equal to 1. -- so can make contour
+    v_mask[p1600_val < mask_thresh] = 1.  # invert mask, set equal to 1. -- so can make contour
     
     # determine percentage of region masked 
     count = np.count_nonzero(np.isnan(p_mask))   
@@ -168,13 +195,13 @@ def heatmap(directory, date, wavelength):
     #fig_height = 10  # works better for 20130626
     
     for i in range(len(titles)-1):
-    #for i in range(1,4):
+    #for i in range(4,5):
         
         #fig = plt.figure(figsize=(13,9))
         fig = plt.figure(figsize=(fig_width,fig_height))
         ax = plt.gca()  # get current axis -- to set colorbar 
         #plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
-        plt.title('%s' % (titles[i]), y = 1.02, fontsize=font_size)  # no date / wavelength
+        plt.title('%s' % (titles[i]), y = 1.02, fontsize=font_size, fontname="Times New Roman")  # no date / wavelength
         
         if i == 6:
             NaN_replace = np.nan_to_num(h_map[i])  # NaN's in chi^2 heatmap were causing issue, replace with 0?
@@ -214,12 +241,12 @@ def heatmap(directory, date, wavelength):
         #im = ax.imshow(h_map[i], cmap = cmap, vmin=h_min, vmax=h_max)
         #plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
         #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
-        #plt.xticks(x_ticks,fontsize=font_size)
-        #plt.yticks(y_ticks,fontsize=font_size)
+        plt.xticks(x_ticks,fontsize=font_size)
+        plt.yticks(y_ticks,fontsize=font_size)
         #plt.xticks(fontsize=font_size)
         #plt.yticks(fontsize=font_size)
-        #plt.xticks(x_ticks,x_ind,fontsize=font_size)
-        #plt.yticks(y_ticks,y_ind,fontsize=font_size)
+        #plt.xticks(x_ticks,x_ind,fontsize=font_size, fontname="Times New Roman")
+        #plt.yticks(y_ticks,y_ind,fontsize=font_size, fontname="Times New Roman")
         ax.tick_params(axis='both', which='major', pad=10)
         divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
         cax = divider.append_axes("right", size="3%", pad=0.07)
@@ -250,9 +277,10 @@ def heatmap(directory, date, wavelength):
             fig = plt.figure(figsize=(fig_width,fig_height))
             ax = plt.gca()  # get current axis -- to set colorbar 
             if i == 2:
-                plt.title(r'$p-value$ < %0.3f | f_{masked} = %0.1f' % (mask_thresh, mask_percent), y = 1.02, fontsize=font_size)
+                plt.title(r'$p-value$ < %0.3f | f$_{masked}$ = %0.1f%s' % (mask_thresh, mask_percent, '%'), y = 1.02, fontsize=font_size, fontname="Times New Roman")
             else:
-                plt.title(r'%s: $p$ < %0.3f | f_{masked} = %0.1f' % (titles[i], mask_thresh, mask_percent), y = 1.02, fontsize=font_size)
+                plt.title(r'%s; $p$ < %0.3f | f$_{masked}$ = %0.1f%s' % (titles[i], mask_thresh, mask_percent, '%'), y = 1.02, fontsize=font_size, fontname="Times New Roman")
+                #plt.title(r'(d) %i $\AA$ | f_{masked} = %0.1f%s' % (wavelength, mask_percent, '%'), y = 1.02, fontsize=font_size, fontname="Times New Roman")
                 #plt.title(r'%i$\AA$ Gaussian Location [min]: | f_{masked} = %0.1f' % (wavelength, mask_percent), y = 1.02, fontsize=font_size)
                 #plt.title(r'%s: $p$ < %0.3f' % (titles[i], mask_thresh), y = 1.02, fontsize=font_size)
             if i == 4:
@@ -280,10 +308,10 @@ def heatmap(directory, date, wavelength):
             #    c_ticks[h] = h1 + h_step*h
             #plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
             #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
-            #plt.xticks(x_ticks,fontsize=font_size)
-            #plt.yticks(y_ticks,fontsize=font_size)
-            #plt.xticks(x_ticks,x_ind,fontsize=font_size)
-            #plt.yticks(y_ticks,y_ind,fontsize=font_size)
+            plt.xticks(x_ticks,fontsize=font_size)
+            plt.yticks(y_ticks,fontsize=font_size)
+            #plt.xticks(x_ticks,x_ind,fontsize=font_size, fontname="Times New Roman")
+            #plt.yticks(y_ticks,y_ind,fontsize=font_size, fontname="Times New Roman")
             ax.tick_params(axis='both', which='major', pad=10)
             divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
             cax = divider.append_axes("right", size="3%", pad=0.07)
@@ -351,11 +379,11 @@ def heatmap(directory, date, wavelength):
     fig = plt.figure(figsize=(fig_width,fig_height))
     ax = plt.gca()  # get current axis -- to set colorbar 
     #plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
-    plt.title(r'Rollover Period [min] - $(C/A)^{\frac{1}{n}}$', y = 1.02, fontsize=font_size)  # no date / wavelength
+    plt.title(r'(d) Rollover Period $T_r$ [min]', y = 1.02, fontsize=font_size, fontname="Times New Roman")  # no date / wavelength
     roll_freq = np.nan_to_num(roll_freq)  # deal with NaN's causing issues
     h_min = np.percentile(roll_freq,1.)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-    h_max = np.percentile(roll_freq,99.)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
-    #h_max = np.percentile(roll_freq,99.9)  # for 1600 sunspot rollover - to show gradient 
+    h_max = np.percentile(roll_freq,99.9)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+    #h_max = np.percentile(roll_freq,99.)  # for 1600 sunspot rollover - to show gradient 
     h_range = np.abs(h_max-h_min)
     h_step = h_range / 10.
     #h1 = h_min + (h_step/2.)
@@ -371,10 +399,10 @@ def heatmap(directory, date, wavelength):
     #im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=(1./10**-1.), vmax=(1./10**-3.5))  # should bounds be set at frequency range
     #plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
     #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
-    #plt.xticks(x_ticks,fontsize=font_size)
-    #plt.yticks(y_ticks,fontsize=font_size)
-    #plt.xticks(x_ticks,x_ind,fontsize=font_size)
-    #plt.yticks(y_ticks,y_ind,fontsize=font_size)
+    plt.xticks(x_ticks,fontsize=font_size)
+    plt.yticks(y_ticks,fontsize=font_size)
+    #plt.xticks(x_ticks,x_ind,fontsize=font_size, fontname="Times New Roman")
+    #plt.yticks(y_ticks,y_ind,fontsize=font_size, fontname="Times New Roman")
     ax.tick_params(axis='both', which='major', pad=10)
     divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
     cax = divider.append_axes("right", size="3%", pad=0.07)
@@ -411,8 +439,8 @@ def heatmap(directory, date, wavelength):
     #im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=(1./10**-1.), vmax=(1./10**-3.5))  # should bounds be set at frequency range
     #plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
     #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
-    #plt.xticks(x_ticks,fontsize=font_size)
-    #plt.yticks(y_ticks,fontsize=font_size)
+    plt.xticks(x_ticks,fontsize=font_size)
+    plt.yticks(y_ticks,fontsize=font_size)
     #plt.xticks(x_ticks,x_ind,fontsize=font_size)
     #plt.yticks(y_ticks,y_ind,fontsize=font_size)
     ax.tick_params(axis='both', which='major', pad=10)
@@ -434,42 +462,53 @@ def heatmap(directory, date, wavelength):
     names_vis = ['average', 'mid']
     
     vis = visual
+    #trim_yv = (vis.shape[0]-1600)/2
+    #trim_xv = (vis.shape[1]-1600)/2
+    
     #trim_yv = (vis.shape[1]-1600)/2
     #trim_xv = (vis.shape[2]-1600)/2
     #vis = vis[:, trim_yv:vis.shape[1]-trim_yv, trim_xv:vis.shape[2]-trim_xv]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
+    #vis = vis[trim_yv:vis.shape[0]-trim_yv, trim_xv:vis.shape[1]-trim_xv]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
     
     #vis = vis[:, 0:vis.shape[1]-50, 0:500]  # for 20130626 blobs     
     
-    for i in range(2):
+    #for i in range(2):
+    for i in range(1):
         
         v_min = np.percentile(vis[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-        v_max = np.percentile(vis[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)     
+        v_max = np.percentile(vis[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)  
+        
+        #v_min = np.percentile(vis,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        #v_max = np.percentile(vis,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)  
         
         #fig = plt.figure(figsize=(12,9))
         fig = plt.figure(figsize=(fig_width,fig_height))
         
         ax = plt.gca()
+        #ax = plt.subplot2grid((1,31),(0, 0), colspan=30, rowspan=1)  #to sub for colorbar space
+        #plt.subplots_adjust(right=0.875)  #to sub for colorbar space
         #plt.title(r'%s: %i $\AA$  [Visual: %s]' % (date_title, wavelength, titles_vis[i]), y = 1.01, fontsize=25)
-        plt.title('Visual: %s' % (titles_vis[i]), y = 1.02, fontsize=font_size)  # no date / wavelength
+        plt.title('(a) Visual %s' % (titles_vis[i]), y = 1.02, fontsize=font_size, fontname="Times New Roman")  # no date / wavelength
+        #plt.title('(b) %i $\AA$' % wavelength, y = 1.02, fontsize=font_size, fontname="Times New Roman")  # no date / wavelength
         #im = ax.imshow(h_map[i], vmin=vmin[i], vmax=vmax[i])
-        #im = ax.imshow(vis[i], cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
-        #cmap = cm.get_cmap('sdoaia%i' % wavelength, 10)    
-        #im = ax.imshow(np.flipud(vis[i]), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
+        #im = ax.imshow(vis[i], cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)   
         im = ax.imshow(np.flipud(vis[i]), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
         #plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
         #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
-        #plt.xticks(x_ticks,fontsize=font_size)
-        #plt.yticks(y_ticks,fontsize=font_size)
+        plt.xticks(x_ticks,fontsize=font_size)
+        plt.yticks(y_ticks,fontsize=font_size)
         #plt.xticks(fontsize=font_size)
         #plt.yticks(fontsize=font_size)
-        #plt.xticks(x_ticks,x_ind,fontsize=font_size)
-        #plt.yticks(y_ticks,y_ind,fontsize=font_size)
+        #plt.xticks(x_ticks,x_ind,fontsize=font_size, fontname="Times New Roman")
+        #plt.yticks(y_ticks,y_ind,fontsize=font_size, fontname="Times New Roman")
         ax.tick_params(axis='both', which='major', pad=10)
-        divider = make_axes_locatable(ax)
-        cax = divider.append_axes("right", size="3%", pad=0.07)
-        cbar = plt.colorbar(im,cax=cax)
+        #divider = make_axes_locatable(ax)
+        #cax = divider.append_axes("right", size="3%", pad=0.07)
+        #cbar = plt.colorbar(im,cax=cax)
         #cbar.set_label('Intensity', size=20, labelpad=10)
-        cbar.ax.tick_params(labelsize=font_size, pad=5) 
+        #cbar.ax.tick_params(labelsize=font_size, pad=5) 
+        #cbar.outline.set_edgecolor('white')
+        #plt.cbaxes.tick_params(axis='both', colors='white')
         #plt.tight_layout()
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_vis[i]))
         plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
@@ -501,8 +540,8 @@ def heatmap(directory, date, wavelength):
             im = ax.imshow(np.flipud(vis[i]), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
             CS = plt.contour(X, Y, Z1, levels=[2.], linewidths=2, colors='red', linestyles='solid')
             CS = plt.contour(X, Y, Z1, levels=[2.], linewidths=2, colors='white', linestyles='dotted')
-            CS = plt.contour(X, Y, np.flipud(vis[i]), levels=[contours[k]], linewidths=2, colors='black', linestyles='solid')
-            CS = plt.contour(X, Y, np.flipud(vis[i]), levels=[contours[k]], linewidths=2, colors='white', linestyles='dashed')
+            CS = plt.contour(X, Y, np.flipud(v1600[i]), levels=[contours[k]], linewidths=2, colors='black', linestyles='solid')
+            CS = plt.contour(X, Y, np.flipud(v1600[i]), levels=[contours[k]], linewidths=2, colors='white', linestyles='dashed')
             #im = ax.imshow(np.flipud(v_mask), cmap='sdoaia%i' % wavelength, vmin = v_min, vmax = v_max)
             #plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
             #plt.ylabel('Y-Position [Pixels]', fontsize=font_size, labelpad=10)
@@ -520,7 +559,7 @@ def heatmap(directory, date, wavelength):
             cbar.ax.tick_params(labelsize=font_size, pad=5) 
             #plt.tight_layout()
             #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_vis[i]))
-            #plt.savefig('C:/Users/Brendan/Desktop/pvalue_mask_contour_overlay.pdf', format='pdf')
+            plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s_umbra.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
     
 
 
@@ -691,7 +730,8 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     y2 = sub_reg_coords[3]  # i2
     
     # create a list of all the files. This is USER-DEFINED
-    flist = sorted(glob.glob('%s/FITS/%s/%i/aia*.fits' % (directory,date,wavelength)))
+    #flist = sorted(glob.glob('%s/FITS/%s/%i/aia*.fits' % (directory,date,wavelength)))
+    flist = sorted(glob.glob('S:/FITS/%s/%i/aia*.fits' % (date,wavelength)))
     nf = len(flist)
 
     # Select the image that is the "middle" of our selection.
@@ -1035,21 +1075,22 @@ def fft_avg(directory, date, wavelength, num_seg):
     
     
     # initialize arrays to hold temporary results for calculating arithmetic average (changed from geometric)
-    #temp = np.zeros((9,spectra_seg.shape[2]))  # maybe have 3x3 to be generalized   
-    temp = np.zeros((25,spectra_seg.shape[2]))  # maybe have 3x3 to be generalized
-    p_avg = np.zeros((spectra_seg.shape[2]))  # would pre-allocating help? (seems to)
-    #spectra_array = np.zeros((spectra_seg.shape[0]-2, spectra_seg.shape[1]-2, spectra_seg.shape[2]))  # would pre-allocating help? (seems to)
-    spectra_array = np.zeros((spectra_seg.shape[0]-4, spectra_seg.shape[1]-4, spectra_seg.shape[2]))  # would pre-allocating help? (seems to)    
+    temp = np.zeros((9,spectra_seg.shape[2]))  # maybe have 3x3 to be generalized   
+    #temp = np.zeros((25,spectra_seg.shape[2]))  # maybe have 3x3 to be generalized
+    #p_avg = np.zeros((spectra_seg.shape[2]))  # would pre-allocating help? (seems to)
+    spectra_array = np.zeros((spectra_seg.shape[0]-2, spectra_seg.shape[1]-2, spectra_seg.shape[2]))
+    spectra_StdDev = np.zeros((spectra_seg.shape[0]-2, spectra_seg.shape[1]-2, spectra_seg.shape[2]))
+    #spectra_array = np.zeros((spectra_seg.shape[0]-4, spectra_seg.shape[1]-4, spectra_seg.shape[2]))    
     
     ### calculate 3x3 pixel-box arithmetic average.  start at 1 and end 1 before to deal with edges.
     ## previously for geometric -- 10^[(log(a) + log(b) + log(c) + ...) / 9] = [a*b*c*...]^(1/9)
 
-    #for l in range(1,spectra_seg.shape[0]-1):
-    for l in range(2,spectra_seg.shape[0]-2):
+    for l in range(1,spectra_seg.shape[0]-1):
+    #for l in range(2,spectra_seg.shape[0]-2):
     #for l in range(1,25):
         #print l
-        #for m in range(1,spectra_seg.shape[1]-1):
-        for m in range(2,spectra_seg.shape[1]-2):
+        for m in range(1,spectra_seg.shape[1]-1):
+        #for m in range(2,spectra_seg.shape[1]-2):
         #for m in range(1,25):
         
             """
@@ -1064,7 +1105,7 @@ def fft_avg(directory, date, wavelength, num_seg):
             temp[8] = np.log10(spectra_seg[l+1][m+1])
             """
             
-            """
+            #"""
             temp[0] = spectra_seg[l-1][m-1]
             temp[1] = spectra_seg[l-1][m]
             temp[2] = spectra_seg[l-1][m+1]
@@ -1074,7 +1115,7 @@ def fft_avg(directory, date, wavelength, num_seg):
             temp[6] = spectra_seg[l+1][m-1]
             temp[7] = spectra_seg[l+1][m]
             temp[8] = spectra_seg[l+1][m+1]
-            """
+            #"""
             
             """            
             w = 0.08
@@ -1091,6 +1132,7 @@ def fft_avg(directory, date, wavelength, num_seg):
             temp[8] = spectra_seg[l+1][m+1]*w
             """
             
+            """
             w = 0.02
             wm = 0.05
             wc = 1. - (16*w) - (8*wm)
@@ -1119,17 +1161,20 @@ def fft_avg(directory, date, wavelength, num_seg):
             temp[22] = spectra_seg[l+2][m]*w
             temp[23] = spectra_seg[l+2][m+1]*w
             temp[24] = spectra_seg[l+2][m+2]*w
-
+            """
             
 
-            temp9 = np.sum(temp, axis=0)
+            #temp9 = np.sum(temp, axis=0)
             #p_avg = temp9 / 9.
-            p_avg = temp9
+            p_avg = np.average(temp, axis=0)
+            #p_avg = temp9
             #spectra_array[l-1][m-1] = np.power(10,p_geometric)
-            #spectra_array[l-1][m-1] = p_avg
-            spectra_array[l-2][m-2] = p_avg
+            spectra_array[l-1][m-1] = p_avg
+            spectra_StdDev[l-1][m-1] = np.std(temp, axis=0)
+            #spectra_array[l-2][m-2] = p_avg
             
     np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_array)
+    np.save('%s/DATA/Temp/%s/%i/uncertainties.npy' % (directory, date, wavelength), spectra_StdDev)
     #np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_seg)  # for no 3x3 pixel box averaging
     #return spectra_array
     
@@ -1438,6 +1483,7 @@ def mem_map(directory, date, wavelength):
     
     # load original array 
     original = np.load('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength))
+    original_StdDev = np.load('%s/DATA/Temp/%s/%i/uncertainties.npy' % (directory, date, wavelength))
     print original.shape
     
     if original.ndim == 3:
@@ -1445,6 +1491,7 @@ def mem_map(directory, date, wavelength):
         
         # create memory-mapped array with similar datatype and shape to original array
         mmap_arr = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='w+', shape=(original.shape[0],original.shape[1],original.shape[2]))
+        mmap_StdDev = np.memmap('%s/DATA/Temp/%s/%i/uncertainties_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='w+', shape=(original.shape[0],original.shape[1],original.shape[2]))
         
         
     elif original.ndim == 4:
@@ -1455,8 +1502,10 @@ def mem_map(directory, date, wavelength):
      
     # write data to memory-mapped array
     mmap_arr[:] = original[:]
+    mmap_StdDev[:] = original_StdDev[:]
     
     # flush memory changes to disk, then remove memory-mapped object
     del mmap_arr
+    del mmap_StdDev
     
     np.save('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength), orig_shape)

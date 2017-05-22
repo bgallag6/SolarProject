@@ -56,3 +56,14 @@
 
 5/9:
 - indented last 10 lines of Spec_fit_mpi.py - so only rank 0 is trying to save param.npy
+
+5/15:
+- for test: changed "for i in range(0,1)" - 1 2hour segment (still using 6 segments in call for freqs)
+  also changed all the 3x3 averaging stuff back from 5x5... array allocating...
+
+5/19:
+- added calculating the standard deviation of the 3x3 pixel box's spectra as a function of frequency, to use as uncertainties 'ds' in spectra fitting [SolSpec.py]
+- added option to constrain parameter bounds of 2nd optimization, since initial parameter guesses are specified [Spec_fit_mpi.py]
+- changed a bunch of formatting of heatmaps [SolSpec.py]
+- added creation of memory map of standard deviation array [SolSpec.py]
+- added loading / splitting into chunks and passing to function of standard deviation memory mapped array, and using as each pixels 'ds' [Spec_fit_mpi.py]

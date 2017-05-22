@@ -24,12 +24,13 @@ from matplotlib import cm
 #h_new = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_304_-500_500i_-500_600j_param_slope6_arthm.npy')
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20141227'
-h1 = np.load('%s/DATA/Output/%s/171/param.npy' % (directory, date))
-h2 = np.load('%s/DATA/Output/%s/193/param.npy' % (directory, date))
-h3 = np.load('%s/DATA/Output/%s/211/param.npy' % (directory, date))
-h4 = np.load('%s/DATA/Output/%s/304/param.npy' % (directory, date))
+date = '20140818'
+#h1 = np.load('%s/DATA/Output/%s/171/param.npy' % (directory, date))
+#h2 = np.load('%s/DATA/Output/%s/193/param.npy' % (directory, date))
+#h3 = np.load('%s/DATA/Output/%s/211/param.npy' % (directory, date))
+#h4 = np.load('%s/DATA/Output/%s/304/param.npy' % (directory, date))
 h5 = np.load('%s/DATA/Output/%s/1600/param.npy' % (directory, date))
+h6 = np.load('%s/DATA/Output/%s/1700/param.npy' % (directory, date))
 #h6 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/8hrs_preflare/param.npy')
 #h1 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/2hrs_9_11/param.npy')
 #h2 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20140910/193/2hrs_11_13/param.npy')
@@ -50,9 +51,9 @@ path_name = 'C:/Users/Brendan/Desktop/same_scale'
 
 # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
 #titles = ['Slope Coefficient', 'Power Law Index', 'Power Law Tail', 'Gaussian Amplitude', 'Gaussian Location [sec]', 'Gaussian Width', '$\chi^2$']
-titles = [r'Power Law Slope-Coefficient -- [$A$]', r'Power Law Index -- [$n$]', r'Power Law Tail -- [$C$]', r'Gaussian Amplitude -- [$\alpha$]', r'Gaussian Location [Seconds] -- [$\beta$]', r'Gaussian Width -- [$\sigma$]', 'F-Statistic', r'Gaussian Amplitude Scaled -- [$\alpha$]', 'P-Value']
+titles = [r'Power Law Slope-Coefficient -- [$A$]', r'Power Law Index -- [$n$]', r'Power Law Tail -- [$C$]', r'Gaussian Amplitude -- [$\alpha$]', r'Gaussian Location [Seconds] -- [$\beta$]', r'Gaussian Width -- [$\sigma$]', 'F-Statistic', r'Gaussian Amplitude Scaled -- [$\alpha$]', 'r-Value']
 #names = ['PL_A', 'Slopes', 'PL_C', 'Gauss_Amp', 'Gauss_Loc', 'Gauss_Wid', 'Chi2']
-names = ['slope_coeff', 'index', 'tail', 'gauss_amp', 'gauss_loc', 'gauss_wid', 'f_test', 'gauss_amp_scaled', 'p_value']
+names = ['slope_coeff', 'index', 'tail', 'gauss_amp', 'gauss_loc', 'gauss_wid', 'f_test', 'gauss_amp_scaled', 'r_value']
 #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location (e^(Value))', 'Width', '$\chi^2$']
 #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', '$\chi^2$']
 cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [seconds]', 'Width', 'F-Statistic', 'Amplitude Scaled', 'P-Value']
@@ -62,13 +63,14 @@ cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'L
 #heatmap = [h171,h193,h211,h304]
 #wavelengths = [171,193,211,304]
 
-#heatmap = [h171,h171_new]
-heatmap = [h1,h2,h3,h4,h5]
+heatmap = [h5,h6]
+#heatmap = [h1,h2,h3,h4,h5]
 #wavelengths = [171,171]
 #wavelengths = [193,193]
 #wavelengths = [211,211]
 #wavelengths = [193 for i in range(len(heatmap))]
-wavelengths = [17100,1930,211,30400,160000]
+#wavelengths = [17100,1930,211,30400,160000]
+wavelengths = [1600,1700]
 
 #h_map2 = h_new
 
@@ -78,8 +80,8 @@ day = date[6:8]
 date_title = '%s-%s-%s' % (year,month,day)
 
 
-vmin = np.zeros((7))
-vmax = np.zeros((7))
+vmin = np.zeros((9))
+vmax = np.zeros((9))
 
 """
 for m in range(6):
@@ -94,7 +96,7 @@ for m in range(6):
 M2_low = [0., 0.3, 0., 0.00001, 1./np.exp(-4.6), 0.05]
 M2_high = [0.000002, 3.0, 0.003, 0.01, 1./np.exp(-6.5), 0.8]
 
-for m in range(7):
+for m in range(9):
         
     for n in range(len(heatmap)):
         if n == 0:
@@ -115,7 +117,15 @@ for m in range(7):
         vmin[m] = np.percentile(v_temp,3)
         vmax[m] = np.percentile(v_temp,97)
 
-
+for n in range(len(heatmap)):
+    if n == 0:
+        roll_temp = []
+    rollover = (heatmap[n][2]/heatmap[n][0])**(1./heatmap[n][1])
+    rollover = np.nan_to_num(rollover)
+    roll_flat = np.reshape(rollover, (heatmap[n][2].shape[0]*heatmap[n][2].shape[1]))
+    roll_temp = np.append(v_temp, roll_flat)
+roll_min = np.percentile(roll_temp,1) 
+roll_max = np.percentile(roll_temp,99.9) 
 
 for c in range(len(heatmap)):
     h_map = heatmap[c]
@@ -137,7 +147,7 @@ for c in range(len(heatmap)):
         fig_height = 10*aspect_ratio  # works better for 20130626
     
     
-    for i in range(7):
+    for i in range(9):
     #for i in range(1):
         
         
@@ -201,7 +211,7 @@ for c in range(len(heatmap)):
         #fig = plt.figure(figsize=(13,9))
         fig = plt.figure(figsize=(fig_width,fig_height))
         ax = plt.gca()  # get current axis -- to set colorbar 
-        plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
+        plt.title(r'%i %s' % (wavelength, titles[i]), y = 1.01, fontsize=25)
         #plt.title('%s -- Segment %i' % (titles[i], c), y = 1.01, fontsize=25)  # no date / wavelength
         #plt.title('%s -- Segment Hours: %s' % (titles[i], seg[c]), y = 1.01, fontsize=25)  # no date / wavelength
         
@@ -222,8 +232,9 @@ for c in range(len(heatmap)):
         #plt.tight_layout()
         #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
         #plt.savefig('%s/%s_%i_%s_same_%i.jpeg' % (path_name, date, wavelength, names[i], c))
-        plt.savefig('%s/%s_%s_same_%i.jpeg' % (path_name, date, names[i], wavelength))
-        #plt.savefig('%s/%s_%i_%s_same_%s.pdf' % (path_name, date, wavelength, names[i], seg[c]), format='pdf')
+        #plt.savefig('%s/%s_%s_same_%i.jpeg' % (path_name, date, names[i], wavelength))
+        #plt.savefig('%s/%s_%s_same_%i.pdf' % (path_name, date, names[i], wavelength), format='pdf')
+        plt.savefig('%s/%s_%i_%s.pdf' % (path_name, date, wavelength, names[i]), format='pdf')
         #plt.close()
         """
         if c == 0:
@@ -322,20 +333,23 @@ for c in range(len(heatmap)):
         #plt.savefig('%s/%s_%i_%s_mask_%i.pdf' % (path_name, date, wavelength, names_m[k], (1./mask_thresh)), format='pdf')
         
     
+    
+    
     # generate 'rollover frequency' heatmap
     roll_freq = (h_map[2] / h_map[0])**(-1./ h_map[1])
-    roll_freq = 1./roll_freq
+    roll_freq = (1./roll_freq)/60.
     fig = plt.figure(figsize=(fig_width,fig_height))
     ax = plt.gca()  # get current axis -- to set colorbar 
     #plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
-    plt.title(r'Rollover Period [Seconds] -- [$(C/A)^{-\frac{1}{n}}$]', y = 1.01, fontsize=25)  # no date / wavelength
+    plt.title(r'%i Rollover Period [min]' % wavelength, y = 1.01, fontsize=25)  # no date / wavelength
     roll_freq = np.nan_to_num(roll_freq)  # deal with NaN's causing issues
     h_min = np.percentile(roll_freq,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-    h_max = np.percentile(roll_freq,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+    #h_max = np.percentile(roll_freq,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)    
+    h_max = np.percentile(roll_freq,99.9)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
     #cmap = 'jet'      
     cmap = cm.get_cmap('jet', 10)    
     
-    im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=h_min, vmax=h_max)
+    im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=roll_min, vmax=roll_max)
     #im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=(1./10**-1.), vmax=(1./10**-3.5))  # should bounds be set at frequency range
     #plt.xlabel('X-position (i) [pixels]', fontsize=20, labelpad=10)
     #plt.ylabel('Y-position (j) [pixels]', fontsize=20, labelpad=10)
@@ -349,6 +363,9 @@ for c in range(len(heatmap)):
     #plt.tight_layout()
     #plt.savefig('%s/%s_%i_heatmap_%s.jpeg' % (path_name, date, wavelength, names[i]))
     #plt.savefig('%s/%s_%i_roll_freq.pdf' % (path_name, date, wavelength), format='pdf')
+    #plt.savefig('%s/%s_roll_freq_same_%i.jpeg' % (path_name, date, wavelength))
+    #plt.savefig('%s/%s_roll_freq_same_%i.pdf' % (path_name, date, wavelength), format='pdf')
+    plt.savefig('%s/%s_%i_roll_freq.pdf' % (path_name, date, wavelength), format='pdf')
     #"""
     
   

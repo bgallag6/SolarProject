@@ -45,7 +45,7 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
 date = '20130626'
-wavelength = 171
+wavelength = 211
     
 #spectra_array = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/193/20130626_193_-450_-200i_-200_200j_spectra.npy')
 #spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
@@ -61,11 +61,15 @@ SPECTRA = spectra_array
 
 #num_freq = SPECTRA.shape[2]  # determine nubmer of frequencies that are used
 num_freq = 299
-#num_freq = 150
+#num_freq = 149
     
 # determine frequency values that FFT will evaluate
 freq_size = ((num_freq)*2) + 1  # determined from FFT-averaging script
-time_step = 12  # add as argument, or leave in as constant?
+if wavelength == 1600:
+    time_step = 24
+else:
+    time_step = 12  # add as argument, or leave in as constant?
+
 #time_step = 24  # add as argument, or leave in as constant?
 sample_freq = fftpack.fftfreq(freq_size, d=time_step)
 pidxs = np.where(sample_freq > 0)
@@ -109,17 +113,20 @@ y2 = [524, 523, 522, 328, 323, 1441, 1427, 864, 325, 319, 551, 352, 322, 650, 65
 
 point_label = ['A', 'B', 'C', 'D']
 
-m2_title = ['Tail Dominated w/o Gaussian', 'Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/ Gaussian', 'Tail Dominated w/ Gaussian']
+m2_title = ['(a) Tail Dominated w/o Gaussian', '(b) Power Law Dominated w/o Gaussian', '(c) Power Law Dominated w/ Gaussian', '(d) Tail Dominated w/ Gaussian']
 """
 
 m2 = [188, 726, 722, 872] # 727, 722, 189, 187, 867, 765, 757, 525, 708, 743, 790, 790, 790, 794, 796, 797, 798, 858, 861, 863, 872, 872, 876]
 l2 = [523, 328, 1427, 875] # 323, 1441, 522, 524, 864, 325, 319, 551, 352, 322, 650, 653, 659, 642, 648, 667, 669, 866, 867, 863, 865, 875, 879]
 
+#l2 = [684,828]
+#m2 = [858,638]
+
 #m2 = [867, 765, 757, 525, 708, 743, 790, 790, 790, 794, 796, 797, 798, 858, 861, 863, 872, 872, 876]
 #l2 = [864, 325, 319, 551, 352, 322, 650, 653, 659, 642, 648, 667, 669, 866, 867, 863, 865, 875, 879]
 
-m2_title = ['Power-Law Dominated w/o Gaussian', 'Power-Law Dominated w/ Gaussian', 'Tail Dominated w/o Gaussian', 'Tail Dominated w/o Gaussian']
-
+m2_title = ['(c) Power Law Dominated w/o Gaussian', '(d) Power Law Dominated w/ Gaussian', '(a) Tail Dominated w/o Gaussian', '(b) Tail Dominated w/o Gaussian']
+#m2_title = 
 point_label = ['C', 'D', 'A', 'B']
 
 #m2_title = ['Tail Dominated w/o Gaussian']
@@ -299,18 +306,20 @@ for l in range(1):
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))
         #plt.close()
         """
+        plt.rcParams["font.family"] = "Times New Roman"
+        font_size = 27
         
-        fig = plt.figure(figsize=(15,15))
+        fig = plt.figure(figsize=(12,10))
         ax = plt.gca()  # get current axis -- to set colorbar 
         #plt.title('Power-Law Dominated : Pixel %ii, %ij' % (l2[m],m2[m]), y = 1.01, fontsize=25)
         #plt.title('%s: Pixel %ix, %iy' % (m2_title[m], m2[m],l2[m]), y = 1.01, fontsize=30)
         #plt.title('171: %ix, %iy' % (m2[m],l2[m]), y = 1.01, fontsize=30)
-        plt.title('%s: Point %s' % (m2_title[m], point_label[m]), y = 1.01, fontsize=30)
+        plt.title('%s: Point %s' % (m2_title[m], point_label[m]), y = 1.01, fontsize=font_size, fontname="Times New Roman")
         #plt.title('%s: Point %s' % (m2_title[m-17], point_label[m-17]), y = 1.01, fontsize=30)
         plt.ylim((10**-4.7,10**0))
         plt.xlim((10**-4.,10**-1.3))
-        plt.xticks(fontsize=30)
-        plt.yticks(fontsize=30)
+        plt.xticks(fontsize=font_size, fontname="Times New Roman")
+        plt.yticks(fontsize=font_size, fontname="Times New Roman")
         ax.tick_params(axis='both', which='major', pad=10)
         plt.loglog(f,s,'k')
         plt.loglog(f, m1_fit, label='M1 - Power Law', linewidth=1.3)
@@ -321,30 +330,31 @@ for l in range(1):
         #plt.loglog(f, m2P_fit, 'g', label=r'$A\nu^{-n} + C$', linewidth=1.3)
         #plt.loglog(f, m2G_fit, 'g--', label=r'$\alpha\ e^{{-\frac{(\ln\nu-\beta)^{2}}{\sigma^{2}}}}$', linewidth=1.3)
         #plt.loglog(f, m2_fit2, 'purple', label='Combined Model', linewidth=1.3)
-        plt.xlabel('Frequency [Hz]', fontsize=30, labelpad=10)
-        plt.ylabel('Power', fontsize=30, labelpad=10)
+        plt.xlabel('Frequency [Hz]', fontsize=font_size, labelpad=10, fontname="Times New Roman")
+        plt.ylabel('Power', fontsize=font_size, labelpad=10, fontname="Times New Roman")
         plt.vlines((1.0/300.),10**-8,10**1, linestyles='dashed', label='5 minutes')
         plt.vlines((1.0/180.),10**-8,10**1, linestyles='dotted', label='3 minutes')
+        #plt.vlines((0.0093),10**-8,10**1, linestyles='dotted', label='3 minutes')
         
-        #rect = patches.Rectangle((0.005,0.05), 0.03, 0.6, color='white', fill=True)
+        #rect = patches.Rectangle((0.004,0.015), 0.012, 0.8, color='white', fill=True)
         #ax.add_patch(rect)
         #"""
-        plt.text(0.0045, 10**-0.31, r'$A$ = {0:0.2e} [$flux$]'.format(m2_param[0]), fontsize=30)
-        plt.text(0.0046, 10**-0.51, r'$n$ = {0:0.2f}'.format(m2_param[1]), fontsize=30)
+        plt.text(0.00725, 10**-0.41, r'$A$ = {0:0.2e}'.format(m2_param[0]), fontsize=font_size, fontname="Times New Roman")
+        plt.text(0.0076, 10**-0.61, r'$n$ = {0:0.2f}'.format(m2_param[1]), fontsize=font_size, fontname="Times New Roman")
         #plt.text(0.008, 10**-0.75, r'$C$ =  {0:0.3e}'.format(m2_param[2]), fontsize=25)
         #plt.text(0.007, 10**-0.73, r'$(C/A)^{-\frac{1}{n}}$ = %f [s]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
-        plt.text(0.0045, 10**-0.73, r'$R$ = %0.1f [min]' % ((1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1]))/60.), fontsize=30)
+        plt.text(0.00725, 10**-0.83, r'$R$ = %0.1f [min]' % ((1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1]))/60.), fontsize=font_size, fontname="Times New Roman")
         #plt.text(0.007, 10**-0.73, r'$r$ = %i [s]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
-        plt.text(0.0046, 10**-0.95, r'$\alpha$ = {0:0.2e} [$flux$]'.format(m2_param[3]), fontsize=30)
+        plt.text(0.0075, 10**-1.05, r'$\alpha$ = {0:0.2e}'.format(m2_param[3]), fontsize=font_size, fontname="Times New Roman")
         #plt.text(0.007, 10**-1.09, r'$\beta$ = {0:0.3f}'.format(m2_param[4]), fontsize=25)
-        plt.text(0.0046, 10**-1.15, r'$\beta$ = {0:0.1f} [min]'.format((1./np.exp(m2_param[4]))/60.), fontsize=30)
-        plt.text(0.0046, 10**-1.35, r'$\sigma$ = {0:0.3f}'.format(m2_param[5]), fontsize=30)
+        plt.text(0.00763, 10**-1.26, r'$\beta$ = {0:0.1f} [min]'.format((1./np.exp(m2_param[4]))/60.), fontsize=font_size, fontname="Times New Roman")
+        plt.text(0.0079, 10**-1.47, r'$\delta$ = {0:0.3f}'.format(m2_param[5]), fontsize=font_size, fontname="Times New Roman")
         #plt.text(0.007, 10**-1.55, r'$\chi^2$ = {0:0.3f}'.format(chisqrM22), fontsize=30)
         #plt.text(0.007, 10**-1.75, r'$p$ = {0:0.2e}'.format(p_val), fontsize=30)
-        plt.text(0.0047, 10**-1.55, r'$p$ = {0:0.3g}'.format(p_val), fontsize=30)
-        plt.text(0.0047, 10**-1.75, r'$r$ = {0:0.3g}'.format(r_val[0]), fontsize=30)
+        plt.text(0.0077, 10**-1.67, r'$p$ = {0:0.3g}'.format(p_val), fontsize=font_size, fontname="Times New Roman")
+        plt.text(0.00786, 10**-1.87, r'$r$ = {0:0.3g}'.format(r_val[0]), fontsize=font_size, fontname="Times New Roman")
         #legend = ax.legend(loc='upper right', prop={'size':30}, labelspacing=0.35)
-        legend = ax.legend(loc='lower left', prop={'size':30}, labelspacing=0.35)
+        legend = ax.legend(loc='lower left', prop={'size':font_size}, labelspacing=0.35)
         for label in legend.get_lines():
             label.set_linewidth(3.0)  # the legend line width
         #"""
@@ -362,7 +372,7 @@ for l in range(1):
         """
         #plt.show()
         #plt.savefig('C:/Users/Brendan/Desktop/171_final_points/171_%ix_%iyR.jpeg' % (m2[m],l2[m]))
-        plt.savefig('C:/Users/Brendan/Desktop/171_final_points2/171_%ix_%iy.pdf' % (m2[m],l2[m]), format='pdf')
+        plt.savefig('C:/Users/Brendan/Desktop/211_%ix_%iyF.pdf' % (m2[m],l2[m]), format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/171_slice2_double_optimize/171A_%ii_%ij.jpeg' % (l,m))
         #plt.savefig('C:/Users/Brendan/Desktop/171_points_square/pixel_%ii_%ij_new.jpeg' % (l2[m],m2[m]))
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))
