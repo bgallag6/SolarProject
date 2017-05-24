@@ -21,7 +21,6 @@ Created on Sat Jan 28 12:15:32 2017
 # changed ds from 0.1*s to new method
 
 from timeit import default_timer as timer
-
 import numpy as np
 import scipy.signal
 from scipy.interpolate import interp1d
@@ -46,7 +45,6 @@ def Gauss(f, P, fp, fw):
 def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
 
-# this function receives a 3D cube and sums over the z axis, returning the [x,y] sum array
 #def spec_fit( subcube ):
 def spec_fit( subcube, subcube_StdDev ):
     
@@ -116,9 +114,6 @@ def spec_fit( subcube, subcube_StdDev ):
 
       
         A, n, C = nlfit_l  # unpack fitting parameters
-        
-        # unpack uncertainties in fitting parameters from diagonal of covariance matrix
-        #dA, dn, dC = [np.sqrt(nlpcov_l[j,j]) for j in range(nlfit_l.size)]
 
         ## fit data to combined power law plus gaussian component model
         #"""        
@@ -204,13 +199,10 @@ def spec_fit( subcube, subcube_StdDev ):
         params[3][l][m] = P22
         params[4][l][m] = fp22
         params[5][l][m] = fw22
-        #params[6][l][m] = redchisqrM2
         params[6][l][m] = f_test2
         params[7][l][m] = P22 / amp_scale2
         params[8][l][m] = r
         
-        # populate array holding model fits
-        #M2_fit[l][m] = m2_fit
         
     # estimate time remaining and print to screen  (looks to be much better - not sure why had above?)
     T = timer()
@@ -237,7 +229,6 @@ def spec_fit( subcube, subcube_StdDev ):
   T_hr3, T_min3 = divmod(T_min3, 60)
   print "Actual total time = %i:%.2i:%.2i" % (T_hr3, T_min3, T_sec3) 
 			
-  #return params, M2_fit
   return params
 	
 
@@ -263,7 +254,6 @@ wavelength = int(sys.argv[3])
 cube_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))
 cube = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
 cube_StdDev = np.memmap('%s/DATA/Temp/%s/%i/uncertainties_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
-#cube = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(1658,1481,299))
 #cube = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_spectra.npy')
 
 chunks = np.array_split(cube, size)  # Split the data based on no. of processors
@@ -280,17 +270,13 @@ ss = np.shape(subcube)  # Validation
 print "Processor", rank, "received an array with dimensions", ss  # Validation
 print "Height = %i, Width = %i, Total pixels = %i" % (subcube.shape[0], subcube.shape[1], subcube.shape[0]*subcube.shape[1])
 
-#params_T, M2_fit_T = spec_fit( subcube )  # Do something with the array
 params_T = spec_fit( subcube, subcube_StdDev )  # Do something with the array
 newData_p = comm.gather(params_T, root=0)  # Gather all the results
-#newData_m = comm.gather(M2_fit_T, root=0)  # Gather all the results
 
 # Have one node stack the results
 if rank == 0:
   stack_p = np.hstack(newData_p)
-  #stack_m = np.vstack(newData_m)
   print stack_p.shape  # Verify we have a summed version of the input cube
-  #print stack_m.shape  # Verify we have a summed version of the input cube
  
 
   T_final = timer() - start
@@ -299,6 +285,4 @@ if rank == 0:
   print "Total program time = %i:%.2i:%.2i" % (T_hr_final, T_min_final, T_sec_final)   
   print "Just finished region: %s %iA" % (date, wavelength)
 
-  #np.save('/mnt/data/Gallagher/DATA/Output/20130626/193/20130626_193_-500_500i_-500_600j_param_slope6_arthm', stack_p)
   np.save('%s/DATA/Output/%s/%i/param' % (directory, date, wavelength), stack_p)
-  #np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_param', stack_p)

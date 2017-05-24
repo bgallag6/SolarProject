@@ -77,11 +77,11 @@ Datasets downloaded:
 
 20131118: 12:00-24:00
 (-300,225)(-125,275) -- (-355,280)(-125,275)
-171 - 3595/3600 [sunspot - DONE]
-193 - 3595/3600 [sunspot - DONE]
-211 - 3592/3600 [sunspot - DONE]
-304 - 3600/3600 [sunspot - DONE]
-1600 - 1800/1800 [sunspot - DONE]
+171 - 3595/3600 [sunspot - DONE]  %%solar-backup%%
+193 - 3595/3600 [sunspot - DONE]  %%solar-backup%%
+211 - 3592/3600 [sunspot - DONE]  %%solar-backup%%
+304 - 3600/3600 [sunspot - DONE]  %%solar-backup%%
+1600 - 1800/1800 [sunspot - DONE]  %%solar-backup%%
 
 
 
@@ -185,7 +185,7 @@ Datasets downloaded:
 193 - 3604/3600 * take forever + reference error
 211 - 3600/3600
 304 - 3591/3600 [sunspot - DONE] [filament - DONE]
-1600 - 1794/1800 [sunspot - DONE]
+1600 - 1794/1800 [sunspot - DONE]  %%solar-backup%%
 
 
 

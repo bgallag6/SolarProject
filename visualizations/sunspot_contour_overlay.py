@@ -72,8 +72,6 @@ for m in range(6):
     vmin[m] = np.min(vmin_temp)
     vmax[m] = np.max(vmax_temp)
 """
-#vmin = [10**-11, 0.5, 10**-6, 10**-6, -6.5, 0.1, 2.]  # think don't need anymore  (or option to set ranges for specific wavelengths?)
-#vmax = [10**-6, 2.5, 0.003, 10**-2, -4.5, 0.8, 15.]  # think don't need anymore
 M2_low = [0., 0.3, 0., 0.00001, 1./np.exp(-4.6), 0.05]
 M2_high = [0.000002, 3.0, 0.003, 0.01, 1./np.exp(-6.5), 0.8]
 
@@ -104,8 +102,6 @@ for c in range(len(heatmap)):
 #for c in range(1):
     h_map = heatmap[c]
     wavelength = wavelengths[c]
-
-    #h_map = h_map[:,0:h_map.shape[1]-1,0:h_map.shape[2]-1]  # trim last row and column from array (originally needed since went one past)
     
     if h_map.shape[2] > h_map.shape[1]:
         aspect_ratio = float(h_map.shape[2]) / float(h_map.shape[1])
@@ -129,10 +125,6 @@ for c in range(len(heatmap)):
     x = np.arange(0., visual.shape[1], delta)
     y = np.arange(0., visual.shape[0], delta)
     X, Y = np.meshgrid(x, y)
-    #Z1 = mlab.bivariate_normal(X, Y, 1.0, 1.0, 0.0, 0.0)
-    #Z2 = mlab.bivariate_normal(X, Y, 1.5, 0.5, 1, 1)
-    # difference of Gaussians
-    #Z = 10.0 * (Z2 - Z1)
     Z = visual
     
     v_min = np.percentile(visual,1)

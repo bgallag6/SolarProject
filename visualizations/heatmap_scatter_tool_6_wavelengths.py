@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Mar 19 00:21:29 2017
+Created on Tue May 23 17:14:18 2017
 
 @author: Brendan
 """
@@ -58,7 +58,7 @@ class Index(object):
         param = h_map[0]
         h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
-        im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max, picker=True)
+        im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[0]), y = 1.01, fontsize=17)
         cbar = plt.colorbar(im,cax=cax)
         #cbar.set_label('%s' % cbar_labels[0], size=15, labelpad=10)
@@ -137,63 +137,131 @@ class Index(object):
         #cbar.set_label('%s' % cbar_labels[7], size=15, labelpad=10)
         plt.draw()
         
-    def scatter(self, event):
-        global toggle
-        global col
-        if toggle == 0:
-            toggle = 1
-            col = ax1.scatter(x, y, s=50, c='white', picker=True)
-        elif toggle == 1:
-            toggle = 0
-            col.remove()
+       
+    def f1700(self, event):
+        global t1700
+        if t1700 == 0:
+            t1700 = 1
+        elif t1700 == 1:
+            t1700 = 0
             plt.draw()                
-        return toggle
+        return t1700
+        
+    def f1600(self, event):
+        global t1600
+        if t1600 == 0:
+            t1600 = 1
+        elif t1600 == 1:
+            t1600 = 0
+            plt.draw()                
+        return t1600
+        
+    def f304(self, event):
+        global t304
+        if t304 == 0:
+            t304 = 1
+        elif t304 == 1:
+            t304 = 0
+            plt.draw()                
+        return t304
+        
+    def f171(self, event):
+        global t171
+        if t171 == 0:
+            t171 = 1
+        elif t171 == 1:
+            t171 = 0
+            plt.draw()                
+        return t171
+        
+    def f193(self, event):
+        global t193
+        if t193 == 0:
+            t193 = 1
+        elif t193 == 1:
+            t193 = 0
+            plt.draw()                
+        return t193
+    
+    def f211(self, event):
+        global t211
+        if t211 == 0:
+            t211 = 1
+        elif t211 == 1:
+            t211 = 0
+            plt.draw()                
+        return t211
+
         
   
 
 # Simple mouse click function to store coordinates
 def onclick(event):
-    global ix, iy, c
+    global ix, iy, c, t1700, t1600, t304, t171, t193, t211
     ixx, iyy = event.xdata, event.ydata
     ax2.clear()
     plt.draw()
     print ('x = %d, y = %d' % ( ixx, iyy))  # print location of pixel
     ix = int(ixx)
     iy = int(iyy)
-
-    s = np.zeros((spectra.shape[2]))
-    m = np.zeros((spectra.shape[2]))
-    g = np.zeros((spectra.shape[2]))
-    pl = np.zeros((spectra.shape[2]))
     
-    s[:] = spectra[iy][ix][:]
+    s1700 = np.zeros((spectra1700.shape[2]))
+    s1600 = np.zeros((spectra1600.shape[2]))
+    s304 = np.zeros((spectra304.shape[2]))
+    s171 = np.zeros((spectra171.shape[2]))
+    s193 = np.zeros((spectra193.shape[2]))
+    s211 = np.zeros((spectra211.shape[2]))
+    #m = np.zeros((spectra.shape[2]))
+    #g = np.zeros((spectra.shape[2]))
+    #pl = np.zeros((spectra.shape[2]))
+    
+    s1700[:] = spectra1700[iy][ix][:]
+    s1600[:] = spectra1600[iy][ix][:]
+    s304[:] = spectra304[iy][ix][:]
+    s171[:] = spectra171[iy][ix][:]
+    s193[:] = spectra193[iy][ix][:]
+    s211[:] = spectra211[iy][ix][:]
     #for i in range(0,spectra.shape[2]):
     #    s[i] = cpy_arr_spec[iy][ix][i]
     
-    m = GaussPowerBase(f_fit, param1[0][iy][ix], param1[1][iy][ix], param1[2][iy][ix], param1[3][iy][ix], param1[4][iy][ix], param1[5][iy][ix]) 
-    g = Gauss(f_fit, param1[3][iy][ix], param1[4][iy][ix], param1[5][iy][ix])
-    pl = PowerLaw(f_fit, param1[0][iy][ix], param1[1][iy][ix], param1[2][iy][ix])
+    #m = GaussPowerBase(f_fit, param1[0][iy][ix], param1[1][iy][ix], param1[2][iy][ix], param1[3][iy][ix], param1[4][iy][ix], param1[5][iy][ix]) 
+    #g = Gauss(f_fit, param1[3][iy][ix], param1[4][iy][ix], param1[5][iy][ix])
+    #pl = PowerLaw(f_fit, param1[0][iy][ix], param1[1][iy][ix], param1[2][iy][ix])
+    if t1700 == 1:
+        ax2.loglog(f24, s1700, 'purple', label=r'1700$\AA$')
+    if t1600 == 1:
+        ax2.loglog(f24, s1600, 'green', label=r'1600$\AA$')
+    if t304 == 1:
+        ax2.loglog(f12, s304, 'red', label=r'304$\AA$')
+    if t171 == 1:
+        ax2.loglog(f12, s171, 'blue', label=r'171$\AA$')
+    if t193 == 1:
+        ax2.loglog(f12, s193, 'orange', label=r'193$\AA$')
+    if t211 == 1:
+        ax2.loglog(f12, s211, 'black', label=r'211$\AA$')
     
-    ax2.loglog(f_fit, s, 'blue')
-    ax2.loglog(f_fit, m, 'purple', label='M2 Combined')
-    ax2.loglog(f_fit, g, 'g--', label='Gaussian')
-    ax2.loglog(f_fit, pl, 'g', label='Power Law')
+    #if toggle == 1: 
+    #    ax2.loglog(f_fit1, s1, 'purple')
+    #    ax2.loglog(f_fit1, s2, 'green')
+    #ax2.loglog(f_fit, m, 'purple', label='M2 Combined')
+    #ax2.loglog(f_fit, g, 'g--', label='Gaussian')
+    #ax2.loglog(f_fit, pl, 'g', label='Power Law')
      
     ax2.set_xlim(10**-4.5, 10**-1.3)
     ax2.set_ylim(10**-5, 10**0)  
     axvline(x=0.00333,color='k',ls='dashed', label='5 minutes')
     axvline(x=0.00555,color='k',ls='dotted', label='3 minutes')
     ax2.set_title('Spectra Fit : Pixel (%ii , %ij)' % (iy, ix), fontsize=15)
-    plt.text(0.006, 10**-0.31, r'$A$ = {0:0.2e}'.format(h_map[0][iy][ix]), fontsize=23)
-    plt.text(0.0061, 10**-0.51, r'$n$ = {0:0.2f}'.format(h_map[1][iy][ix]), fontsize=23)
-    plt.text(0.006, 10**-0.73, r'$R$ = %0.1f [min]' % ((1./(h_map[2][iy][ix] / h_map[0][iy][ix])**(-1./ h_map[1][iy][ix]))/60.), fontsize=23)
-    plt.text(0.0061, 10**-0.95, r'$\alpha$ = {0:0.2e}'.format(h_map[3][iy][ix]), fontsize=23)
-    plt.text(0.0061, 10**-1.15, r'$\beta$ = {0:0.1f} [min]'.format((1./np.exp(h_map[4][iy][ix]))/60.), fontsize=23)
-    plt.text(0.0061, 10**-1.35, r'$\sigma$ = {0:0.3f}'.format(h_map[5][iy][ix]), fontsize=23)
+    #plt.text(0.006, 10**-0.31, r'$A$ = {0:0.2e}'.format(h_map[0][iy][ix]), fontsize=23)
+    #plt.text(0.0061, 10**-0.51, r'$n$ = {0:0.2f}'.format(h_map[1][iy][ix]), fontsize=23)
+    #plt.text(0.006, 10**-0.73, r'$R$ = %0.1f [min]' % ((1./(h_map[2][iy][ix] / h_map[0][iy][ix])**(-1./ h_map[1][iy][ix]))/60.), fontsize=23)
+    #plt.text(0.0061, 10**-0.95, r'$\alpha$ = {0:0.2e}'.format(h_map[3][iy][ix]), fontsize=23)
+    #plt.text(0.0061, 10**-1.15, r'$\beta$ = {0:0.1f} [min]'.format((1./np.exp(h_map[4][iy][ix]))/60.), fontsize=23)
+    #plt.text(0.0061, 10**-1.35, r'$\sigma$ = {0:0.3f}'.format(h_map[5][iy][ix]), fontsize=23)
     #plt.legend(loc='lower left', prop={'size':20})
-    legend = ax2.legend(loc='lower left', prop={'size':15}, labelspacing=0.35)
+    legend = ax2.legend(loc='lower left', prop={'size':25}, labelspacing=0.35)
     for label in legend.get_lines():
-            label.set_linewidth(2.0)  # the legend line width
+            label.set_linewidth(3.0)  # the legend line width
     plt.draw()
 
     return ix, iy
@@ -212,18 +280,38 @@ def Gauss(f, P, fp, fw):
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
 date = '20140818'
-wavelength = 1700
+wavelength1700 = 1700
+wavelength1600 = 1600
+wavelength304 = 304
+wavelength171 = 171
+wavelength193 = 193
+wavelength211 = 211
 
-global spectra
+global spectra1700
+global spectra1600
+global spectra304
+global spectra171
+global spectra193
+global spectra211
 
-cube_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))
-spectra = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
+cube_shape1700 = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength1700))
+spectra1700 = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength1700), dtype='float64', mode='r', shape=(cube_shape1700[0], cube_shape1700[1], cube_shape1700[2]))
+cube_shape1600 = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength1600))
+spectra1600 = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength1600), dtype='float64', mode='r', shape=(cube_shape1600[0], cube_shape1600[1], cube_shape1600[2]))
+cube_shape304 = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength304))
+spectra304 = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength304), dtype='float64', mode='r', shape=(cube_shape304[0], cube_shape304[1], cube_shape304[2]))
+cube_shape171 = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength171))
+spectra171 = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength171), dtype='float64', mode='r', shape=(cube_shape171[0], cube_shape171[1], cube_shape171[2]))
+cube_shape193 = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength193))
+spectra193 = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength193), dtype='float64', mode='r', shape=(cube_shape193[0], cube_shape193[1], cube_shape193[2]))
+cube_shape211 = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength211))
+spectra211 = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength211), dtype='float64', mode='r', shape=(cube_shape211[0], cube_shape211[1], cube_shape211[2]))
 
 #global cpy_arr_spec
 #cpy_arr_spec = np.copy(spectra)
 
 global param1
-param1 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
+param1 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength1700))
 
 """
 TIME = np.load('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength))
@@ -248,44 +336,47 @@ rem = n % n_segments  # n_segments is argument in module call (default to 1?)
 freq_size = (n - rem) / n_segments
 """
 ### determine frequency values that FFT will evaluate
-if wavelength == 1600 or wavelength == 1700:
-    time_step = 24
-else:
-    time_step = 12  # add as argument, or leave in as constant?
-freq_size = (cube_shape[2]*2)+1
-sample_freq = fftpack.fftfreq(freq_size, d=time_step)
-pidxs = np.where(sample_freq > 0)    
 
+time_step = 24  
+freq_size = (cube_shape1700[2]*2)+1
+sample_freq24 = fftpack.fftfreq(freq_size, d=time_step)
+pidxs24 = np.where(sample_freq24 > 0)    
+
+time_step = 12
+freq_size = (cube_shape304[2]*2)+1
+sample_freq12 = fftpack.fftfreq(freq_size, d=time_step)
+pidxs12 = np.where(sample_freq12 > 0)  
 
 if 1:
     
-    global f_fit
+    global f24
+    global f12
     
-    freqs = sample_freq[pidxs]
-    print len(freqs)
-    f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],int(spectra.shape[2]))
+    freqs24 = sample_freq24[pidxs24]
+    freqs12 = sample_freq12[pidxs12]
+    f24 = np.linspace(freqs24[0],freqs24[len(freqs24)-1],int(spectra1700.shape[2]))
+    f12 = np.linspace(freqs12[0],freqs12[len(freqs12)-1],int(spectra304.shape[2]))
+    print len(f24)
+    print len(f12)
         
-    global toggle
-    toggle = 0
+    global t1700, t1600, t304, t171, t193, t211
+    t1700 = 1
+    t1600 = 0
+    t304 = 0
+    t171 = 0
+    t193 = 0
+    t211 = 0
     
     
-    h_map = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
+    h_map = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength1700))
  
-    vis = np.load('%s/DATA/Output/%s/%i/visual.npy' % (directory, date, wavelength))
+    vis = np.load('%s/DATA/Output/%s/%i/visual.npy' % (directory, date, wavelength1700))
     
 
     date_title = '%i/%02i/%02i' % (int(date[0:4]),int(date[4:6]),int(date[6:8]))
 
     
-    # arrays containing interesting points to be clicked for each dataset
-    if date == '20120923' and wavelength == 211:
-        x = [250, 359, 567, 357, 322, 315, 97, 511, 316, 336]  
-        y = [234, 308, 218, 197, 201, 199, 267, 5, 175, 181]
-        
-    if date == '20130530' and wavelength == 193:
-        x = [1]  
-        y = [1]
-    
+
     # create list of titles and colorbar names for display on the figures
     titles = ['Power Law Slope Coeff.', 'Power Law Index', 'Rolloever - [min]', 'Gaussian Amplitude', 'Gaussian Location -- [min]', 'Gaussian Width', 'F-Statistic', 'Visual Image - Averaged']
     
@@ -297,7 +388,7 @@ if 1:
     plt.subplots_adjust(left=0.25)
     ax1.set_xlim(0, h_map.shape[2]-1)
     ax1.set_ylim(0, h_map.shape[1]-1)  
-    ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[1]), y = 1.01, fontsize=17)
+    ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength1700, date_title, titles[1]), y = 1.01, fontsize=17)
     
     # was getting error "'AxesImage' object is not iterable"
     # - found: "Each element in img needs to be a sequence of artists, not a single artist."
@@ -324,7 +415,14 @@ if 1:
     axgauss_wid = plt.axes([0.31, 0.9, 0.05, 0.063])
     axfstat = plt.axes([0.37, 0.9, 0.05, 0.063])
     axvisual = plt.axes([0.43, 0.9, 0.05, 0.063])
-    axscatter = plt.axes([0.49, 0.9, 0.05, 0.063])
+    ax1700 = plt.axes([0.07, 0.05, 0.05, 0.063])
+    ax1600 = plt.axes([0.13, 0.05, 0.05, 0.063])
+    ax304 = plt.axes([0.19, 0.05, 0.05, 0.063])
+    ax171 = plt.axes([0.25, 0.05, 0.05, 0.063])
+    ax193 = plt.axes([0.31, 0.05, 0.05, 0.063])
+    ax211 = plt.axes([0.37, 0.05, 0.05, 0.063])
+
+    
  
     # set up spectra subplot
     ax2 = plt.subplot2grid((1,11),(0, 6), colspan=5, rowspan=1)
@@ -357,7 +455,18 @@ if 1:
     bfstat.on_clicked(callback.fstat)
     bvisual = Button(axvisual, 'Visual')
     bvisual.on_clicked(callback.visual)
-    bscatter = Button(axscatter, 'Scatter')
-    bscatter.on_clicked(callback.scatter)
+    b1700 = Button(ax1700, '1700A')
+    b1700.on_clicked(callback.f1700)
+    b1600 = Button(ax1600, '1600A')
+    b1600.on_clicked(callback.f1600)
+    b304 = Button(ax304, '304A')
+    b304.on_clicked(callback.f304)
+    b171 = Button(ax171, '171A')
+    b171.on_clicked(callback.f171)
+    b193 = Button(ax193, '193A')
+    b193.on_clicked(callback.f193)
+    b211 = Button(ax211, '211A')
+    b211.on_clicked(callback.f211)
+    
     
 plt.draw()
