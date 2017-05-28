@@ -211,8 +211,8 @@ def Gauss(f, P, fp, fw):
     return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) 
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20140818'
-wavelength = 1700
+date = '20130626'
+wavelength = 1600
 
 global spectra
 
