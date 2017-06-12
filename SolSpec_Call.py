@@ -36,7 +36,7 @@ import SolSpec as ss
 #y1 = 2000
 #y2 = 2900
 
-#ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/FITS/20170424/1600/aia_lev1_1600a_2017_04_24t05_59_50_13z_image_lev1.fits')
+#ss.arc2pix(x1,x2,y1,y2, image = 'F:/Users/Brendan/Desktop/SolarProject/FITS/20140818/1600/aia_lev1_1600a_2014_08_18t18_00_16_12z_image_lev1.fits')
 #ss.arc2pix(x1,x2,y1,y2, image = 'S:/FITS/20130626/193/aia_lev1_193a_2013_06_26t06_00_06_84z_image_lev1.fits')
 
 #"""
@@ -53,8 +53,8 @@ wavelength = int(sys.argv[3])
 """
 ## create derotated region datacube
 """
-ss.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20120923/304', date='20120923', wavelength=304, sub_reg_coords=[-528,-132,-100,100], coords_type='arc', bin_frac=1)
-#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-300,235,-300,100], coords_type='arc', bin_frac=1)
+#ss.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20120923/304', date='20120923', wavelength=304, sub_reg_coords=[-528,-132,-100,100], coords_type='arc', bin_frac=1)
+#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-193,-43,132,172], coords_type='arc', bin_frac=1)
 
 
 """

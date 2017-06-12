@@ -210,8 +210,8 @@ def PowerLaw(f, A, n, C):
 def Gauss(f, P, fp, fw):
     return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) 
 
-directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20130626'
+directory = 'D:/Users/Brendan/Desktop/SolarProject'
+date = '20140818'
 wavelength = 1600
 
 global spectra
@@ -271,7 +271,7 @@ if 1:
     
     h_map = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
  
-    vis = np.load('%s/DATA/Output/%s/%i/visual.npy' % (directory, date, wavelength))
+    #vis = np.load('%s/DATA/Output/%s/%i/visual.npy' % (directory, date, wavelength))
     
 
     date_title = '%i/%02i/%02i' % (int(date[0:4]),int(date[4:6]),int(date[6:8]))

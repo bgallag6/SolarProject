@@ -87,18 +87,18 @@ def heatmap(directory, date, wavelength):
     
     # load parameter array and visual images from file tree structure 
     heatmaps = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
-    visual = np.load('%s/DATA/Output/%s/%i/visual.npy'% (directory, date, wavelength))  
+    #visual = np.load('%s/DATA/Output/%s/%i/visual.npy'% (directory, date, wavelength))  
     
     #visual = visual[1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
-    visual = visual[:,1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
+    #visual = visual[:,1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
     h_map = heatmaps
     
-    v1600 = np.load('%s/DATA/Output/%s/1600/visual.npy'% (directory, date))  
+    #v1600 = np.load('%s/DATA/Output/%s/1600/visual.npy'% (directory, date))  
     #v1600 = v1600[:,1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
     p1600 = np.load('%s/DATA/Output/%s/1600/param.npy'% (directory, date)) 
-    xdif = v1600.shape[2] - p1600.shape[2]
-    ydif = v1600.shape[1] - p1600.shape[1]
-    v1600 = v1600[:,ydif/2:-ydif/2,xdif/2:-xdif/2]
+    #xdif = v1600.shape[2] - p1600.shape[2]
+    #ydif = v1600.shape[1] - p1600.shape[1]
+    #v1600 = v1600[:,ydif/2:-ydif/2,xdif/2:-xdif/2]
     #print v1600.shape[1], v1600.shape[2]
     #print p1600.shape[1], p1600.shape[2]
     
@@ -115,14 +115,14 @@ def heatmap(directory, date, wavelength):
     
     #"""
     # trim x/y dimensions equally so that resulting region is 1600x1600    
-    trim_y = (h_map.shape[1]-1600)/2
-    trim_x = (h_map.shape[2]-1600)/2
-    h_map = h_map[:, trim_y:h_map.shape[1]-trim_y, trim_x:h_map.shape[2]-trim_x]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
+    #trim_y = (h_map.shape[1]-1600)/2
+    #trim_x = (h_map.shape[2]-1600)/2
+    #h_map = h_map[:, trim_y:h_map.shape[1]-trim_y, trim_x:h_map.shape[2]-trim_x]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)    
     
-    x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
-    y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
-    x_ind = [-800,-600,-400,-200,0,200,400,600,800]
-    y_ind = [800,600,400,200,0,-200,-400,-600,-800]    
+    #x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
+    #y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
+    #x_ind = [-800,-600,-400,-200,0,200,400,600,800]
+    #y_ind = [800,600,400,200,0,-200,-400,-600,-800]    
     #"""
     
     #h_map = h_map[:, 0:h_map.shape[1]-50, 0:500]  # for 20130626 blobs      
@@ -132,11 +132,14 @@ def heatmap(directory, date, wavelength):
     #y_ind = [0,100,200,300,400]   
     #y_ticks = [0,100,200,300] # 20120923
     
-    #xdim = int(np.floor(h_map.shape[2]/100))
-    #ydim = int(np.floor(h_map.shape[1]/100))
+    xdim = int(np.floor(h_map.shape[2]/100))
+    ydim = int(np.floor(h_map.shape[1]/100))
     
-    #x_ticks = [100*i for i in range(xdim+1)]
-    #y_ticks = [100*i for i in range(ydim+1)]
+    x_ticks = [100*i for i in range(xdim+1)]
+    y_ticks = [100*i for i in range(ydim+1)]
+    
+    x_ind = x_ticks
+    y_ind = y_ticks
     
     #x_ticks = [0,100,200,300]
     #y_ticks = [0,100,200,300]  
@@ -155,16 +158,16 @@ def heatmap(directory, date, wavelength):
     loc_mask = np.copy(h_map[4])
     wid_mask = np.copy(h_map[5])
     #v_mask = np.copy(visual[0])
-    p1600_val = ff.sf(p1600[6], df1, df2)
+    #p1600_val = ff.sf(p1600[6], df1, df2)
     #p1600_mask = np.copy(p1600_val)
-    v_mask = np.copy(v1600[0])
+    #v_mask = np.copy(v1600[0])
     
     # mask the Gaussian component arrays with NaNs if above threshold 
     p_mask[p_val > mask_thresh] = np.NaN  # for every element in p_mask, if the corresponding element in p_val is greater than the threshold, set that value to NaN
     amp_mask[p_val > mask_thresh] = np.NaN
     loc_mask[p_val > mask_thresh] = np.NaN
     wid_mask[p_val > mask_thresh] = np.NaN
-    v_mask[p1600_val < mask_thresh] = 1.  # invert mask, set equal to 1. -- so can make contour
+    #v_mask[p1600_val < mask_thresh] = 1.  # invert mask, set equal to 1. -- so can make contour
     
     # determine percentage of region masked 
     count = np.count_nonzero(np.isnan(p_mask))   
@@ -263,7 +266,7 @@ def heatmap(directory, date, wavelength):
         cbar.ax.tick_params(labelsize=font_size, pad=5) 
         cbar.set_ticks(c_ticks)
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
+        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
         
         if i == 2 or i == 3 or i == 4 or i == 5:   
             fig = plt.figure(figsize=(fig_width,fig_height))
@@ -311,7 +314,7 @@ def heatmap(directory, date, wavelength):
             cbar.ax.tick_params(labelsize=font_size, pad=5) 
             cbar.set_ticks(c_ticks)
             #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.jpeg' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)))
-            plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.pdf' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)), format='pdf')
+            #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.pdf' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)), format='pdf')
         
         #"""
         flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
@@ -346,7 +349,7 @@ def heatmap(directory, date, wavelength):
             label.set_linewidth(2.0)  # the legend line width
         
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
+        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
         #"""
     
     # generate 'rollover frequency' heatmap
@@ -382,13 +385,15 @@ def heatmap(directory, date, wavelength):
     cbar.ax.tick_params(labelsize=font_size, pad=5) 
     cbar.set_ticks(c_ticks)
     #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.jpeg' % (directory, date, wavelength, date, wavelength))
-    plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
+    #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
     
     #"""
     # generate 'r-value correlation coefficient' heatmap
     fig = plt.figure(figsize=(fig_width,fig_height))
     ax = plt.gca()  # get current axis -- to set colorbar 
     plt.title(r'$r$-Value: Correlation Coefficient', y = 1.02, fontsize=font_size)  # no date / wavelength
+    #h_min = np.percentile(h_map[8],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+    #h_max = np.percentile(h_map[8],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
     h_min = np.percentile(h_map[8],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
     h_max = np.percentile(h_map[8],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
     h_range = np.abs(h_max-h_min)
@@ -413,10 +418,10 @@ def heatmap(directory, date, wavelength):
     cbar.ax.tick_params(labelsize=font_size, pad=5) 
     cbar.set_ticks(c_ticks)
     #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.jpeg' % (directory, date, wavelength, date, wavelength))
-    plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_r_value.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
+    #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_r_value.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
     #"""
     
-    
+    """
     # generate visual images
     titles_vis = ['Average', 'Middle-File']
     names_vis = ['average', 'mid']
@@ -463,7 +468,7 @@ def heatmap(directory, date, wavelength):
         #cbar.ax.tick_params(labelsize=font_size, pad=5) 
 
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_vis[i]))
-        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
+        #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
 
         # create inverted p-value mask - to plot as contour 
         delta = 1.
@@ -504,8 +509,8 @@ def heatmap(directory, date, wavelength):
             cbar = plt.colorbar(im,cax=cax)
             cbar.ax.tick_params(labelsize=font_size, pad=5) 
             #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_vis[i]))
-            plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s_umbra.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
-    
+            #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s_umbra.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
+    """
 
 
 
@@ -846,7 +851,7 @@ def fft_avg(directory, date, wavelength, num_seg):
     ::
         ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, num_seg = 6)
     """
-    import accelerate  # switch on if computer has installed
+    #import accelerate  # switch on if computer has installed
     
     from scipy import fftpack
     
@@ -959,10 +964,10 @@ def fft_avg(directory, date, wavelength, num_seg):
                 
               ## perform Fast Fourier Transform on each segment       
               sig = split[i]
-              #sig_fft = fftpack.fft(sig)
+              sig_fft = fftpack.fft(sig)
               #sig_fft = fftpack.rfft(sig)  # real-FFT
               #sig_fft = np.fft.rfft(sig)  # numpy significantly slower than scipy                 
-              sig_fft = accelerate.mkl.fftpack.fft(sig)  # MKL-accelerated is (2x) faster
+              #sig_fft = accelerate.mkl.fftpack.fft(sig)  # MKL-accelerated is (2x) faster
               #sig_fft = accelerate.mkl.fftpack.rfft(sig)  # this is slightly faster
               powers = np.abs(sig_fft)[pidxs]
               norm = len(sig)  # to normalize the power

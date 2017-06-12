@@ -43,9 +43,10 @@ def Gauss(f, P, fp, fw):
 def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
     
-directory = 'F:/Users/Brendan/Desktop/SolarProject'
+#directory = 'F:/Users/Brendan/Desktop/SolarProject'
+directory = 'D:/Users/Brendan/Desktop/SolarProject'
 date = '20130626'
-wavelength = 211
+wavelength = 171
     
 #spectra_array = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20130626/193/20130626_193_-450_-200i_-200_200j_spectra.npy')
 #spectra_array = np.load('C:/Users/Brendan/Desktop/project_files/20130626_171_-500_500i_-500_600j_spectra_arth.npy')
@@ -372,7 +373,7 @@ for l in range(1):
         """
         #plt.show()
         #plt.savefig('C:/Users/Brendan/Desktop/171_final_points/171_%ix_%iyR.jpeg' % (m2[m],l2[m]))
-        plt.savefig('C:/Users/Brendan/Desktop/211_%ix_%iyF.pdf' % (m2[m],l2[m]), format='pdf')
+        #plt.savefig('C:/Users/Brendan/Desktop/211_%ix_%iyF.pdf' % (m2[m],l2[m]), format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/171_slice2_double_optimize/171A_%ii_%ij.jpeg' % (l,m))
         #plt.savefig('C:/Users/Brendan/Desktop/171_points_square/pixel_%ii_%ij_new.jpeg' % (l2[m],m2[m]))
         #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))

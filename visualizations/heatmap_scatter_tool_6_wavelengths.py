@@ -205,7 +205,7 @@ def onclick(event):
     ix = int(ixx)
     iy = int(iyy)
     
-    s1700 = np.zeros((spectra1700.shape[2]))
+    #s1700 = np.zeros((spectra1700.shape[2]))
     s1600 = np.zeros((spectra1600.shape[2]))
     s304 = np.zeros((spectra304.shape[2]))
     s171 = np.zeros((spectra171.shape[2]))
@@ -215,7 +215,7 @@ def onclick(event):
     #g = np.zeros((spectra.shape[2]))
     #pl = np.zeros((spectra.shape[2]))
     
-    s1700[:] = spectra1700[iy][ix][:]
+    #s1700[:] = spectra1700[iy][ix][:]
     s1600[:] = spectra1600[iy][ix][:]
     s304[:] = spectra304[iy][ix][:]
     s171[:] = spectra171[iy][ix][:]
@@ -278,8 +278,8 @@ def PowerLaw(f, A, n, C):
 def Gauss(f, P, fp, fw):
     return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) 
 
-directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20140818'
+directory = 'D:/Users/Brendan/Desktop/SolarProject'
+date = '20130626'
 wavelength1700 = 1700
 wavelength1600 = 1600
 wavelength304 = 304
@@ -294,8 +294,8 @@ global spectra171
 global spectra193
 global spectra211
 
-cube_shape1700 = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength1700))
-spectra1700 = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength1700), dtype='float64', mode='r', shape=(cube_shape1700[0], cube_shape1700[1], cube_shape1700[2]))
+#cube_shape1700 = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength1700))
+#spectra1700 = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength1700), dtype='float64', mode='r', shape=(cube_shape1700[0], cube_shape1700[1], cube_shape1700[2]))
 cube_shape1600 = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength1600))
 spectra1600 = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength1600), dtype='float64', mode='r', shape=(cube_shape1600[0], cube_shape1600[1], cube_shape1600[2]))
 cube_shape304 = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength304))
@@ -311,7 +311,7 @@ spectra211 = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date,
 #cpy_arr_spec = np.copy(spectra)
 
 global param1
-param1 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength1700))
+param1 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength1600))
 
 """
 TIME = np.load('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength))
@@ -338,7 +338,7 @@ freq_size = (n - rem) / n_segments
 ### determine frequency values that FFT will evaluate
 
 time_step = 24  
-freq_size = (cube_shape1700[2]*2)+1
+freq_size = (cube_shape1600[2]*2)+1
 sample_freq24 = fftpack.fftfreq(freq_size, d=time_step)
 pidxs24 = np.where(sample_freq24 > 0)    
 
@@ -354,23 +354,23 @@ if 1:
     
     freqs24 = sample_freq24[pidxs24]
     freqs12 = sample_freq12[pidxs12]
-    f24 = np.linspace(freqs24[0],freqs24[len(freqs24)-1],int(spectra1700.shape[2]))
+    f24 = np.linspace(freqs24[0],freqs24[len(freqs24)-1],int(spectra1600.shape[2]))
     f12 = np.linspace(freqs12[0],freqs12[len(freqs12)-1],int(spectra304.shape[2]))
     print len(f24)
     print len(f12)
         
     global t1700, t1600, t304, t171, t193, t211
-    t1700 = 1
+    t1700 = 0
     t1600 = 0
     t304 = 0
-    t171 = 0
+    t171 = 1
     t193 = 0
     t211 = 0
     
     
-    h_map = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength1700))
+    h_map = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength1600))
  
-    vis = np.load('%s/DATA/Output/%s/%i/visual.npy' % (directory, date, wavelength1700))
+    vis = np.load('%s/DATA/Output/%s/%i/visual.npy' % (directory, date, wavelength1600))
     
 
     date_title = '%i/%02i/%02i' % (int(date[0:4]),int(date[4:6]),int(date[6:8]))
