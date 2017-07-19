@@ -45,8 +45,8 @@ def Gauss(f, P, fp, fw):
 def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
 
-#def spec_fit( subcube ):
-def spec_fit( subcube, subcube_StdDev ):
+def spec_fit( subcube ):
+#def spec_fit( subcube, subcube_StdDev ):
     
   SPECTRA = subcube
   spectra_array = SPECTRA
@@ -91,8 +91,8 @@ def spec_fit( subcube, subcube_StdDev ):
         df2 = np.zeros_like(f)
         df2[0:len(df)] = df
         df2[len(df2)-1] = df2[len(df2)-2]
-        #ds = df2
-        ds = subcube_StdDev[l][m]
+        ds = df2
+        #ds = subcube_StdDev[l][m]
         
                                                
         ### fit data to models using SciPy's Levenberg-Marquart method
@@ -253,24 +253,25 @@ wavelength = int(sys.argv[3])
 # load memory-mapped array as read-only
 cube_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))
 cube = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
-cube_StdDev = np.memmap('%s/DATA/Temp/%s/%i/uncertainties_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
+#cube_StdDev = np.memmap('%s/DATA/Temp/%s/%i/uncertainties_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
 #cube = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_spectra.npy')
 
 chunks = np.array_split(cube, size)  # Split the data based on no. of processors
-chunks_StdDev = np.array_split(cube_StdDev, size)  # Split the data based on no. of processors
+#chunks_StdDev = np.array_split(cube_StdDev, size)  # Split the data based on no. of processors
 
 # specify which chunks should be handled by each processor
 for i in range(size):
     if rank == i:
         subcube = chunks[i]
-        subcube_StdDev = chunks_StdDev[i]
+        #subcube_StdDev = chunks_StdDev[i]
 
 # verify each processor received subcube with correct dimensions
 ss = np.shape(subcube)  # Validation	
 print "Processor", rank, "received an array with dimensions", ss  # Validation
 print "Height = %i, Width = %i, Total pixels = %i" % (subcube.shape[0], subcube.shape[1], subcube.shape[0]*subcube.shape[1])
 
-params_T = spec_fit( subcube, subcube_StdDev )  # Do something with the array
+params_T = spec_fit( subcube )  # Do something with the array
+#params_T = spec_fit( subcube, subcube_StdDev )  # Do something with the array
 newData_p = comm.gather(params_T, root=0)  # Gather all the results
 
 # Have one node stack the results
