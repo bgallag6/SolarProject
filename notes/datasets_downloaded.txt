@@ -312,3 +312,16 @@ centered - 04/01 - 00:00 - 12:00 (have til 15:00)
 20170515: 00:00-12:00 *crazy quiet region for 1600/1700
 
 20130713: 12:00-24:00 *quiet region for 1600/1700
+
+20170324: 20:00 - 20170325: 12:00 (interesting region in coronal hole develops from nothing)
+
+20170614 (great dual coronal holes)
+
+2017/08/06 (great sunspot in next couple days!)
+
+2017/07/10-14 (monster sunspot!!!)
+20170711 - 12:00 - 24:00
+(-175,175),(-50,-275) -- (-230,230),(-50,-275)
+1600 - 1750/1765 [sunspot - DONE]
+304 - 3500/3540 [sunspot - DONE]
+171 - 1750/3548
