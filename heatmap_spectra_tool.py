@@ -6,43 +6,19 @@ Created on Sun Mar 19 00:21:29 2017
 """
 
 import matplotlib.pyplot as plt
-from matplotlib.pyplot import plot, ion, draw
 import numpy as np
-import random
 from matplotlib.widgets import RectangleSelector
 import matplotlib.patches as patches
-from PIL import Image
 import scipy.signal
 #matplotlib.use('TkAgg') 	# NOTE: This is a MAC/OSX thing. Probably REMOVE for linux/Win
 from matplotlib.widgets import Cursor
-from pylab import *
 from pylab import axvline
 import sunpy
-from sunpy.map import Map
-from scipy.interpolate import interp1d
 from scipy import signal
-import scipy.misc
-import astropy.units as u
-import h5py
 from scipy import fftpack
-from statsmodels.nonparametric.smoothers_lowess import lowess
-import matplotlib.pylab as plt
-from astropy.convolution import convolve, Box1DKernel
 from matplotlib import cm
-from numpy.random import randn
-from matplotlib.colors import LogNorm
-import matplotlib.colors as colors
-from matplotlib.mlab import bivariate_normal
-from matplotlib.ticker import LogFormatterMathtext
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from matplotlib import gridspec
-from matplotlib.pyplot import figure, show
-from matplotlib.image import AxesImage
 from matplotlib.widgets import Button
-from matplotlib.widgets import RadioButtons
-from matplotlib.pyplot import figure, show
-import numpy as npy
-from numpy.random import rand
 
     
 def find_nearest(array,value):
@@ -210,9 +186,9 @@ def PowerLaw(f, A, n, C):
 def Gauss(f, P, fp, fw):
     return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) 
 
-#directory = 'F:/Users/Brendan/Desktop/SolarProject'
-directory = 'S:'
-date = '20120621'
+directory = 'F:/Users/Brendan/Desktop/SolarProject'
+#directory = 'S:'
+date = '20140818'
 wavelength = 1600
 
 global spectra
@@ -220,34 +196,10 @@ global spectra
 cube_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))
 spectra = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
 
-#global cpy_arr_spec
-#cpy_arr_spec = np.copy(spectra)
-
 global param1
 param1 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
 
-"""
-TIME = np.load('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength))
 
-if wavelength == 1600:
-    time_step = 24
-else:
-    time_step = 12  # add as argument, or leave in as constant?
-    
-t_interp = np.linspace(0, TIME[len(TIME)-1], int(TIME[len(TIME)-1]/time_step))
-
-if date == '20120923':   
-    n_segments = 3  # break data into 12 segments of equal length
-elif date == '20160426':
-    n_segments = 12
-elif date == '20140910':
-    n_segments = 1
-else:
-    n_segments = 6
-n = len(t_interp)
-rem = n % n_segments  # n_segments is argument in module call (default to 1?)
-freq_size = (n - rem) / n_segments
-"""
 ### determine frequency values that FFT will evaluate
 if wavelength == 1600 or wavelength == 1700:
     time_step = 24
@@ -288,7 +240,7 @@ if 1:
         y = [1]
     
     # create list of titles and colorbar names for display on the figures
-    titles = ['Power Law Slope Coeff.', 'Power Law Index', 'Rolloever - [min]', 'Gaussian Amplitude', 'Gaussian Location -- [min]', 'Gaussian Width', 'F-Statistic', 'Visual Image - Averaged']
+    titles = ['Power Law Slope Coeff.', 'Power Law Index', 'Rollover - [min]', 'Gaussian Amplitude', 'Gaussian Location -- [min]', 'Gaussian Width', 'F-Statistic', 'Visual Image - Averaged']
     
     # create figure with heatmap and spectra side-by-side subplots
     fig1 = plt.figure(figsize=(20,10))

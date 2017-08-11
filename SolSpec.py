@@ -330,7 +330,8 @@ def heatmap(directory, date, wavelength):
         plt.xticks(fontsize=font_size)
         plt.yticks(fontsize=font_size)
         plt.xlim(h_min, h_max)
-        y, x, _ = plt.hist(flat_param, bins=200, range=(h_min, h_max))
+        y, x, _ = plt.hist(flat_param, bins=500, range=(h_min, h_max))
+        #y, x, _ = plt.hist(flat_param, bins=200, range=(3.5,5))  # possibly use for 1600/1700 so same range
         #n, bins, patches = plt.hist(flat_param, bins=200, range=(h_min, h_max))
         n=y[1:-2]
         bins=x[1:-2]

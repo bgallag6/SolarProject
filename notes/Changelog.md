@@ -67,3 +67,6 @@
 - changed a bunch of formatting of heatmaps [SolSpec.py]
 - added creation of memory map of standard deviation array [SolSpec.py]
 - added loading / splitting into chunks and passing to function of standard deviation memory mapped array, and using as each pixels 'ds' [Spec_fit_mpi.py]
+
+8/10:
+- removed a bunch of module imports + deleted unused / replaced lines [heatmap_spectra_tool.py]
