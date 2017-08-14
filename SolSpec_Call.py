@@ -9,15 +9,16 @@ Created on Tue Dec 20 22:33:10 2016
 
 import numpy as np
 import SolSpec as ss
-#import h5py
 
 """
+** not in current module **
 ## download data
 """
 #r = ss.get_data(wavelength=1600, time_begin='2013/06/26 00:00:00', time_end='2013/06/26 00:05:00', path_name='F:/Users/Brendan/Desktop/SolarProject/data2/20130626/1600')
 
 
 """
+** not in current module **
 ## download data (fill in missing)
 """
 #r = ss.get_data_fill(wavelength=193, time_begin='2013/05/30 00:00:00', time_end='2013/05/30 11:59:59', path_name='F:/Users/Brendan/Desktop/SolarProject/FITS/20130530/193')
@@ -54,7 +55,7 @@ wavelength = int(sys.argv[3])
 ## create derotated region datacube
 """
 #ss.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20120923/304', date='20120923', wavelength=304, sub_reg_coords=[-528,-132,-100,100], coords_type='arc', bin_frac=1)
-ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-155,155,-150,150], coords_type='arc', bin_frac=1)
+ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-130,130,-25,125], coords_type='arc', bin_frac=1)
 
 
 """
@@ -64,7 +65,7 @@ ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavele
 #TIME = np.load('%s/DATA/Temp/%s/%i/*time.npy')
 #EXPOSURE = np.load('%s/DATA/Temp/%s/%i/*exposure.npy')
 
-ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, num_seg = 1)  # 3 seg for 20120923, 6 seg for rest
+ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, num_seg = 6)  # 3 seg for 20120923, 6 seg for rest
 #spectra_array = ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= '%i' % (wavelength), datacube = DATA, timeseries = TIME, exposure_array = EXPOSURE, num_seg = 6)
 #np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/304/20120923_304_-100_100i_-528_-132j_spectra', spectra_array)
 #np.save('C:/Users/Brendan/Desktop/SDO/spectra_20130530_193_2300_2600_2200_3000', spectra)  # now this
@@ -79,9 +80,6 @@ ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelen
 """
 ## memory mapping 
 """
-#DATA = np.load('%s/DATA/Temp/%s/%i/*rebin1.npy')
-#TIME = np.load('%s/DATA/Temp/%s/%i/*time.npy')
-#EXPOSURE = np.load('%s/DATA/Temp/%s/%i/*exposure.npy')
 
 ss.mem_map(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength)
 #spectra_array = ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= '%i' % (wavelength), datacube = DATA, timeseries = TIME, exposure_array = EXPOSURE, num_seg = 6)

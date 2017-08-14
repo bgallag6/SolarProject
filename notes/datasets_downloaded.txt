@@ -66,6 +66,9 @@ Datasets downloaded:
 
 
 20130713: 12:00-24:00 *quiet region for 1600/1700
+(-340,435)(-270,270) *full region (used smaller region for tests)
+1600 - 1700/1800 *check
+1700 - 1700/1800 *check
 
 
 
@@ -145,6 +148,8 @@ Datasets downloaded:
 1600 - 1797/1800 [sunspot - DONE]
 
 
+20140810: 12:00-24:00  (see if hexagon / same structure as 08/18 and 08/22 is there)
+
 
 20140818:  12:00-24:00 * hexagon!  [could go back to 2014/08/18 00:00 and forward to 2014/08/20 12:00]
 -- get 20140819 00:00-12:00 -- look for hexagon / change
@@ -159,9 +164,18 @@ Datasets downloaded:
 1700 - 1774/1800 [sunspot - DONE]
 
 
+20140822: 12:00-24:00
+(-75,100)(-30,100) -- (-130,155)(-30,100)
+1600 - 1745/1800
+
+
+20140827: 00:00-12:00
+(-75,75)(-25,125) -- (-130,130)(-25,125)
+
+
 
 20140910:  08:00-20:00  (flare!)  *using 09:00-17:00 (8 hours) for pre-flare FFT
-(-250,100)(-50,300) -- (-300,150)(-50,300)
+(-250,100)(-30,100) -- (-305,155)(-30,100)
 171 - 3591/3600 [sunspot - DONE]
 193 - 3591/3600 [sunspot - DONE]
 211 - 3590/3600 [sunspot - DONE]
@@ -322,16 +336,27 @@ centered - 04/01 - 00:00 - 12:00 (have til 15:00)
 20170324: 20:00 - 20170325: 12:00 (interesting region in coronal hole develops from nothing)
 
 
+20170518 (great coronal hole shape)
+
+
 20170614 (great dual coronal holes)
-
-
-2017/08/07 12:00 - 24:00
 
 
 
 2017/07/10-14 (monster sunspot!!!)
 20170711 - 12:00 - 24:00
 (-175,175),(-50,-275) -- (-230,230),(-50,-275)
-1600 - 1750/1765 [sunspot - DONE]
-304 - 3500/3540 [sunspot - DONE]
 171 - 3500/3548
+304 - 3500/3540 [sunspot - DONE]
+1600 - 1750/1765 [sunspot - DONE]
+
+
+2017/08/03 00:00 - 12:00 *for quiet-sun global oscillation
+(-250,100)(-375,-75) -- (-305,155)(-375,-75) * for quiet in 1600 and 171/193
+(25,275)(75,275) -- (-30,330)(75,275) * for quiet/coronal hole in 193
+1600 - 1797/1800 [sunspot - DONE - both]
+
+
+2017/08/07 12:00 - 24:00
+(-75,150)(-300,-120) -- (-130,205)(-300,-120)
+1600 - 1747/1800 [sunspot - DONE]

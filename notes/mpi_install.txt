@@ -1,0 +1,62 @@
+Installing mpi4py
+=================
+
+What I had tried months ago:
+............................
+
+- Tried installing OpenMP:
+
+download tar.gz from https://www.open-mpi.org/software/ompi/v2.0/
+shell$ gunzip -c openmpi-2.0.1.tar.gz | tar xf -
+shell$ cd openmpi-2.0.1
+shell$ ./configure --prefix=/usr/local
+shell$ make all install
+
+- couldn't get OpenMP working or conda installation of mpi4py
+
+- installed MPICH
+
+- $ pip intall mpi4py (finally worked)
+
+
+What I tried now:
+.................
+
+When I execute:
+$ mpiexec -n 10 python untitled10.py
+
+I get error:
+"from mpi4py import MPI
+ImportError: libmpi.so.20: cannot open shared object file: No such file or directory"
+
+- when I initially entered: $ which mpicc
+I got a blank line
+
+- I did $ sudo apt install MPICH
+downloaded a bunch of stuff, looked to be good
+
+- now when $ which mpicc
+I get "/usr/local/mpicc
+
+- also $ which mpiexec
+gives "/usr/local/mpiexec
+
+- still get same error when try to run python script
+
+- however, when run $ mpiexec -n 2 python -c "print 'Hello World'"
+I get:
+"Hello World
+Hello World"
+
+- could be path issues:
+$ echo $LD_LIBRARY_PATH
+gives {empty}
+$ echo $PATH
+gives {bunch of entries}
+
+- tried $ ldconfig 
+got: "/sbin/ldconfig.real: Can't create temporary cache file: ... Permission denied" 
+
+- when do $ ls /usr/local
+returns tons of entries, including multiple MPI entries - possibly conflicts between 
+two installations or old/new installs?

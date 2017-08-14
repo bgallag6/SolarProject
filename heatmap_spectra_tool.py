@@ -36,8 +36,7 @@ class Index(object):
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max, picker=True)
         ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[0]), y = 1.01, fontsize=17)
-        cbar = plt.colorbar(im,cax=cax)
-        #cbar.set_label('%s' % cbar_labels[0], size=15, labelpad=10)
+        plt.colorbar(im,cax=cax)
         plt.draw()
 
     def index(self, event):
@@ -46,8 +45,7 @@ class Index(object):
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[1]), y = 1.01, fontsize=17)
-        cbar = plt.colorbar(im,cax=cax)
-        #cbar.set_label('%s' % cbar_labels[1], size=15, labelpad=10)
+        plt.colorbar(im,cax=cax)
         plt.draw()
         
     def roll(self, event):
@@ -60,8 +58,7 @@ class Index(object):
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[2]), y = 1.01, fontsize=17)
-        cbar = plt.colorbar(im,cax=cax)
-        #cbar.set_label('%s' % cbar_labels[2], size=15, labelpad=10)
+        plt.colorbar(im,cax=cax)
         plt.draw()
         
     def gauss_amp(self, event):
@@ -70,8 +67,7 @@ class Index(object):
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[3]), y = 1.01, fontsize=17)
-        cbar = plt.colorbar(im,cax=cax)
-        #cbar.set_label('%s' % cbar_labels[3], size=15, labelpad=10)
+        plt.colorbar(im,cax=cax)
         plt.draw()
         
     def gauss_loc(self, event):
@@ -80,8 +76,7 @@ class Index(object):
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet_r', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[4]), y = 1.01, fontsize=17)
-        cbar = plt.colorbar(im,cax=cax)
-        #cbar.set_label('%s' % cbar_labels[4], size=15, labelpad=10)
+        plt.colorbar(im,cax=cax)
         plt.draw()
         
     def gauss_wid(self, event):
@@ -90,8 +85,7 @@ class Index(object):
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[5]), y = 1.01, fontsize=17)
-        cbar = plt.colorbar(im,cax=cax)
-        #cbar.set_label('%s' % cbar_labels[5], size=15, labelpad=10)
+        plt.colorbar(im,cax=cax)
         plt.draw()
         
     def fstat(self, event):
@@ -101,16 +95,14 @@ class Index(object):
         h_max = np.percentile(NaN_replace,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='none', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[6]), y = 1.01, fontsize=17)
-        cbar = plt.colorbar(im,cax=cax)
-        #cbar.set_label('%s' % cbar_labels[6], size=15, labelpad=10)
+        plt.colorbar(im,cax=cax)
         plt.draw()
         
     def visual(self, event):
         param = vis[0]
         im = ax1.imshow(param, cmap='sdoaia%i' % wavelength, interpolation='nearest', picker=True)
         ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[7]), y = 1.01, fontsize=17)
-        cbar = plt.colorbar(im,cax=cax)
-        #cbar.set_label('%s' % cbar_labels[7], size=15, labelpad=10)
+        plt.colorbar(im,cax=cax)
         plt.draw()
         
     def scatter(self, event):
@@ -188,7 +180,7 @@ def Gauss(f, P, fp, fw):
 
 directory = 'F:/Users/Brendan/Desktop/SolarProject'
 #directory = 'S:'
-date = '20140818'
+date = '20130713'
 wavelength = 1600
 
 global spectra

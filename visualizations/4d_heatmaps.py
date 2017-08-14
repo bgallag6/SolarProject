@@ -9,8 +9,9 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import numpy as np
 
-directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20140818'
+#directory = 'F:/Users/Brendan/Desktop/SolarProject'
+directory = 'S:'
+date = '20140822'
 wavelength = 1600
 
 H = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
@@ -22,11 +23,14 @@ names = ['slope_coeff', 'index', 'tail', 'gauss_amp', 'gauss_loc', 'gauss_wid', 
 p1 = 4
 p2 = 5
 
+param1 = H[p1] # for 20140822
+param2 = H[p2] # for 20140822
+
 #param1 = H[p1,50:-50,70:-70] # for 20160520
 #param2 = H[p2,50:-50,70:-70] # for 20160520
 
-param1 = H[p1,180:-175,350:-80] # for 20140818 large
-param2 = H[p2,180:-175,350:-80] # for 20140818 large
+#param1 = H[p1,180:-175,350:-80] # for 20140818 large
+#param2 = H[p2,180:-175,350:-80] # for 20140818 large
 #param1 = H[p1,70:-55, 190:270] # for 20160426
 #param2 = H[p2,70:-55, 190:270] # for 20160426
 #param1 = H[p1,160:-130, 260:-165] # for 20160520

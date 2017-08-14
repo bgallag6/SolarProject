@@ -70,3 +70,10 @@
 
 8/10:
 - removed a bunch of module imports + deleted unused / replaced lines [heatmap_spectra_tool.py]
+
+8/12:
+- added "bbox_inches='tight' to figure plots (removes whitespace around borders) - use scale vs. width in latex files [SolSpec.py]
+- added rollover calculation to spec_fit.py 
+- included r-value plot + histogram in loop, separated p-value plot creation from loop: heatmaps script
+- included rollover plot + histogram in loop - for those parameter arrays that have it: heatmaps script
+- moved umbra/PPV overlay into if-statement so no global error if not defined: heatmaps script

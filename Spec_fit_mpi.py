@@ -45,6 +45,7 @@ def Gauss(f, P, fp, fw):
 def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
 
+
 def spec_fit( subcube ):
 #def spec_fit( subcube, subcube_StdDev ):
     
@@ -67,7 +68,8 @@ def spec_fit( subcube ):
 
 
   # initialize arrays to hold parameter values
-  params = np.zeros((9, SPECTRA.shape[0], SPECTRA.shape[1]))
+  #params = np.zeros((9, SPECTRA.shape[0], SPECTRA.shape[1]))
+  params = np.zeros((10, SPECTRA.shape[0], SPECTRA.shape[1]))
 
   # Uncertainties = np.zeros((6, SPECTRA.shape[0], SPECTRA.shape[1]))  # not using right now
   
@@ -101,7 +103,7 @@ def spec_fit( subcube ):
             # initial guesses for fitting parameters
             M1_low = [-0.002, 0.3, -0.01]
             M1_high = [0.002, 6., 0.01]
-            nlfit_l, nlpcov_l = scipy.optimize.curve_fit(PowerLaw, f, s, bounds=(M1_low, M1_high), sigma=ds, method='dogbox')  # replaced #'s with arrays
+            nlfit_l, nlpcov_l = scipy.optimize.curve_fit(PowerLaw, f, s, bounds=(M1_low, M1_high), sigma=ds, method='dogbox')
            
         
         except RuntimeError:
@@ -122,8 +124,8 @@ def spec_fit( subcube ):
             M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
             
             # change method to 'dogbox' and increase max number of function evaluations to 3000
-            nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000) # replaced #'s with arrays
-            #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A,n,C,0.1,-5.55,0.425], bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000) # replaced #'s with arrays
+            nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
+            #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A,n,C,0.1,-5.55,0.425], bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
         
         except RuntimeError:
             #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
@@ -148,8 +150,8 @@ def spec_fit( subcube ):
             #    M2_low = [0., 0.3, 0., 0., -6.5, 0.05]  # try constraining further, now that are specifying initial guess
             #    M2_high = [0.002, 6., 0.01, 0.1, -4.6, 0.8]
             
-            nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
-            #nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000) # replaced #'s with arrays
+            nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)
+            #nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)
        
         except RuntimeError:
             #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
@@ -192,6 +194,8 @@ def spec_fit( subcube ):
         r_temp = pearsonr(m2_fit2, s)  # calculate r-value correlation coefficient
         r = r_temp[0]
         
+        rollover = (1. / ((C22 / A22)**(-1. / n22))) / 60.
+        
         # populate array with parameters
         params[0][l][m] = A22
         params[1][l][m] = n22
@@ -202,6 +206,7 @@ def spec_fit( subcube ):
         params[6][l][m] = f_test2
         params[7][l][m] = P22 / amp_scale2
         params[8][l][m] = r
+        params[9][l][m] = rollover
         
         
     # estimate time remaining and print to screen  (looks to be much better - not sure why had above?)

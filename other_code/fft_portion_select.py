@@ -6,11 +6,7 @@ Created on Sun Jan 08 16:54:19 2017
 """
 
 """
-# widgets example code: slider_demo.py
-The SpanSelector is a mouse widget to select a xmin/xmax range and plot the
-detail view of the selected region in the lower axes
-*** make so that can view full timeseries, can select portion and see if 
-*** something pops out from FFT
+* make so that can view full timeseries, can select portion and see if something pops out from FFT
 """
 
 #"""
@@ -50,8 +46,9 @@ ax1 = plt.subplot2grid((3,5),(0, 0), colspan=5, rowspan=1)
 #f = np.loadtxt('C:/Users/Brendan/Desktop/PHYS 326/older/seconds.txt')
 #s = np.loadtxt('C:/Users/Brendan/Desktop/PHYS 326/older/values.txt')
 
-directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20140818'
+#directory = 'F:/Users/Brendan/Desktop/SolarProject'
+directory = 'S:'
+date = '20140822'
 wavelength = 1600
 
 derotated = np.load('%s/DATA/Temp/%s/%i/derotated.npy' % (directory, date, wavelength))
@@ -59,10 +56,12 @@ derotated = np.load('%s/DATA/Temp/%s/%i/derotated.npy' % (directory, date, wavel
 #freq_size = ((num_freq)*2) + 1  # determined from FFT-averaging script
 
 #t = np.array([12*i for i in range(3600)])
-t = np.array([24*i for i in range(1797)])  
+#t = np.array([24*i for i in range(1797)])  
+t = np.array([24*i for i in range(derotated.shape[0])])  
 
 #s = derotated[200][380]
-s = derotated[:,202,380]
+#s = derotated[:,202,380]
+s = derotated[:,50,100]
 
 ax1.plot(t, s, '-')
 ax1.set_title('Timeseries -- (Select segment to compute FFT)', fontsize=20, y=1.01)

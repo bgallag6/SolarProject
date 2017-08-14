@@ -9,15 +9,14 @@ Created on Sun Feb 26 00:00:48 2017
 
 import numpy as np
 import SolSpec as ss
-#import h5py
 
 """
 ## generate heatmaps
 """
 
-directory = 'F:/Users/Brendan/Desktop/SolarProject'
-#directory = 'S:'
-date = '20130713'
+#directory = 'F:/Users/Brendan/Desktop/SolarProject'
+directory = 'S:'
+date = '20140827'
 wavelength = 1600
 
 """
