@@ -18,6 +18,11 @@ Datasets downloaded:
 1600 - 1800/1800 [sunspot - DONE]
 
 
+20120111 : 00:00-12:00 (quiet region)
+1600 - 0/1800
+1700 - 0/1800
+
+
 
 20120923:  00:00-06:00
 171 - 1784/1800 [sunspot - DONE]
@@ -35,6 +40,11 @@ Datasets downloaded:
 211 - 0/3600
 304 - 3600/3600 * run $& reference before assignment error.
 1600 - 1800/1800 [sunspot - DONE]
+
+
+20121227: 12:00-24:00 (quiet region)
+1600: 1770/1800 *solar-backup*
+1700: 1430/1800 *solar-backup*
 
 
 
@@ -166,12 +176,12 @@ Datasets downloaded:
 
 20140822: 12:00-24:00
 (-75,100)(-30,100) -- (-130,155)(-30,100)
-1600 - 1745/1800
+1600 - 1745/1800 [sunspot - DONE]
 
 
 20140827: 00:00-12:00
 (-75,75)(-25,125) -- (-130,130)(-25,125)
-
+1600 - 1740/1800 [sunspot - DONE]
 
 
 20140910:  08:00-20:00  (flare!)  *using 09:00-17:00 (8 hours) for pre-flare FFT
@@ -254,7 +264,15 @@ Datasets downloaded:
 1600 - 0/1800
 
 
+20151231: 12:00-24:00 (quiet region)
+1600 - 1760/1800 [500x500 region - DONE]
+1700 - 1730/1800 [500x500 region - DONE]
+
+
 20160103 - circular/spiral interesting pattern
+
+
+20160113 - incredible full-disk filament
 
 
 20160414: 00:00-12:00  [DONE]
@@ -297,6 +315,10 @@ for full 24: [(-180,160)(-240,40) -- (-290,270)(-240,40)]
 304 - 3600/3600 [sunspot - DONE]
 1600 - 1800/1800 [sunspot - DONE]
 
+
+20170111: 00:00-12:00 (quiet region)
+1600 - 1770/1800 [500x500 region - DONE]
+1700 - 1750/1800 [500x500 region - DONE]
 
 
 20170328 - 00:00 - 03/30 12:00 [DONE]
@@ -346,7 +368,7 @@ centered - 04/01 - 00:00 - 12:00 (have til 15:00)
 2017/07/10-14 (monster sunspot!!!)
 20170711 - 12:00 - 24:00
 (-175,175),(-50,-275) -- (-230,230),(-50,-275)
-171 - 3500/3548
+171 - 3500/3548 [sunspot - DONE]
 304 - 3500/3540 [sunspot - DONE]
 1600 - 1750/1765 [sunspot - DONE]
 
