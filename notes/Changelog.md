@@ -77,3 +77,6 @@
 - included r-value plot + histogram in loop, separated p-value plot creation from loop: heatmaps script
 - included rollover plot + histogram in loop - for those parameter arrays that have it: heatmaps script
 - moved umbra/PPV overlay into if-statement so no global error if not defined: heatmaps script
+
+8/22:
+- added Gaussian fit of Gaussian location to SolSpec.py

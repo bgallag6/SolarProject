@@ -9,6 +9,11 @@ Datasets downloaded:
 1600 - 1800/1800 [sunspot - DONE]
 
 
+20110207: 12:00 - 24:00
+1600 - 1760/1800 [1200x1200 - 4hrs/6seg - DONE]
+1700 - 1480/1800
+
+
 20111210 : 00:00 - 12:00 *Jess Dataset 
 (200,350)(225,375) -- (145,405)(225,375)
 171 - 3600/3600 [sunspot - DONE]
@@ -19,8 +24,8 @@ Datasets downloaded:
 
 
 20120111 : 00:00-12:00 (quiet region)
-1600 - 0/1800
-1700 - 0/1800
+1600 - 1770/1800 [1200x1200 - 4hrs/6seg - DONE]
+1700 - 1735/1800
 
 
 
@@ -43,8 +48,8 @@ Datasets downloaded:
 
 
 20121227: 12:00-24:00 (quiet region)
-1600: 1770/1800 *solar-backup*
-1700: 1430/1800 *solar-backup*
+1600: 1770/1800 *solar-backup*  [1200x1200 - 4hrs/6seg - DONE]
+1700: 1760/1800 *solar-backup*  [1200x1200 - 12hrs/6seg - DONE] [1200x1200 - 4hrs/6seg - DONE]
 
 
 
@@ -111,14 +116,17 @@ Datasets downloaded:
 
 
 
-
-20140107: 00:00 - 20:00 *possible flare
+20140107: 00:00 - 20:00 *possible flare *upside-down heart sunspot
 171 - 0/3600
 193 - 0/3600
 211 - 0/3600
 304 - 0/3600
 1600 - 0/1800
 
+
+20140130: 00:00 - 12:00 (quiet region)
+1600 - 0/1800
+1700 - 0/1800
 
 
 20140203: 00:00 - 12:00 *complex active regions above and below equator (hold off)
@@ -235,6 +243,10 @@ Datasets downloaded:
 1600 - 0
 
 
+20141205: 00:00 - 12:00 (quiet region)
+1600: 0/1800
+1700: 0/1800
+
 
 20141227:  12:00-24:00 [DONE]
 (-100,100)(250,400) -- (-155,155)(250,400)
@@ -265,7 +277,7 @@ Datasets downloaded:
 
 
 20151231: 12:00-24:00 (quiet region)
-1600 - 1760/1800 [500x500 region - DONE]
+1600 - 1760/1800 [500x500 region - DONE] [1200x1200 - 4hrs/6seg - DONE]
 1700 - 1730/1800 [500x500 region - DONE]
 
 
@@ -317,8 +329,8 @@ for full 24: [(-180,160)(-240,40) -- (-290,270)(-240,40)]
 
 
 20170111: 00:00-12:00 (quiet region)
-1600 - 1770/1800 [500x500 region - DONE]
-1700 - 1750/1800 [500x500 region - DONE]
+1600 - 1770/1800 [500x500 region - DONE]  [1200x1200 - 4hrs/6seg - DONE]
+1700 - 1750/1800 [500x500 region - DONE]  [1200x1200 - 4hrs/6seg - RUNNING-PC]
 
 
 20170328 - 00:00 - 03/30 12:00 [DONE]

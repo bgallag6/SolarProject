@@ -76,6 +76,12 @@ def heatmap(directory, date, wavelength):
            wavelength=211, path_name='C:/Users/Brendan/Desktop/PHYS 326') 
     """
     
+    # define Gaussian-fitting function
+    #def Gauss(f, P, fp, fw, C):
+    def Gauss(f, P, fp, fw):
+        #return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) + C
+        return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2)
+    
     # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
     #titles = [r'Power Law Slope-Coefficient [flux] - $A$', r'(b) Power Law Index $n$', r'Power Law Tail - $C$', r'Gaussian Amplitude [flux] - $\alpha$', r'(c) Gauss. Loc. $\beta$ [min]', r'Gaussian Width - $\sigma$', 'F-Statistic', r'Gaussian Amplitude Scaled - $\alpha$', 'p-Value']
     titles = [r'Power Law Slope-Coefficient [flux] - $A$', r'(b) Power Law Index $n$', r'Power Law Tail - $C$', r'Gaussian Amplitude [flux] - $\alpha$', r'(c) Gauss. Loc. $\beta$ [min]', r'Gaussian Width - $\sigma$', 'F-Statistic', r'Gaussian Amplitude Scaled - $\alpha$', r'$r$-Value: Correlation Coefficient', r'(d) Rollover Period $T_r$ [min]'] # 10-param-list
@@ -336,14 +342,32 @@ def heatmap(directory, date, wavelength):
         bins=x[1:-2]
         elem = np.argmax(n)
         bin_max = bins[elem]
-        plt.vlines(bin_max, 0, y.max()*1.1, color='blue', linestyle='dotted', linewidth=1.5, label='mode=%0.6f' % bin_max)      
-        #y, x, _ = plt.hist(flat_param, bins=100)
         plt.ylim(0, y.max()*1.1)
-        plt.vlines(mean, 0, y.max()*1.1, color='red', linestyle='solid', linewidth=1.5, label='mean=%0.6f' % mean)
-        plt.vlines(0, 0, y.max()*1.1, color='white', linestyle='dashed', linewidth=1.5, label='sigma=%0.6f' % sigma) 
-        #plt.vlines(mode[0], 0, y.max()*1.1, color='red', linestyle='dashed', linewidth=1.5, label='mode=%0.6f' % mode[0])
-        #plt.vlines(lower_sigma, 0, y.max()*1.1, color='blue', linestyle='dotted', linewidth=1.5, label='low 68=%0.6f' % lower_sigma)
-        #plt.vlines(upper_sigma, 0, y.max()*1.1, color='blue', linestyle='dashed', linewidth=1.5, label='high 68=%0.6f' % upper_sigma)
+        
+        
+        if i == 1 or i == 4:
+            f = x[:-1]
+            s = y
+            #ds = 1./y
+            
+            #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, sigma=ds, method='dogbox', max_nfev=3000)     
+            nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(Gauss, f, s)       
+            #P, fp, fw, C = nlfit_gp  # unpack fitting parameters
+            P, fp, fw = nlfit_gp  # unpack fitting parameters          
+            #g_fit = Gauss(f, P,fp,fw, C)  
+            g_fit = Gauss(f, P,fp,fw)       
+            gauss_center = np.exp(fp)
+            gauss_wid = np.exp(fw)
+        
+            plt.plot(f,s, linewidth=1.5)
+            plt.plot(f,g_fit, linestyle='dashed', linewidth=2.)
+            plt.vlines(gauss_center,0,y.max()*1.1, linestyle='dashed', color='red', linewidth=2., label='center=%0.4f' % gauss_center)
+        
+        
+        plt.vlines(bin_max, 0, y.max()*1.1, color='black', linestyle='dotted', linewidth=2., label='mode=%0.4f' % bin_max)  
+        #plt.vlines(mean, 0, y.max()*1.1, color='red', linestyle='solid', linewidth=1.5, label='mean=%0.6f' % mean)     
+        #plt.hlines(y[nearest],fwhm_min,fwhm_min+fwhm, linestyle='dashed', linewidth=2., color='white')
+        plt.vlines(0, 0, y.max()*1.1, color='white', linestyle='dashed', linewidth=1.5, label='sigma=%0.4f' % sigma)
         legend = plt.legend(loc='upper right', prop={'size':20}, labelspacing=0.35)
         for label in legend.get_lines():
             label.set_linewidth(2.0)  # the legend line width
