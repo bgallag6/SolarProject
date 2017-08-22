@@ -345,7 +345,7 @@ def heatmap(directory, date, wavelength):
         plt.ylim(0, y.max()*1.1)
         
         
-        if i == 1 or i == 4:
+        if i == 4:
             f = x[:-1]
             s = y
             #ds = 1./y
