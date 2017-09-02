@@ -38,7 +38,7 @@ def get_data_fill(arr_need, arr_rename, directory):
             counter += 1
         
         if rank == 0:
-            print "Probably downloading file %i/%i" % (counter*size, sub_arr_len*4)
+            print "Probably downloading file %i/%i" % (counter*size, sub_arr_len*size)
     return counter
 
 
@@ -82,11 +82,11 @@ for item in data:
                 new_name = 'aia_lev1_%sa_%s_%s_%st%s_%s_%s_24z_image_lev1.fits' % (wavelength, fyear, fmonth, fday, fhour, fmin, fsec) 
                 arr_rename = np.append(arr_rename, new_name)
 
-arr_need0 = arr_need[:8]  # for testing small number of files
-arr_rename0 = arr_rename[:8]  # for testing small number of files
+#arr_need0 = arr_need[:8]  # for testing small number of files
+#arr_rename0 = arr_rename[:8]  # for testing small number of files
 
-#arr_need0 = arr_need
-#arr_rename0 = arr_rename     
+arr_need0 = arr_need
+arr_rename0 = arr_rename     
 
 chunks = np.array_split(arr_need0, size)  # Split the data based on no. of processors
 chunksB = np.array_split(arr_rename0, size)  # Split the data based on no. of processors

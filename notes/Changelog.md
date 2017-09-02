@@ -86,3 +86,6 @@
 - removed spectra_array=SPECTRA from Spec_fit_mpi.py, +..4d
 - removed some unused code in SolSpec.py
 - removed duplicate variables in SolSpec.py
+
+9/2:
+- added script using MPI to parallelize JSOC 'url' .FITS file download request
