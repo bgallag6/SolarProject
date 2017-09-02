@@ -226,6 +226,8 @@ def heatmap(directory, date, wavelength):
             h_map[i] = (1./(np.exp(h_map[i])))/60.
             h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+            #h_min = np.percentile(h_map[i],0.5)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+            #h_max = np.percentile(h_map[i],99.5)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
             #cmap = 'jet_r'  # reverse color-scale for Gaussian Location, because of flipped frequencies to seconds
             cmap = cm.get_cmap('jet_r', 10)
         elif i == 9:
@@ -350,18 +352,20 @@ def heatmap(directory, date, wavelength):
             s = y
             #ds = 1./y
             
-            #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, sigma=ds, method='dogbox', max_nfev=3000)     
-            nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(Gauss, f, s)       
-            #P, fp, fw, C = nlfit_gp  # unpack fitting parameters
-            P, fp, fw = nlfit_gp  # unpack fitting parameters          
-            #g_fit = Gauss(f, P,fp,fw, C)  
-            g_fit = Gauss(f, P,fp,fw)       
-            gauss_center = np.exp(fp)
-            gauss_wid = np.exp(fw)
-        
-            plt.plot(f,s, linewidth=1.5)
-            plt.plot(f,g_fit, linestyle='dashed', linewidth=2.)
-            plt.vlines(gauss_center,0,y.max()*1.1, linestyle='dashed', color='red', linewidth=2., label='center=%0.4f' % gauss_center)
+            if wavelength == 1600 or wavelength == 1700:
+                #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(Gauss, f, s, method='dogbox', max_nfev=10000)     
+                nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(Gauss, f, s)       
+                #P, fp, fw, C = nlfit_gp  # unpack fitting parameters
+                P, fp, fw = nlfit_gp  # unpack fitting parameters          
+                #g_fit = Gauss(f, P,fp,fw, C)  
+                g_fit = Gauss(f, P,fp,fw)       
+                gauss_center = np.exp(fp)
+                gauss_wid = np.exp(fw)
+            
+                plt.plot(f,s, linewidth=1.5)
+                plt.plot(f,g_fit, linestyle='dashed', linewidth=2.)
+                plt.vlines(gauss_center,0,y.max()*1.1, linestyle='dashed', color='red', linewidth=2., label='center=%0.4f' % gauss_center)
+            
         
         
         plt.vlines(bin_max, 0, y.max()*1.1, color='black', linestyle='dotted', linewidth=2., label='mode=%0.4f' % bin_max)  
@@ -849,11 +853,9 @@ from sunpy.map import Map
 from scipy.interpolate import interp1d
 from scipy import signal
 import scipy.misc
-import astropy.units as u
 #from scipy import fftpack  # not working with this called here???
 from timeit import default_timer as timer
 #import accelerate  # put inside function
-import glob
 
 
 def fft_avg(directory, date, wavelength, num_seg):
@@ -883,41 +885,16 @@ def fft_avg(directory, date, wavelength, num_seg):
     
     from scipy import fftpack
     
-    """
-    # in case need to add other descriptors to filename
-    flist_data = glob.glob('%s/DATA/Temp/%s/%i/*rebin1.npy' % (directory, date, wavelength)) 
-    flist_time = glob.glob('%s/DATA/Temp/%s/%i/*time.npy' % (directory, date, wavelength))
-    flist_exposure = glob.glob('%s/DATA/Temp/%s/%i/*exposure.npy' % (directory, date, wavelength))
-    
-    part_name = '%s/DATA/Temp/%s/%i/' % (directory, date, wavelength)
-    len_data = len(flist_data[0])
-    len_time = len(flist_time[0])
-    len_exposure = len(flist_exposure[0])
-    len_part = len(part_name)
-    
-    fname_data = data[0][len_part:len_data]
-    fname_time = data[0][len_part:len_time]
-    fname_exposure = data[0][len_part:len_exposure]
-    
-    DATA = np.load('%s/DATA/Temp/%s/%i/%s' % (directory, date, wavelength, fname_data))
-    
-    TIME = np.load('%s/DATA/Temp/%s/%i/%s' % (directory, date, wavelength, fname_time))
-    
-    Ex = np.load('%s/DATA/Temp/%s/%i/%s' % (directory, date, wavelength, fname_exposure))
-    """
-    
     DATA = np.load('%s/DATA/Temp/%s/%i/derotated.npy' % (directory, date, wavelength))
     
     TIME = np.load('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength))
     
     Ex = np.load('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength))
-
     
     print DATA.shape 
     
     print "Number of seconds in timeseries = %i" % (TIME[len(TIME)-1] - TIME[0])
-    
-        
+          
     ## determine frequency values that FFT will evaluate
     if wavelength == 1600 or wavelength == 1700:
       time_step = 24  # 24-second cadence for these wavelengths
@@ -957,28 +934,9 @@ def fft_avg(directory, date, wavelength, num_seg):
         for jj in range(spectra_seg.shape[1]):
         #for jj in range(0,5):        
 
-            pixmed = DATA[:,ii,jj] / Ex  # extract timeseries + normalize by exposure time
-            #pixmed = pixmed/Ex  # normalize by exposure time    
-            
-            """
-            # The derotation introduces some bad data towards the end of the sequence. This trims that off
-            bad = np.argmax(pixmed <= 0.)		# Look for values <= zero
-            last_good_pos = bad - 1			# retain only data before the <=zero
-            
-            # Get time and pixel values
-            if wavelength == 94 or wavelength == 131 or wavelength == 335:  
-                v=pixmed  # 094/131/335 -- intensities too low to trim off negative values
-                t=TIME
-            else:
-                v=pixmed[0:last_good_pos]		
-                t=TIME[0:last_good_pos]
-            """
-            
-            # maybe do this for all wavelengths?
-            v=pixmed
-            t=TIME
+            pixmed = DATA[:,ii,jj] / Ex  # extract timeseries + normalize by exposure time   
         
-            v_interp = np.interp(t_interp,t,v)  # interpolate pixel-intensity values onto specified time grid
+            v_interp = np.interp(t_interp,TIME,pixmed)  # interpolate pixel-intensity values onto specified time grid
             
             data = v_interp
             
@@ -986,20 +944,18 @@ def fft_avg(directory, date, wavelength, num_seg):
     
             data = data[0:len(data)-rem]  # trim timeseries to be integer multiple of n_segments
             split = np.split(data, n_segments)  # create split array for each segment
-    
-    
+       
             for i in range(0,n_segments):               
                 
               ## perform Fast Fourier Transform on each segment       
               sig = split[i]
               sig_fft = fftpack.fft(sig)
-              #sig_fft = fftpack.rfft(sig)  # real-FFT
-              #sig_fft = np.fft.rfft(sig)  # numpy significantly slower than scipy                 
+              #sig_fft = fftpack.rfft(sig)  # real-FFT                
               #sig_fft = accelerate.mkl.fftpack.fft(sig)  # MKL-accelerated is (2x) faster
               #sig_fft = accelerate.mkl.fftpack.rfft(sig)  # this is slightly faster
               powers = np.abs(sig_fft)[pidxs]
-              norm = len(sig)  # to normalize the power
-              powers = ((powers/norm)**2)*(1./(sig.std()**2))*2
+              norm = len(sig)
+              powers = ((powers/norm)**2)*(1./(sig.std()**2))*2   # normalize the power
               avg_array += powers
             
             avg_array /= n_segments  # take the average of the segments
@@ -1017,13 +973,11 @@ def fft_avg(directory, date, wavelength, num_seg):
             T_est = T_init*(spectra_seg.shape[0])  
             T_min, T_sec = divmod(T_est, 60)
             T_hr, T_min = divmod(T_min, 60)
-            #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_seg.shape[0], T_est)
             print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spectra_seg.shape[0], T_hr, T_min, T_sec)
         else:
             T_est2 = T2*(spectra_seg.shape[0]-ii)
             T_min2, T_sec2 = divmod(T_est2, 60)
             T_hr2, T_min2 = divmod(T_min2, 60)
-            #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_seg.shape[0], T_est2)
             print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spectra_seg.shape[0], T_hr2, T_min2, T_sec2)
         T1 = T
         
@@ -1159,11 +1113,9 @@ from sunpy.map import Map
 from scipy.interpolate import interp1d
 from scipy import signal
 import scipy.misc
-import astropy.units as u
 #from scipy import fftpack  # not working with this called here???
 from timeit import default_timer as timer
 #import accelerate  # put inside function
-import glob
 
 
 def fft_overlap(directory, date, wavelength, window_length, overlap_pct, pixel_box):
@@ -1193,40 +1145,15 @@ def fft_overlap(directory, date, wavelength, window_length, overlap_pct, pixel_b
     
     from scipy import fftpack
     
-    """
-    # in case need to add other descriptors to filename
-    flist_data = glob.glob('%s/DATA/Temp/%s/%i/*rebin1.npy' % (directory, date, wavelength)) 
-    flist_time = glob.glob('%s/DATA/Temp/%s/%i/*time.npy' % (directory, date, wavelength))
-    flist_exposure = glob.glob('%s/DATA/Temp/%s/%i/*exposure.npy' % (directory, date, wavelength))
-    
-    part_name = '%s/DATA/Temp/%s/%i/' % (directory, date, wavelength)
-    len_data = len(flist_data[0])
-    len_time = len(flist_time[0])
-    len_exposure = len(flist_exposure[0])
-    len_part = len(part_name)
-    
-    fname_data = data[0][len_part:len_data]
-    fname_time = data[0][len_part:len_time]
-    fname_exposure = data[0][len_part:len_exposure]
-    
-    DATA = np.load('%s/DATA/Temp/%s/%i/%s' % (directory, date, wavelength, fname_data))
-    
-    TIME = np.load('%s/DATA/Temp/%s/%i/%s' % (directory, date, wavelength, fname_time))
-    
-    Ex = np.load('%s/DATA/Temp/%s/%i/%s' % (directory, date, wavelength, fname_exposure))
-    """
-    
     DATA = np.load('%s/DATA/Temp/%s/%i/derotated.npy' % (directory, date, wavelength))
     
     TIME = np.load('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength))
     
     Ex = np.load('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength))
-
     
     print DATA.shape 
     
-    print "Number of seconds in timeseries = %i" % (TIME[len(TIME)-1] - TIME[0])
-    
+    print "Number of seconds in timeseries = %i" % (TIME[len(TIME)-1] - TIME[0])    
         
     ## determine frequency values that FFT will evaluate
     if wavelength == 1600 or wavelength == 1700:
@@ -1268,28 +1195,9 @@ def fft_overlap(directory, date, wavelength, window_length, overlap_pct, pixel_b
         for jj in range(spec_array.shape[2]):
         #for jj in range(0,5):        
             
-            pixmed = DATA[:,ii,jj] / Ex  # extract timeseries + normalize by exposure time
-            #pixmed = pixmed/Ex  # normalize by exposure time    
-            
-            """
-            # The derotation introduces some bad data towards the end of the sequence. This trims that off
-            bad = np.argmax(pixmed <= 0.)		# Look for values <= zero
-            last_good_pos = bad - 1			# retain only data before the <=zero
-            
-            # Get time and pixel values
-            if wavelength == 94 or wavelength == 131 or wavelength == 335:  
-                v=pixmed  # 094/131/335 -- intensities too low to trim off negative values
-                t=TIME
-            else:
-                v=pixmed[0:last_good_pos]		
-                t=TIME[0:last_good_pos]
-            """
-            
-            # maybe do this for all wavelengths?
-            v=pixmed
-            t=TIME
+            pixmed = DATA[:,ii,jj] / Ex  # extract timeseries + normalize by exposure time     
         
-            v_interp = np.interp(t_interp,t,v)  # interpolate pixel-intensity values onto specified time grid
+            v_interp = np.interp(t_interp,TIME,pixmed)  # interpolate pixel-intensity values onto specified time grid
             
             avg_array = np.zeros((len(freqs)))  # initialize array to hold fourier powers
             avg_smooth = np.zeros((len(freqs)))  # initialize array to hold fourier powers
@@ -1305,8 +1213,8 @@ def fft_overlap(directory, date, wavelength, window_length, overlap_pct, pixel_b
                 #sig_fft = fftpack.fft(sig)
                 sig_fft = accelerate.mkl.fftpack.fft(sig)  # MKL-accelerated is (2x) faster
                 powers = np.abs(sig_fft)[pidxs]
-                norm = len(sig)  # to normalize the power
-                powers = ((powers/norm)**2)*(1./(sig.std()**2))*2
+                norm = len(sig)
+                powers = ((powers/norm)**2)*(1./(sig.std()**2))*2  # normalize the power
                 avg_array += powers
                       
                 orig_powerspec = powers

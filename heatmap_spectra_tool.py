@@ -180,8 +180,8 @@ def Gauss(f, P, fp, fw):
 
 #directory = 'F:/Users/Brendan/Desktop/SolarProject'
 directory = 'S:'
-date = '20120621'
-wavelength = 1700
+date = '20151231'
+wavelength = 171
 
 global spectra
 

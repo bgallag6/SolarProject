@@ -9,10 +9,6 @@ Datasets downloaded:
 1600 - 1800/1800 [sunspot - DONE]
 
 
-20110207: 12:00 - 24:00
-1600 - 1760/1800 [1200x1200 - 4hrs/6seg - DONE]
-1700 - 1480/1800
-
 
 20111210 : 00:00 - 12:00 *Jess Dataset 
 (200,350)(225,375) -- (145,405)(225,375)
@@ -45,11 +41,6 @@ Datasets downloaded:
 211 - 0/3600
 304 - 3600/3600 * run $& reference before assignment error.
 1600 - 1800/1800 [sunspot - DONE]
-
-
-20121227: 12:00-24:00 (quiet region)
-1600: 1770/1800 *solar-backup*  [1200x1200 - 4hrs/6seg - DONE]
-1700: 1760/1800 *solar-backup*  [1200x1200 - 12hrs/6seg - DONE] [1200x1200 - 4hrs/6seg - DONE]
 
 
 
@@ -123,10 +114,6 @@ Datasets downloaded:
 304 - 0/3600
 1600 - 0/1800
 
-
-20140130: 00:00 - 12:00 (quiet region)
-1600 - 0/1800
-1700 - 0/1800
 
 
 20140203: 00:00 - 12:00 *complex active regions above and below equator (hold off)
@@ -234,7 +221,7 @@ Datasets downloaded:
 
 
 
-***don't need this one?***
+*** filament ***
 20141115:  00:00-12:00  
 171 - 0
 193 - 3553/3600  %%solar-backup%%
@@ -242,10 +229,6 @@ Datasets downloaded:
 304 - 3600/3600  %%solar-backup%%
 1600 - 0
 
-
-20141205: 00:00 - 12:00 (quiet region)
-1600: 0/1800
-1700: 0/1800
 
 
 20141227:  12:00-24:00 [DONE]
@@ -267,7 +250,7 @@ Datasets downloaded:
 1600 - 1800/1800 [sunspot - DONE]  %%solar-backup%%
 
 
-*not active region - just interesting - get when have time*
+* filament *
 20150211: 12:00-24:00
 171 - 0/3600
 193 - 3421/3600
@@ -276,15 +259,28 @@ Datasets downloaded:
 1600 - 0/1800
 
 
-20151231: 12:00-24:00 (quiet region)
-1600 - 1760/1800 [500x500 region - DONE] [1200x1200 - 4hrs/6seg - DONE]
-1700 - 1730/1800 [500x500 region - DONE]
+20150911-12 (great dual emergence)
 
 
-20160103 - circular/spiral interesting pattern
+20151231: 12:00-24:00 *very sharp filament
+(-125,250)(-350,0) -- (-180,305)(-350,0)
+171: 3570/3600 [filament - DONE]
+193: 3540/3600 [filament - DONE]
+304: 3580/3600 [filament - DONE]
+1600: 1760/1800
+1700: 1730/1800
 
 
-20160113 - incredible full-disk filament
+
+20160103: 00:00-12:00 - circular/spiral interesting pattern
+
+
+
+20160114: 00:00-12:00 - incredible full-disk filament
+171: 2380/3600
+193: 3310/3600
+304: 3575/3600
+
 
 
 20160414: 00:00-12:00  [DONE]
@@ -327,10 +323,6 @@ for full 24: [(-180,160)(-240,40) -- (-290,270)(-240,40)]
 304 - 3600/3600 [sunspot - DONE]
 1600 - 1800/1800 [sunspot - DONE]
 
-
-20170111: 00:00-12:00 (quiet region)
-1600 - 1770/1800 [500x500 region - DONE]  [1200x1200 - 4hrs/6seg - DONE]
-1700 - 1750/1800 [500x500 region - DONE]  [1200x1200 - 4hrs/6seg - RUNNING-PC]
 
 
 20170328 - 00:00 - 03/30 12:00 [DONE]

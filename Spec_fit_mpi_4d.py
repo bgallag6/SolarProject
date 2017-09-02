@@ -16,16 +16,10 @@ from timeit import default_timer as timer
 
 import numpy as np
 import scipy.signal
-from scipy.interpolate import interp1d
-from scipy import signal
 import scipy.misc
-import astropy.units as u
 from scipy import fftpack  # doesnt work in module when called here???
-from astropy.convolution import convolve, Box1DKernel
-from numpy.random import randn
 from mpi4py import MPI
-from scipy.stats.stats import pearsonr
-from scipy import fftpack    
+from scipy.stats.stats import pearsonr 
 
 # define Power-Law-fitting function (Model M1)
 def PowerLaw(f, A, n, C):
@@ -43,7 +37,6 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
 def spec_fit( subcube ):
     
   SPECTRA = subcube
-  spectra_array = SPECTRA
   print SPECTRA.shape[0], SPECTRA.shape[1]
       
   # determine frequency values that FFT will evaluate
@@ -77,7 +70,7 @@ def spec_fit( subcube ):
             
                                             
             f = freqs  # frequencies
-            s = spectra_array[h][l][m]  # fourier power
+            s = SPECTRA[h][l][m]  # fourier power
             
             
             # assign equal weights to all parts of the curve

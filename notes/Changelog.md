@@ -80,3 +80,9 @@
 
 8/22:
 - added Gaussian fit of Gaussian location to SolSpec.py
+
+8/27:
+- removed couple unused modules from Spec_fit_mpi.py, +..4d
+- removed spectra_array=SPECTRA from Spec_fit_mpi.py, +..4d
+- removed some unused code in SolSpec.py
+- removed duplicate variables in SolSpec.py

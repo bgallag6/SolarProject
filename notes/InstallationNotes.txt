@@ -10,3 +10,323 @@ Windows 10:
 - open command prompt
 - cd into extracted directory
 - python setup.py install
+
+
+waipy: pip install waipy
+downloaded whole repository - extracted to desktop - cd into directory - "python setup.py install"
+
+netcdf4: pip install netcdf4
+
+PyWavelets: pip install PyWavelets
+
+other wavelet: pip install git+https://github.com/aaren/wavelets
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Installing scikit-cuda (looks like also comes with pycuda?)
+-----------------------------------------------------------
+kept getting 
+[ gcc: error trying to exec 'cc1plus': execvp: No such file or directory
+    error: command 'gcc' failed with exit status 1 ]
+
+sudo apt-get install g++
+
+sudo apt-get install python-dev
+
+sudo apt-get install gcc
+
+echo $PATH
+*see if \usr\local\bin\CUDA is on there
+
+export PATH=/usr/local/cuda-8.0/bin${PATH:+:${PATH}}
+
+export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64>                          ${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+
+pip install scikit-cuda
+
+*finally succeeded*
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Installing mpi4py
+-----------------
+
+Windows 10:
+
+- download Microsoft implementation of MPI:
+https://www.microsoft.com/en-us/download/details.aspx?id=54607
+
+- download Microsoft Visual C++ compiler for Python 2.7 (if using 2.7):
+https://www.microsoft.com/en-us/download/details.aspx?id=44266
+
+- download mpi4py from PyPI:
+https://pypi.python.org/pypi/mpi4py
+
+either / both (don't remember)
+- extract mpi4py compressed folder
+- cd into extracted directory
+- $ python setup.py install
+
+- pip install mpi4py
+
+
+Linux Mint 18:
+
+- $ conda install mpi4py
+
+# worked perfectly??
+
+for whatever reason, that didn't work on the lab computer
+
+- i had to install MPI from MPICH, and then install mpi4py?
+
+
+What I had tried months ago:
+............................
+
+- Tried installing OpenMP:
+
+download tar.gz from https://www.open-mpi.org/software/ompi/v2.0/
+shell$ gunzip -c openmpi-2.0.1.tar.gz | tar xf -
+shell$ cd openmpi-2.0.1
+shell$ ./configure --prefix=/usr/local
+shell$ make all install
+
+- couldn't get OpenMP working or conda installation of mpi4py
+
+- installed MPICH
+
+- $ pip intall mpi4py (finally worked)
+
+
+What I tried now:
+.................
+
+When I execute:
+$ mpiexec -n 10 python untitled10.py
+
+I get error:
+"from mpi4py import MPI
+ImportError: libmpi.so.20: cannot open shared object file: No such file or directory"
+
+- when I initially entered: $ which mpicc
+I got a blank line
+
+- I did $ sudo apt install MPICH
+downloaded a bunch of stuff, looked to be good
+
+- now when $ which mpicc
+I get "/usr/local/mpicc
+
+- also $ which mpiexec
+gives "/usr/local/mpiexec
+
+- still get same error when try to run python script
+
+- however, when run $ mpiexec -n 2 python -c "print 'Hello World'"
+I get:
+"Hello World
+Hello World"
+
+- could be path issues:
+$ echo $LD_LIBRARY_PATH
+gives {empty}
+$ echo $PATH
+gives {bunch of entries}
+
+- tried $ ldconfig 
+got: "/sbin/ldconfig.real: Can't create temporary cache file: ... Permission denied" 
+
+- when do $ ls /usr/local
+returns tons of entries, including multiple MPI entries - possibly conflicts between 
+two installations or old/new installs?
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Installation process for NVIDIA Driver, CUDA Toolkit, Anaconda Accelerate
+
+OS: Ubuntu 16.04 64-bit
+
+
+NVIDIA Driver Installation
+==========================
+
+clean install ubuntu 16.04 64-bit 
+
+download NVIDIA driver 375.26 as local runfile from: (supports GTX 1050 Ti + TITAN)
+http://www.nvidia.com/download/find.aspx
+
+put NVIDIA driver file on desktop
+
+$ sudo service lightdm stop  # stop x server
+
+press [ctrl+alt+f1]  # enter text-only mode
+
+login as brendan (or user) + enter password
+
+$ cd Desktop
+
+** for Linux Mint, said didn't have libc headers, had to [$ sudo apt-get install libc6-dev] **
+
+$ sudo bash NVIDIA_..._.run  # execute NVIDIA driver runfile
+
+* "pre-install script failed: continue?" -- yes
+
+* "DKMS ... ...?" -- no
+
+* "create x-config" -- yes
+
+driver installation finishes
+
+$ sudo reboot
+
+when starts back up - both monitors should be working
+
+$ lspci 
+# still only shows (NVIDIA Corp. Device 1c82 -- not GTX 1050 Ti)
+
+$ nvidia-settings
+# shows correct detailed info (confirms driver installed correctly)
+
+
+
+
+CUDA Toolkit Installation
+=========================
+
+Download CUDA 8.0 Toolkit from:
+https://developer.nvidia.com/cuda-downloads
+
+put CUDA Toolkit runfile on desktop
+
+$ cd desktop
+
+$ sudo sh cuda_8.0.44_linux.run
+
+* "install nvidia accelerated graphics driver" -- no
+
+* "install CUDA toolkit" -- yes
+
+* accept default toolkit location
+
+* "install symbolic link" -- yes
+
+* "install CUDA samples" -- yes
+
+* accept default samples location
+
+$ export PATH=/usr/local/cuda-8.0/bin${PATH:+:${PATH}}
+
+$ export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64\
+>                          ${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+
+$ sudo reboot
+
+things should look to be working correctly
+
+
+
+
+Anaconda Accelerate Installation
+================================
+
+Download Anaconda (Python 2.7 version) from:
+https://www.continuum.io/downloads
+
+$ bash Anaconda2-4.2.0-Linux-x86_64.sh
+
+* "prepend install location to PATH" -- yes
+
+$ conda update conda
+
+download licenses from:
+https://anaconda.org/bgallag6/settings/add-ons
+
+$ anaconda-navigator
+
+* help --> license manager --> add the 3 files and confirm that they are valid
+
+$ conda install accelerate
+
+$ conda install numbapro
+
+create python script cuda_check.py, with commands:
+import numbapro
+numbapro.check_cuda()
+
+run cuda_check.py script -- should identify correct GPU installed
+
+run mandelbrot python examples examples copied from:
+http://nbviewer.jupyter.org/gist/harrism/f5707335f40af9463c43
+- all 3, including the GPU-accelerated one, should run correctly
+
+be amazed at speed increase on GPU
+
+celebrate accomplishment
+
+
+%%% Other Stuff %%%
+% ran "Example: Basic Example" from:
+https://docs.continuum.io/numbapro/CUDAufunc
+- got same "NameError: global name 'warnings' is not defined" error as on Windows 10: dektop
+
+% next steps: CUDA examples / tutorials
+https://docs.continuum.io/numbapro/quickstart
+
+% for some reason, now attempting to run [$ anaconda-navigator] raises qt-type error messages
+% however, everything else still works 
+
+
+
+Other things that I tried?
+==========================
+follow installation instructions:
+
+% lspci | grep -i nvidia
+
+2.2. Verify You Have a Supported Version of Linux
+
+The CUDA Development Tools are only supported on some specific distributions of Linux. These are listed in the CUDA Toolkit release notes.
+
+To determine which distribution and release number you're running, type the following at the command line:
+
+$ uname -m && cat /etc/*release
+
+
+$ gcc --version
+
+$ sudo apt-get install linux-headers-$(uname -r)
+
+
+4.3.5. Ubuntu
+
+Create a file at /etc/modprobe.d/blacklist-nouveau.conf with the following contents:
+
+    blacklist nouveau
+    options nouveau modeset=0
+
+Regenerate the kernel initramfs:
+
+$ sudo update-initramfs -u
+
+
+Read more at: http://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ixzz4VgwVnMr1
+Follow us: @GPUComputing on Twitter | NVIDIA on Facebook
+
+$ export PATH=/usr/local/cuda-8.0/bin${PATH:+:${PATH}}
+
+$ export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64\
+                         ${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+

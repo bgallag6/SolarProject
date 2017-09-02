@@ -23,13 +23,8 @@ Created on Sat Jan 28 12:15:32 2017
 from timeit import default_timer as timer
 import numpy as np
 import scipy.signal
-from scipy.interpolate import interp1d
-from scipy import signal
 import scipy.misc
-import astropy.units as u
 from scipy import fftpack
-from astropy.convolution import convolve, Box1DKernel
-from numpy.random import randn
 from mpi4py import MPI
 from scipy.stats.stats import pearsonr   
 
@@ -50,7 +45,6 @@ def spec_fit( subcube ):
 #def spec_fit( subcube, subcube_StdDev ):
     
   SPECTRA = subcube
-  spectra_array = SPECTRA
   print SPECTRA.shape[0], SPECTRA.shape[1]
       
   # determine frequency values that FFT will evaluate
@@ -75,19 +69,16 @@ def spec_fit( subcube ):
   
   start = timer()
   T1 = 0
-
-    
+   
   for l in range(SPECTRA.shape[0]):
   #for l in range(0,15):
     
     for m in range(SPECTRA.shape[1]):
     #for m in range(0,20):
-        
-                                        
-        f = freqs  # frequencies
-        s = spectra_array[l][m]  # fourier power
-        
-        
+                                               
+        f = freqs
+        s = SPECTRA[l][m]
+               
         # assign equal weights to all parts of the curve
         df = np.log10(f[1:len(f)]) - np.log10(f[0:len(f)-1])
         df2 = np.zeros_like(f)
@@ -104,8 +95,7 @@ def spec_fit( subcube ):
             M1_low = [-0.002, 0.3, -0.01]
             M1_high = [0.002, 6., 0.01]
             nlfit_l, nlpcov_l = scipy.optimize.curve_fit(PowerLaw, f, s, bounds=(M1_low, M1_high), sigma=ds, method='dogbox')
-           
-        
+                  
         except RuntimeError:
             #print("Error M1 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
             pass
@@ -113,9 +103,9 @@ def spec_fit( subcube ):
         except ValueError:
             #print("Error M1 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
             pass
-
-      
+    
         A, n, C = nlfit_l  # unpack fitting parameters
+
 
         ## fit data to combined power law plus gaussian component model
         #"""        
@@ -140,8 +130,7 @@ def spec_fit( subcube ):
         
         # unpack uncertainties in fitting parameters from diagonal of covariance matrix
         #dA2, dn2, dC2, dP2, dfp2, dfw2 = [np.sqrt(nlpcov_gp[j,j]) for j in range(nlfit_gp.size)]
-        
-        
+               
         try:
             #if wavelength == 1600 or wavelength == 1700:
             #    M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]  # try constraining further, now that are specifying initial guess
@@ -183,8 +172,7 @@ def spec_fit( subcube ):
         residsM22 = (s - m2_fit2)
         chisqrM22 = ((residsM22/ds)**2).sum()
         redchisqrM22 = ((residsM22/ds)**2).sum()/float(f.size-6) 
-        
-        
+              
         #f_test = ((chisqrM1-chisqrM2)/(6-3))/((chisqrM2)/(f.size-6))
         f_test2 = ((chisqrM1-chisqrM22)/(6-3))/((chisqrM22)/(f.size-6))
         
@@ -217,13 +205,11 @@ def spec_fit( subcube ):
         T_est = T_init*(SPECTRA.shape[0])  
         T_min, T_sec = divmod(T_est, 60)
         T_hr, T_min = divmod(T_min, 60)
-        #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est)
         print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (l, SPECTRA.shape[0], T_hr, T_min, T_sec)
     else:
         T_est2 = T2*((SPECTRA.shape[0])-l)
         T_min2, T_sec2 = divmod(T_est2, 60)
         T_hr2, T_min2 = divmod(T_min2, 60)
-        #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est2)
         print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (l, SPECTRA.shape[0], T_hr2, T_min2, T_sec2)
     T1 = T
 
@@ -284,7 +270,6 @@ if rank == 0:
   stack_p = np.hstack(newData_p)
   print stack_p.shape  # Verify we have a summed version of the input cube
  
-
   T_final = timer() - start
   T_min_final, T_sec_final = divmod(T_final, 60)
   T_hr_final, T_min_final = divmod(T_min_final, 60)
