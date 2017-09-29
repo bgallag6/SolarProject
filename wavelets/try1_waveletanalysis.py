@@ -10,6 +10,7 @@ from waveletFunctions import wavelet, wave_signif
 import matplotlib.pylab as plt
 import matplotlib
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from scipy import fftpack
 
 __author__ = 'Evgeniya Predybaylo'
 
@@ -155,4 +156,56 @@ plt.tight_layout()
 
 plt.show()
 
+
+
+
+
+
+
+## determine frequency values that FFT will evaluate
+
+time_step = 24
+  
+t_interp = np.linspace(0, time0[len(time0)-1], (time0[len(time0)-1]/time_step)+1)  # interpolate onto default-cadence time-grid
+  
+n_segments = 6  # break data into 12 segments of equal length
+n = len(t_interp)
+rem = n % n_segments
+freq_size = (n - rem) / n_segments 
+
+sample_freq = fftpack.fftfreq(freq_size, d=time_step)
+pidxs = np.where(sample_freq > 0)
+freqs = sample_freq[pidxs]
+
+pixmed=np.empty(data0.shape[0])  # Initialize array to hold median pixel values
+spectra_seg = np.zeros((data0.shape[1],data0.shape[2],len(freqs)))
+
+
+pixmed = sst 
+
+v_interp = np.interp(t_interp,time0,pixmed)  # interpolate pixel-intensity values onto specified time grid
+
+data = v_interp
+
+avg_array = np.zeros((len(freqs)))  # initialize array to hold fourier powers
+
+data = data[0:len(data)-rem]  # trim timeseries to be integer multiple of n_segments
+split = np.split(data, n_segments)  # create split array for each segment
+   
+for i in range(0,n_segments):               
+    
+  ## perform Fast Fourier Transform on each segment       
+  sig = split[i]
+  sig_fft = fftpack.fft(sig)
+  #sig_fft = fftpack.rfft(sig)  # real-FFT                
+  #sig_fft = accelerate.mkl.fftpack.fft(sig)  # MKL-accelerated is (2x) faster
+  #sig_fft = accelerate.mkl.fftpack.rfft(sig)  # this is slightly faster
+  powers = np.abs(sig_fft)[pidxs]
+  norm = len(sig)
+  powers = ((powers/norm)**2)*(1./(sig.std()**2))*2   # normalize the power
+  avg_array += powers
+
+
+plt.figure()
+plt.loglog(freqs, avg_array)
 # end of code
