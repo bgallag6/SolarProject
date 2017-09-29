@@ -15,4 +15,8 @@ read -p "Enter a directory for files to be saved [ex. /media/solar/Gallagher]: "
 read -p "Enter the date [ex. 20130626]: " date
 read -p "Enter the number of processors [ex. 16]: " num
 
-mpiexec -n $num python mpi_jsoc_download.py $url_jsoc $directory $date
+:: mpiexec -n $num python mpi_jsoc_download.py $url_jsoc $directory $date
+
+mpiexec -n $num python mpi_jsoc_euv_download.py $url_jsoc $directory $date
+
+:: mpiexec -n $num python mpi_jsoc_hmi_download.py $url_jsoc $directory $date

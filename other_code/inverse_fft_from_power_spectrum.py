@@ -46,6 +46,9 @@ c0 = 10**-5.
 p0 = 0.
 l0 = 0.
 w0 = 0.
+#p0 = 10**-3.
+#l0 = -6.
+#w0 = 0.3
 
 spectra = a0*freqs**(-n0)+c0+p0*np.exp(-0.5*(((np.log(freqs))-(l0))/w0)**2)
 
@@ -55,8 +58,6 @@ plt.loglog(freqs, spectra)
 spectra2 = np.zeros((599))
 spectra2[1:300] = spectra
 spectra2[300:599] = np.flipud(spectra)
-
-#plt.loglog(freqs,spectra)
 
 v = np.fft.ifft(spectra2)
 v2 = np.real(v)
