@@ -17,6 +17,10 @@ read -p "Enter the number of processors [ex. 16]: " num
 
 :: mpiexec -n $num python mpi_jsoc_download.py $url_jsoc $directory $date
 
-mpiexec -n $num python mpi_jsoc_euv_download.py $url_jsoc $directory $date
+:: mpiexec -n $num python mpi_jsoc_euv_download.py $url_jsoc $directory $date
 
 :: mpiexec -n $num python mpi_jsoc_hmi_download.py $url_jsoc $directory $date
+
+:: mpiexec -n $num python mpi_jsoc_continuum_download.py $url_jsoc $directory $date
+
+mpiexec -n $num python mpi_jsoc_download_complete.py $url_jsoc $directory $date

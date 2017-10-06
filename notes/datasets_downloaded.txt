@@ -407,6 +407,8 @@ centered - 04/01 - 00:00 - 12:00 (have til 15:00)
 1600 - 1747/1800 [sunspot - DONE]
 
 
+2017/09/26: 12:00-24:00 (compact circular sunspot)
+1600 - 1800/1800 [sunspot - DONE]
 
 aia.lev1_uv_24s[2011.09.02_00:00/4h]
 aia.lev1_euv_12s[2015.01.01_00:00/12h][171]

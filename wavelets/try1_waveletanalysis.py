@@ -26,8 +26,6 @@ __author__ = 'Evgeniya Predybaylo'
 # ------------------------------------------------------------------------------------------------------------------
 
 # READ THE DATA
-sst = np.loadtxt('sst_nino3.dat')  # input SST time series
-
 directory = 'S:'
 date = '20140822'  # was 20130815, 171 for other figures
 wavelength = 1600
@@ -50,17 +48,17 @@ sst = data0[:,x,y] / exposure0
 variance = np.std(sst, ddof=1) ** 2
 sst = (sst - np.mean(sst)) / np.std(sst, ddof=1)
 n = len(sst)
-dt = 24
+dt = 24/60.
 #time = np.arange(len(sst)) * dt + 1871.0  # construct time array
-time = time0
+time = time0/60.
 #xlim = ([1870, 2000])  # plotting range
-xlim = ([0,43200])
+xlim = ([0,43200/60.])
 pad = 1  # pad the time series with zeroes (recommended)
 dj = 0.25  # this will do 4 sub-octaves per octave
 s0 = 2 * dt  # this says start at a scale of 6 months
 j1 = 7 / dj  # this says do 7 powers-of-two with dj sub-octaves each
 lag1 = 0.72  # lag-1 autocorrelation for red noise background
-mother = 'PAUL'
+mother = 'MORLET'
 
 # Wavelet transform:
 wave, period, scale, coi = wavelet(sst, dt, pad, dj, s0, j1, mother)
@@ -77,7 +75,7 @@ dof = n - scale  # the -scale corrects for padding at edges
 global_signif = wave_signif(variance, dt=dt, scale=scale, sigtest=1, lag1=lag1, dof=dof, mother=mother)
 
 # Scale-average between El Nino periods of 2--8 years
-avg = np.logical_and(scale >= 120, scale < 600)
+avg = np.logical_and(scale >= 120/60., scale < 600/60.)
 Cdelta = 0.776  # this is for the MORLET wavelet
 scale_avg = scale[:, np.newaxis].dot(np.ones(n)[np.newaxis, :])  # expand scale --> (J+1)x(N) array
 scale_avg = power / scale_avg  # [Eqn(24)]
@@ -91,10 +89,11 @@ plt.figure(figsize=(18, 9))
 plt.subplot(221)
 plt.plot(time, sst)
 plt.xlim(xlim[:])
-plt.xlabel('Time (year)')
-plt.ylabel('NINO3 SST (degC)')
-plt.title('a) NINO3 Sea Surface Temperature (seasonal)')
+plt.xlabel('Time (minutes)')
+plt.ylabel('Intensity')
+plt.title('a) Intensity Time Series')
 plt.hold(False)
+
 
 # --- Plot 2--8 yr scale-average time series
 plt.subplot(222)
@@ -112,8 +111,8 @@ plt3 = plt.subplot(223)
 levels = [0.0625, 0.125, 0.25, 0.5, 1, 2, 4, 8, 16]
 CS = plt.contourf(time, period, np.log2(power), len(levels))  #*** or use 'contour'
 im = plt.contourf(CS, levels=np.log2(levels))
-plt.xlabel('Time (year)')
-plt.ylabel('Period (years)')
+plt.xlabel('Time (seconds)')
+plt.ylabel('Period (seconds)')
 plt.title('b) NINO3 SST Wavelet Power Spectrum (in base 2 logarithm)')
 plt.xlim(xlim[:])
 # 95# significance contour, levels at -99 (fake) and 1 (95# signif)
@@ -157,7 +156,8 @@ plt.tight_layout()
 plt.show()
 
 
-
+plt.figure()
+plt.loglog(1./period, global_ws)
 
 
 
