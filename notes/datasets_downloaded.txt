@@ -74,6 +74,8 @@ Datasets downloaded:
 304 - 3585/3600 [sunspot - DONE] [full - DONE]
 1600 - 1739/1800 [sunspot - DONE] [full - DONE]
 1700 - 1780/1800 [full - DONE]
+magnetogram - 960/960
+continuum - 960/960
 
 
 20130713: 12:00-24:00 *quiet region for 1600/1700
@@ -410,5 +412,14 @@ centered - 04/01 - 00:00 - 12:00 (have til 15:00)
 2017/09/26: 12:00-24:00 (compact circular sunspot)
 1600 - 1800/1800 [sunspot - DONE]
 
+
+2017/09/26: 12:00-24:00 (compact circular sunspot)
+1600 - 1795/1800
+
+
+
+
 aia.lev1_uv_24s[2011.09.02_00:00/4h]
 aia.lev1_euv_12s[2015.01.01_00:00/12h][171]
+hmi.M_45s[2010.07.25_12:00_TAI/4h]
+hmi.Ic_45s[2010.07.25_12:00_TAI/4h]

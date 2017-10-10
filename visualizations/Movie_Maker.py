@@ -27,10 +27,12 @@ import numpy as np
 import scipy.misc
 import astropy.units as u
 import h5py
-import matplotlib.animation as animation
+
+#import matplotlib.animation as animation
+import matplotlib.animation as manimation
 
 # create a list of all the files. This is USER-DEFINED
-flist = glob.glob('F:/Users/Brendan/Desktop/SolarProject/FITS/Movies/20140818/171/aia*.fits')
+flist = glob.glob('F:/Users/Brendan/Desktop/SolarProject/FITS/Movies/20140818/171/*.fits')
 #flist = glob.glob('C:/Users/Brendan/Desktop/SDO/304/aia*.fits')
 #flist = glob.glob('D:/1600part2/aia*.fits')
 #flist2 = flist[0:25]
@@ -117,9 +119,39 @@ dr = mapcube_solar_derotate(new_mapcube)
 
 #cube = Map(mc_list, cube=True)   # doctest: +SKIP
 
+"""
+## use these
 ani = dr.plot()   # doctest: +SKIP
 
 Writer = animation.writers['ffmpeg']   # doctest: +SKIP
 writer = Writer(fps=60, metadata=dict(artist='SunPy'), bitrate=5000000)   # doctest: +SKIP
 
-ani.save('C:/Users/Brendan/Desktop/try1.mp4', writer=writer)   # doctest: +SKIP
+ani.save('C:/Users/Brendan/Desktop/try1.mp4', writer=writer, bbox_inches='tight')   # doctest: +SKIP
+"""
+
+
+#####
+#possible other
+#####
+
+my_dpi=192 # dpi for retina display (detect monitor dpi automatically here: http://www.infobyip.com/detectmonitordpi.php)
+#fig = plt.figure(figsize=(xsize/my_dpi, ysize/my_dpi), dpi=my_dpi)
+fig = plt.figure(figsize=(12,10), dpi=175)
+#print "The figure is the following size (in pixels):",fig
+ax = fig.add_subplot(1,1,1)
+#ax.get_xaxis().set_ticks([])
+#ax.get_yaxis().set_ticks([])
+savefigdict = {'bbox_inches' : 'tight'}
+
+Writer = manimation.writers['ffmpeg']   # doctest: +SKIP
+writer = Writer(fps=60, metadata=dict(artist='SunPy'), bitrate=5000000)   # doctest: +SKIP
+
+ims = []
+for i in range(nf):
+    #im = plt.imshow(dr[:,:,i],cmap='sdoaia171',origin='lower',vmin=0,vmax=3000,extent=[0,xsize,0,ysize], interpolation=None, animated=True)
+    im = plt.imshow(dr[i].data,cmap='sdoaia171',origin='lower',vmin=0,vmax=3000, interpolation=None, animated=True)
+    ims.append([im])
+
+ani = manimation.ArtistAnimation(fig, ims, interval=50, blit=True)
+
+#ani.save('C:/Users/Brendan/Desktop/test1.mp4', savefig_kwargs=savefigdict, writer=writer, dpi=my_dpi)
