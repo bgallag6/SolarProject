@@ -32,7 +32,7 @@ import h5py
 import matplotlib.animation as manimation
 
 # create a list of all the files. This is USER-DEFINED
-flist = glob.glob('F:/Users/Brendan/Desktop/SolarProject/FITS/Movies/20140818/171/*.fits')
+flist = glob.glob('F:/Users/Brendan/Desktop/SolarProject/FITS/Movies/20130626/continuum/*.fits')
 #flist = glob.glob('C:/Users/Brendan/Desktop/SDO/304/aia*.fits')
 #flist = glob.glob('D:/1600part2/aia*.fits')
 #flist2 = flist[0:25]
@@ -47,17 +47,17 @@ mid_file = np.int(np.floor(nf / 2))
 m1 = Map(flist[mid_file])
 
 # Get defined rectangle coords as integers
-x1=1400
-x2=1578
-y1=2400
-y2=2772
+#x1=1400
+#x2=1578
+#y1=2400
+#y2=2772
 
-"""
-x1=2400
-x2=2500
-y1=2200
-y2=2525
-"""
+#"""
+x1=2000
+x2=3000
+y1=2000
+y2=3000
+#"""
 
 # Create an empty list
 mc_list = []
@@ -74,6 +74,7 @@ for filename in flist:
 new_mapcube = Map(mc_list, cube=True)
 
 dr = mapcube_solar_derotate(new_mapcube)
+#dr = new_mapcube
 
 """
 # full solar disk
@@ -143,15 +144,16 @@ ax = fig.add_subplot(1,1,1)
 #ax.get_yaxis().set_ticks([])
 savefigdict = {'bbox_inches' : 'tight'}
 
-Writer = manimation.writers['ffmpeg']   # doctest: +SKIP
-writer = Writer(fps=60, metadata=dict(artist='SunPy'), bitrate=5000000)   # doctest: +SKIP
+#Writer = manimation.writers['ffmpeg']   # doctest: +SKIP
+#writer = Writer(fps=60, metadata=dict(artist='SunPy'), bitrate=5000000)   # doctest: +SKIP
 
 ims = []
 for i in range(nf):
     #im = plt.imshow(dr[:,:,i],cmap='sdoaia171',origin='lower',vmin=0,vmax=3000,extent=[0,xsize,0,ysize], interpolation=None, animated=True)
-    im = plt.imshow(dr[i].data,cmap='sdoaia171',origin='lower',vmin=0,vmax=3000, interpolation=None, animated=True)
+    #im = plt.imshow(dr[i].data,cmap='sdoaia171',origin='lower',vmin=0,vmax=3000, interpolation=None, animated=True)
+    im = plt.imshow((dr[i].data)/1e3,cmap='gray',origin='lower',vmin=10,vmax=70, interpolation=None, animated=True)
     ims.append([im])
 
-ani = manimation.ArtistAnimation(fig, ims, interval=50, blit=True)
+ani = manimation.ArtistAnimation(fig, ims, interval=500, blit=True)
 
 #ani.save('C:/Users/Brendan/Desktop/test1.mp4', savefig_kwargs=savefigdict, writer=writer, dpi=my_dpi)

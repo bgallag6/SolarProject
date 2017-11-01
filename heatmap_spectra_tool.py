@@ -48,7 +48,7 @@ class Index(object):
         plt.colorbar(im,cax=cax)
         plt.draw()
         
-    def roll(self, event):
+    def roll(self, event):  # meh, should probably fix this
         paramA = h_map[0]
         paramn = h_map[1]
         paramC = h_map[2]
@@ -89,10 +89,12 @@ class Index(object):
         plt.draw()
         
     def fstat(self, event):
-        param = h_map[8]
+        param = h_map[6]
         NaN_replace = np.nan_to_num(param)  # NaN's in chi^2 heatmap were causing issue, replace with 0?
-        h_min = np.percentile(NaN_replace,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-        h_max = np.percentile(NaN_replace,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        #h_min = np.percentile(NaN_replace,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        #h_max = np.percentile(NaN_replace,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        h_min = 0
+        h_max = 30
         im = ax1.imshow(param, cmap='jet', interpolation='none', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[6]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
@@ -178,9 +180,9 @@ def PowerLaw(f, A, n, C):
 def Gauss(f, P, fp, fw):
     return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) 
 
-#directory = 'F:/Users/Brendan/Desktop/SolarProject'
-directory = 'S:'
-date = '20140822'
+directory = 'F:/Users/Brendan/Desktop/SolarProject'
+#directory = 'S:'
+date = '20130626'
 wavelength = 1600
 
 global spectra
@@ -237,7 +239,7 @@ if 1:
     # create figure with heatmap and spectra side-by-side subplots
     fig1 = plt.figure(figsize=(20,10))
     ax1 = plt.gca()
-    ax1 = plt.subplot2grid((1,11),(0, 0), colspan=5, rowspan=1)
+    ax1 = plt.subplot2grid((10,11),(1, 0), colspan=5, rowspan=9)
     plt.subplots_adjust(top=0.15)
     plt.subplots_adjust(left=0.25)
     ax1.set_xlim(0, h_map.shape[2]-1)
@@ -272,7 +274,7 @@ if 1:
     axscatter = plt.axes([0.49, 0.9, 0.05, 0.063])
  
     # set up spectra subplot
-    ax2 = plt.subplot2grid((1,11),(0, 6), colspan=5, rowspan=1)
+    ax2 = plt.subplot2grid((10,11),(0, 6), colspan=5, rowspan=10)
     ax2.loglog()
     ax2.set_xlim(10**-4.5, 10**-1.3)
     ax2.set_ylim(10**-5, 10**0)  
