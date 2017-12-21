@@ -117,7 +117,7 @@ def heatmap(directory, date, wavelength):
     y_ind = [800,600,400,200,0,-200,-400,-600,-800]    
     """
     
-    #"""
+    """
     ### for Global Oscillation Paper
     # trim x/y dimensions equally so that resulting region is 1600x1600    
     #trim_y = (h_map.shape[1]-1200)/2
@@ -130,7 +130,7 @@ def heatmap(directory, date, wavelength):
     y_ticks = [10,210,410,610,810,1010,1210]  
     x_ind = [-600,-400,-200,0,200,400,600]
     y_ind = [600,400,200,0,-200,-400,-600]    
-    #"""
+    """
     
     #h_map = h_map[:, 0:h_map.shape[1]-50, 0:500]  # for 20130626 blobs      
     #x_ticks = [0,100,200,300,400,500]
@@ -139,7 +139,7 @@ def heatmap(directory, date, wavelength):
     #y_ind = [0,100,200,300,400]   
     #y_ticks = [0,100,200,300] # 20120923
     
-    """
+    #"""
     xdim = int(np.floor(h_map.shape[2]/100))
     ydim = int(np.floor(h_map.shape[1]/100))
     
@@ -148,7 +148,7 @@ def heatmap(directory, date, wavelength):
     
     x_ind = x_ticks
     y_ind = y_ticks
-    """
+    #"""
     #x_ticks = [0,100,200,300]
     #y_ticks = [0,100,200,300]  
     

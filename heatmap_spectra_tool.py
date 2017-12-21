@@ -180,10 +180,10 @@ def PowerLaw(f, A, n, C):
 def Gauss(f, P, fp, fw):
     return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) 
 
-directory = 'F:/Users/Brendan/Desktop/SolarProject'
+directory = 'F:'
 #directory = 'S:'
 date = '20130626'
-wavelength = 1600
+wavelength = 1700
 
 global spectra
 

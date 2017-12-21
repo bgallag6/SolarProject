@@ -57,15 +57,19 @@ size = MPI.COMM_WORLD.Get_size()  # How many processors do we have? (pulls from 
 
 import sys
 
-jsoc_url = sys.argv[1]
-directory = sys.argv[2]
-date = sys.argv[3]
+#jsoc_url = sys.argv[1]
+#directory = sys.argv[2]
+#date = sys.argv[3]
+directory = sys.argv[1]
+date = sys.argv[2]
 
+r_url = np.load('%s/FITS/%s/%s_request_url.npy' % (directory, date, date))  # only use with JSOC_request_url.py - otherwise switch commented stuff back
 
 arr_need = []
 arr_rename = []
 
-page=urllib2.urlopen(jsoc_url)
+#page=urllib2.urlopen(jsoc_url)
+page=urllib2.urlopen(str(r_url))
 data=page.read().split("<td><A HREF=")
 tag=".fits"
 endtag="</tr>"

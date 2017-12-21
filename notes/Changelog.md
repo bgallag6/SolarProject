@@ -89,3 +89,11 @@
 
 9/2:
 - added script using MPI to parallelize JSOC 'url' .FITS file download request
+
+11/3:
+- added shell script to download AIA (1700, 1600, 304, 171, 193, 211) and HMI (magnetogram + continuum) from JSOC using MPI
+- revised JSOC download script so export request is done through shell script input
+- added "-u" to shell script call of mpi_jsoc_download_complete.py, this sets the output as unbuffered, so prints correctly on Windows.  I need to check if works same on Linux.
+
+12/21:
+- added Lorentzian option to model M2 in model_sliders.py, revised script
