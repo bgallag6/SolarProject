@@ -97,3 +97,7 @@
 
 12/21:
 - added Lorentzian option to model M2 in model_sliders.py, revised script
+
+12/26:
+- added normalized averaged visual image to SolSpec.py
+- added directory creation to SolSpecShell.sh (DATA directories only, not FITS)

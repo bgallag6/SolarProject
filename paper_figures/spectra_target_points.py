@@ -41,10 +41,11 @@ def Gauss(f, P, fp, fw):
 
 # define combined-fitting function (Model M2)
 def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
-    return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
+    #return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
+    return A2*f2**-n2 + C2 + P2*(1./ ((np.pi*fw2)*(1.+((np.log(f2)-fp2)/fw2)**2)))
     
-#directory = 'F:/Users/Brendan/Desktop/SolarProject'
-directory = 'D:/Users/Brendan/Desktop/SolarProject'
+directory = 'F:'
+#directory = 'D:/Users/Brendan/Desktop/SolarProject'
 date = '20130626'
 wavelength = 171
     
@@ -372,7 +373,7 @@ for l in range(1):
         plt.legend(loc='upper right', prop={'size':23})
         """
         #plt.show()
-        #plt.savefig('C:/Users/Brendan/Desktop/171_final_points/171_%ix_%iyR.jpeg' % (m2[m],l2[m]))
+        #plt.savefig('C:/Users/Brendan/Desktop/sample_spectra_%s_lorentz.pdf' % (point_label[m]), format='pdf', bbox_inches='tight')
         #plt.savefig('C:/Users/Brendan/Desktop/211_%ix_%iyF.pdf' % (m2[m],l2[m]), format='pdf')
         #plt.savefig('C:/Users/Brendan/Desktop/171_slice2_double_optimize/171A_%ii_%ij.jpeg' % (l,m))
         #plt.savefig('C:/Users/Brendan/Desktop/171_points_square/pixel_%ii_%ij_new.jpeg' % (l2[m],m2[m]))

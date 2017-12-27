@@ -801,7 +801,8 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     # initialize arrays to hold exposure time, pixel data, and time values
     I = np.empty((nf))  # exposure time
     DATA = np.empty((nf, subarr_idim, subarr_jdim), dtype=np.int16)  # save as int16, since that is what original is
-    TIME = np.empty((nf))  # might as well just have all as float
+    TIME = np.empty((nf))  # time stamps
+    AVG = np.zeros((subarr_idim, subarr_jdim))
     
     # loop through datacube and extract pixel data and time values
     """# this is probably another loop that I could take out and extract directly"""
@@ -811,7 +812,8 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
         L = dr[p].data
         L_trim = L[0:(mid_subarr.shape[0] - rem_i), 0:(mid_subarr.shape[1] - rem_j)]
         small_L = rebin(L_trim, L_trim.shape[0]/bin_frac, L_trim.shape[1]/bin_frac)
-        DATA[p][:][:] = small_L  # normalize by exposure time
+        DATA[p][:][:] = small_L
+        AVG += (small_L / Ex.value)  # create normalized average visual image
         T = dr[p].date
         #curr_time=(T.hour * 3600.)+(T.minute * 60.)+T.second	
         #TIME[p] = curr_time - base_time  # calculate running time of image
@@ -830,15 +832,14 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     np.save('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength), I)
     
     # calculate the average-intensity image of the timeseries 
-    AVG = np.average(DATA,axis=0)
+    #AVG = np.average(DATA,axis=0)
+    AVG /= nf
     
     # determine the middle file of the timeseries
     mid_num = (DATA.shape[0]/2)
     mid = DATA[mid_num]
     
     print "Middle file is number %i" % mid_num
-    
-    print "(100,100): %i ~ %i" % (AVG[100][100], mid[100][100])  # check values are reasonably close
     
     # check the two image sizes agree
     print " Average Image Dimensions = %i, %i" % (AVG.shape[0], AVG.shape[1])
