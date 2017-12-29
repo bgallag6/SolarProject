@@ -101,3 +101,8 @@
 12/26:
 - added normalized averaged visual image to SolSpec.py
 - added directory creation to SolSpecShell.sh (DATA directories only, not FITS)
+
+12/27:
+- added FITS directory creation to jsoc_mpi_download2.sh
+- revised jsoc_mpi_download2.sh scripts to identify correct character position for file names + accept 171, 193, 211, 304, 1600, 1700, magnetogram, and continuum wavelength requests
+- revised heatmap_spectra_tool.py title of plots, added white cross as current-pixel marker

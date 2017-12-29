@@ -41,12 +41,16 @@ c = drms.Client(verbose=True)
 q_date = '%s.%s.%s' % (date[0:4], date[4:6], date[6:8])
 
 # Data export query string
-#qstr = 'aia.lev1_uv_24s[2011.09.02_00:00/1h][1600]'
-#qstr = 'aia.lev1_euv_12s[%s_%s/%sh][%s]' % (q_date, t_start, duration, wavelength)
 if wavelength == 'UV':
     qstr = 'aia.lev1_uv_24s[%s_%s/%sh]' % (q_date, t_start, duration)
-if wavelength == '1600' or wavelength == '1700':
+if wavelength in ['1600', '1700']:
     qstr = 'aia.lev1_uv_24s[%s_%s/%sh][%s]' % (q_date, t_start, duration, wavelength) 
+elif wavelength in ['171', '193', '211', '304']:
+    qstr = 'aia.lev1_euv_12s[%s_%s/%sh][%s]' % (q_date, t_start, duration, wavelength) 
+elif wavelength == 'magnetogram':
+    qstr = 'hmi.M_45s[%s_%s_TAI/%sh]' % (q_date, t_start, duration)
+elif wavelength == 'continuum':
+    qstr = 'hmi.Ic_45s[%s_%s_TAI/%sh]' % (q_date, t_start, duration)
 
 print('Data export query:\n  %s\n' % qstr)
 
@@ -61,4 +65,4 @@ print('%d file(s) available for download.\n' % len(r.urls))
 
 r_url = str(r.request_url)
 
-np.save('%s/FITS/%s/%s_request_url.npy' % (directory, date, date), r_url)
+np.save('%s/FITS/%s/%s_request_url.npy' % (directory, date, wavelength), r_url)

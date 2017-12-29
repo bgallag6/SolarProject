@@ -22,13 +22,13 @@ def get_data_fill(arr_need, arr_rename, directory):
     # loop through the array of needed files, requesting them one at a time         
     for i in range(len(arr_need)):
         
-        if item[50:55] == 'hmi.M':
+        if url_want.find("hmi.M") != -1:
             wavelength = 'magnetogram'
 
-        elif item[50:55] == 'hmi.I':
+        elif url_want.find("hmi.I") != -1:
             wavelength = 'continuum'
         
-        elif item[50:55] == 'aia.l':
+        elif url_want.find("aia.l") != -1:
             wavelength_temp = arr_need[i][-20:-16]
             #wavelength = arr_need[i][-19:-16]
             if wavelength_temp[0] == '.':
@@ -36,9 +36,10 @@ def get_data_fill(arr_need, arr_rename, directory):
             else:
                 wavelength = wavelength_temp
             #print wavelength
+                
+        wavelengths = ['magnetogram', 'continuum', '1700', '1600', '304', '171', '193', '211']
         
-        if wavelength == 'magnetogram' or wavelength == 'continuum' or wavelength == '1700' or wavelength == '1600' or wavelength == '304' or wavelength == '171' or wavelength == '193' or wavelength == '211':
-        # maybe use if wavelength in [A,B,C,...]
+        if wavelength in wavelengths:
         
             urllib.urlretrieve("%s" % arr_need[i], "%s/FITS/%s/%s/%s" % (directory, date, wavelength, arr_rename[i]))
             
@@ -62,9 +63,9 @@ import sys
 #date = sys.argv[3]
 directory = sys.argv[1]
 date = sys.argv[2]
+wavelength = sys.argv[3]
 
-r_url = np.load('%s/FITS/%s/%s_request_url.npy' % (directory, date, date))  # only use with JSOC_request_url.py - otherwise switch commented stuff back
-
+r_url = np.load('%s/FITS/%s/%s_request_url.npy' % (directory, date, wavelength))  # only use with JSOC_request_url.py - otherwise switch commented stuff back
 arr_need = []
 arr_rename = []
 
@@ -74,62 +75,74 @@ data=page.read().split("<td><A HREF=")
 tag=".fits"
 endtag="</tr>"
 for item in data:
+    
     if ".fits" in item:
+        start_pt = item.find("\"")
+        end_pt = item.find("\"", start_pt + 1)
+        url_want = item[start_pt + 1: end_pt]
+        if url_want.find("spikes") == -1:
         
-        if item[1:5] == 'http':
-            if item[50:55] == 'hmi.M':
-                filename0 = item[1:98]
+            if url_want[:4] == 'http':      
+                filename0 = url_want
                 arr_need = np.append(arr_need,filename0)
-                filename = filename0[49:]
+                fn_end = item.find(".fits\"")    
                 
-                fyear = filename[10:14]
-                fmonth = filename[14:16]
-                fday = filename[16:18]
-                fhour = filename[19:21]
-                fmin = filename[21:23]
-                fsec = filename[23:25]
-                wavelength = 'magnetogram'
-                new_name = 'hmi_lev1_%s_%s_%s_%st%s_%s_%s_45z_image_lev1.fits' % (wavelength, fyear, fmonth, fday, fhour, fmin, fsec)  
-                arr_rename = np.append(arr_rename, new_name)
-
-            elif item[50:55] == 'hmi.I':
-                filename0 = item[1:97]
-                arr_need = np.append(arr_need,filename0)
-                filename = filename0[49:]
-                
-                k = -3  # for adjusting
-                fyear = filename[14+k:18+k]
-                fmonth = filename[18+k:20+k]
-                fday = filename[20+k:22+k]
-                fhour = filename[23+k:25+k]
-                fmin = filename[25+k:27+k]
-                fsec = filename[27+k:29+k]
-                wavelength = 'continuum'
-                new_name = 'hmi_lev1_%s_%s_%s_%st%s_%s_%s_45z_image_lev1.fits' % (wavelength, fyear, fmonth, fday, fhour, fmin, fsec) 
-                arr_rename = np.append(arr_rename, new_name)
-            
-            elif item[50:55] == 'aia.l':
-                filename0 = item[1:105]
-                arr_need = np.append(arr_need,filename0)
-                filename = filename0[49:]
-                
-                k = 2  # for adjusting
-                fyear = filename[14+k:18+k]
-                fmonth = filename[19+k:21+k]
-                fday = filename[22+k:24+k]
-                fhour = filename[25+k:27+k]
-                fmin = filename[27+k:29+k]
-                fsec = filename[29+k:31+k]
-                #wavelength = filename[33+k:36+k]  # maybe use - characters back from end - then "if 1600/1700 do this__"
-                wavelength_temp = filename[33+k:37+k]
-                if wavelength_temp[3] == '.':
-                    wavelength = wavelength_temp[0:3]
-                    cadence = 12
-                else:
-                    wavelength = wavelength_temp
-                    cadence = 24
-                new_name = 'aia_lev1_%sa_%s_%s_%st%s_%s_%s_%iz_image_lev1.fits' % (wavelength, fyear, fmonth, fday, fhour, fmin, fsec, cadence) 
-                arr_rename = np.append(arr_rename, new_name)
+                if url_want.find("hmi.M") != -1:
+                    fn_start = item.find("hmi.M")
+                    filename = filename0[fn_start-1:fn_end]
+                    
+                    k = 0  # for adjusting
+                    fyear = filename[10+k:14+k]
+                    fmonth = filename[14+k:16+k]
+                    fday = filename[16+k:18+k]
+                    fhour = filename[19+k:21+k]
+                    fmin = filename[21+k:23+k]
+                    fsec = filename[23+k:25+k]
+                    wavelength = 'magnetogram'
+                    new_name = 'hmi_lev1_%s_%s_%s_%st%s_%s_%s_45z_image_lev1.fits' % (wavelength, fyear, fmonth, fday, fhour, fmin, fsec)  
+                    arr_rename = np.append(arr_rename, new_name)
+    
+                elif url_want.find("hmi.I") != -1:
+                    fn_start = item.find("hmi.I")
+                    filename = filename0[fn_start-1:fn_end]
+                    
+                    k = 0  # for adjusting
+                    fyear = filename[11+k:15+k]
+                    fmonth = filename[15+k:17+k]
+                    fday = filename[17+k:19+k]
+                    fhour = filename[20+k:22+k]
+                    fmin = filename[22+k:24+k]
+                    fsec = filename[24+k:26+k]
+                    wavelength = 'continuum'
+                    new_name = 'hmi_lev1_%s_%s_%s_%st%s_%s_%s_45z_image_lev1.fits' % (wavelength, fyear, fmonth, fday, fhour, fmin, fsec) 
+                    arr_rename = np.append(arr_rename, new_name)
+                    
+                elif url_want.find("aia.l") != -1:
+                    fn_start = item.find("aia.l")
+                    filename = filename0[fn_start-1:fn_end]
+                    
+                    if url_want.find("euv") != -1:
+                        k = 1
+                    else:
+                        k = 0
+                    
+                    #k = 0  # for adjusting
+                    fyear = filename[16+k:20+k]
+                    fmonth = filename[21+k:23+k]
+                    fday = filename[24+k:26+k]
+                    fhour = filename[27+k:29+k]
+                    fmin = filename[29+k:31+k]
+                    fsec = filename[31+k:33+k]
+                    wavelength_temp = filename[35+k:39+k]
+                    if wavelength_temp[3] == '.':
+                        wavelength = wavelength_temp[0:3]
+                        cadence = 12
+                    else:
+                        wavelength = wavelength_temp
+                        cadence = 24
+                    
+                    new_name = 'aia_lev1_%sa_%s_%s_%st%s_%s_%s_%iz_image_lev1.fits' % (wavelength, fyear, fmonth, fday, fhour, fmin, fsec, cadence) 
+                    arr_rename = np.append(arr_rename, new_name)
 
 #arr_need0 = arr_need[:8]  # for testing small number of files
 #arr_rename0 = arr_rename[:8]  # for testing small number of files

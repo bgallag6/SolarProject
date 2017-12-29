@@ -24,27 +24,28 @@ from matplotlib.widgets import Button
 def find_nearest(array,value):
     idx = (np.abs(array-value)).argmin()
     return array[idx]
-    
-    
-class Index(object):
-    ind = 0
-    
-       
-    def coeff(self, event):
-        param = h_map[0]
+
+def plotMap(p):
+        param = h_map[p]
         h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max, picker=True)
-        ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[0]), y = 1.01, fontsize=17)
+        ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[p]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
+    
+class Index(object):
+    ind = 0
+         
+    def coeff(self, event):
+        plotMap(0)  # could just do this
 
     def index(self, event):
         param = h_map[1]
         h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
-        ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[1]), y = 1.01, fontsize=17)
+        ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[1]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
         
@@ -57,7 +58,7 @@ class Index(object):
         h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
-        ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[2]), y = 1.01, fontsize=17)
+        ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[2]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
         
@@ -66,7 +67,7 @@ class Index(object):
         h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
-        ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[3]), y = 1.01, fontsize=17)
+        ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[3]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
         
@@ -75,7 +76,7 @@ class Index(object):
         h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet_r', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
-        ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[4]), y = 1.01, fontsize=17)
+        ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[4]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
         
@@ -84,7 +85,7 @@ class Index(object):
         h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
-        ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[5]), y = 1.01, fontsize=17)
+        ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[5]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
         
@@ -96,14 +97,14 @@ class Index(object):
         h_min = 0
         h_max = 30
         im = ax1.imshow(param, cmap='jet', interpolation='none', vmin=h_min, vmax=h_max,  picker=True)
-        ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[6]), y = 1.01, fontsize=17)
+        ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[6]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
         
     def visual(self, event):
         param = vis[0]
         im = ax1.imshow(param, cmap='sdoaia%i' % wavelength, interpolation='nearest', picker=True)
-        ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[7]), y = 1.01, fontsize=17)
+        ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[7]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
         
@@ -126,6 +127,7 @@ def onclick(event):
     global ix, iy, c
     ixx, iyy = event.xdata, event.ydata
     ax2.clear()
+    del ax1.collections[:]
     plt.draw()
     print ('x = %d, y = %d' % ( ixx, iyy))  # print location of pixel
     ix = int(ixx)
@@ -162,6 +164,7 @@ def onclick(event):
     plt.text(0.0061, 10**-1.35, r'$\sigma$ = {0:0.3f}'.format(h_map[5][iy][ix]), fontsize=23)
     #plt.legend(loc='lower left', prop={'size':20})
     legend = ax2.legend(loc='lower left', prop={'size':15}, labelspacing=0.35)
+    ax1.scatter(ix, iy, s=200, marker='x', c='white', linewidth=2.5)
     for label in legend.get_lines():
             label.set_linewidth(2.0)  # the legend line width
     plt.draw()
@@ -180,10 +183,15 @@ def PowerLaw(f, A, n, C):
 def Gauss(f, P, fp, fw):
     return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) 
 
-directory = 'F:'
-#directory = 'S:'
-date = '20130626'
-wavelength = 1700
+
+"""
+##############################################################################
+##############################################################################
+"""
+
+directory = 'S:'
+date = '20160327'
+wavelength = 1600
 
 global spectra
 
@@ -198,7 +206,7 @@ param1 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength
 if wavelength == 1600 or wavelength == 1700:
     time_step = 24
 else:
-    time_step = 12  # add as argument, or leave in as constant?
+    time_step = 12
 freq_size = (cube_shape[2]*2)+1
 sample_freq = fftpack.fftfreq(freq_size, d=time_step)
 pidxs = np.where(sample_freq > 0)    
@@ -244,7 +252,7 @@ if 1:
     plt.subplots_adjust(left=0.25)
     ax1.set_xlim(0, h_map.shape[2]-1)
     ax1.set_ylim(0, h_map.shape[1]-1)  
-    ax1.set_title('SDO AIA %i.0 Angstrom %s [%s]' % (wavelength, date_title, titles[1]), y = 1.01, fontsize=17)
+    ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[1]), y = 1.01, fontsize=17)
     
     # was getting error "'AxesImage' object is not iterable"
     # - found: "Each element in img needs to be a sequence of artists, not a single artist."
@@ -252,7 +260,6 @@ if 1:
     h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
     h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
     im, = ([ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)])
-    
     
     # design colorbar for heatmaps
     divider = make_axes_locatable(ax1)
