@@ -32,7 +32,7 @@ def plotMap(p):
         h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max, picker=True)
-        ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[p]), y = 1.01, fontsize=17)
+        ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[p]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
 
@@ -40,7 +40,7 @@ def plotMask(p):
         ax1.clear()
         ax1.set_xlim(0, h_map.shape[2]-1)
         ax1.set_ylim(0, h_map.shape[1]-1)  
-        ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[p]), y = 1.01, fontsize=17)
+        ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[p]), y = 1.01, fontsize=17)
         
         param = h_map[p]
         h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
@@ -52,7 +52,6 @@ def plotMask(p):
         mask_thresh = 0.005  # significance threshold - masked above this value
         param_mask = np.copy(param) 
         param_mask[p_val > mask_thresh] = np.NaN  # mask the Gaussian component arrays with NaNs if above threshold
-        print "here2"
         im = ax1.imshow(param_mask, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max, picker=True)
         plt.colorbar(im,cax=cax)
         plt.draw()
@@ -84,7 +83,7 @@ class Index(object):
         h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
-        ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[2]), y = 1.01, fontsize=17)
+        ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[2]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()      
         
@@ -95,7 +94,7 @@ class Index(object):
         h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
-        ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[3]), y = 1.01, fontsize=17)
+        ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[3]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
     
@@ -106,7 +105,7 @@ class Index(object):
         h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet_r', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
-        ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[4]), y = 1.01, fontsize=17)
+        ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[4]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
         
@@ -117,7 +116,7 @@ class Index(object):
         h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
-        ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[5]), y = 1.01, fontsize=17)
+        ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[5]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
 
@@ -132,14 +131,14 @@ class Index(object):
         h_min = 0
         h_max = 30
         im = ax1.imshow(param, cmap='jet', interpolation='none', vmin=h_min, vmax=h_max,  picker=True)
-        ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[6]), y = 1.01, fontsize=17)
+        ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[6]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
         
     def visual(self, event):
         param = vis[0]
         im = ax1.imshow(param, cmap='sdoaia%i' % wavelength, interpolation='nearest', picker=True)
-        ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[7]), y = 1.01, fontsize=17)
+        ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[7]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
     
@@ -170,63 +169,69 @@ class Index(object):
             plotMask(marker)
         elif toggle2 == 1:
             toggle2 = 0
-            plotMap(marker) 
-        print "here"               
+            plotMap(marker)              
         return toggle2
         
+    def saveFig(self, event):
+        global count
+        plt.savefig('C:/Users/Brendan/Desktop/Tool_Figures/%s_%i_%i.pdf' % (date, wavelength, count), bbox_inches='tight')
+        count += 1
+        return count
   
 
 # Simple mouse click function to store coordinates
 def onclick(event):
     global ix, iy, c
     ixx, iyy = event.xdata, event.ydata
-    ax2.clear()
-    del ax1.collections[:]
-    plt.draw()
-    print ('x = %d, y = %d' % ( ixx, iyy))  # print location of pixel
-    ix = int(ixx)
-    iy = int(iyy)
+    if ixx > 1. and iyy > 1.:
+        ax2.clear()
+        del ax1.collections[:]
+        plt.draw()
+        print ('x = %d, y = %d' % ( ixx, iyy))  # print location of pixel
+        ix = int(ixx)
+        iy = int(iyy)
+        
+        s = np.zeros((spectra.shape[2]))
+        m = np.zeros((spectra.shape[2]))
+        g = np.zeros((spectra.shape[2]))
+        pl = np.zeros((spectra.shape[2]))
     
-    s = np.zeros((spectra.shape[2]))
-    m = np.zeros((spectra.shape[2]))
-    g = np.zeros((spectra.shape[2]))
-    pl = np.zeros((spectra.shape[2]))
-
-    s[:] = spectra[iy][ix][:]
-    
-    m = GaussPowerBase(f_fit, param1[0][iy][ix], param1[1][iy][ix], param1[2][iy][ix], param1[3][iy][ix], param1[4][iy][ix], param1[5][iy][ix]) 
-    g = Gauss(f_fit, param1[3][iy][ix], param1[4][iy][ix], param1[5][iy][ix])
-    pl = PowerLaw(f_fit, param1[0][iy][ix], param1[1][iy][ix], param1[2][iy][ix])
-    
-    ax2.set_xlim(10**-4.5, 10**-1.3)
-    ax2.set_ylim(10**-5, 10**0)
-    
-    ax2.loglog(f_fit, s, 'blue')
-    ax2.loglog(f_fit, m, 'purple', label='M2 Combined')
-    ax2.loglog(f_fit, g, 'g--', label='Gaussian')
-    ax2.loglog(f_fit, pl, 'g', label='Power Law')
-     
-    axvline(x=0.00333,color='k',ls='dashed', label='5 minutes')
-    axvline(x=0.00555,color='k',ls='dotted', label='3 minutes')
-    ax2.set_title('Spectra Fit: Pixel (%ii , %ij)' % (iy, ix), y = 1.01, fontsize=17)
-    plt.text(0.006, 10**-0.31, r'$A$ = {0:0.2e}'.format(h_map[0][iy][ix]), fontsize=23)
-    plt.text(0.0061, 10**-0.51, r'$n$ = {0:0.2f}'.format(h_map[1][iy][ix]), fontsize=23)
-    plt.text(0.006, 10**-0.73, r'$R$ = %0.1f [min]' % ((1./(h_map[2][iy][ix] / h_map[0][iy][ix])**(-1./ h_map[1][iy][ix]))/60.), fontsize=23)
-    plt.text(0.0061, 10**-0.95, r'$\alpha$ = {0:0.2e}'.format(h_map[3][iy][ix]), fontsize=23)
-    plt.text(0.0061, 10**-1.15, r'$\beta$ = {0:0.1f} [min]'.format((1./np.exp(h_map[4][iy][ix]))/60.), fontsize=23)
-    plt.text(0.0061, 10**-1.35, r'$\sigma$ = {0:0.3f}'.format(h_map[5][iy][ix]), fontsize=23)
-    #plt.legend(loc='lower left', prop={'size':20})
-    legend = ax2.legend(loc='lower left', prop={'size':15}, labelspacing=0.35)
-    ax1.scatter(ix, iy, s=200, marker='x', c='white', linewidth=2.5)
-    for label in legend.get_lines():
-            label.set_linewidth(2.0)  # the legend line width
-    plt.draw()
+        s[:] = spectra[iy][ix][:]
+        
+        m = GaussPowerBase(f_fit, param1[0][iy][ix], param1[1][iy][ix], param1[2][iy][ix], param1[3][iy][ix], param1[4][iy][ix], param1[5][iy][ix]) 
+        g = Gauss(f_fit, param1[3][iy][ix], param1[4][iy][ix], param1[5][iy][ix])
+        pl = PowerLaw(f_fit, param1[0][iy][ix], param1[1][iy][ix], param1[2][iy][ix])
+        
+        ax2.set_xlim(10**-4.5, 10**-1.3)
+        ax2.set_ylim(10**-5, 10**0)
+        
+        ax2.loglog(f_fit, s, 'blue')
+        ax2.loglog(f_fit, m, 'purple', label='M2 Combined')
+        ax2.loglog(f_fit, g, 'g--', label='Gaussian')
+        ax2.loglog(f_fit, pl, 'g', label='Power Law')
+         
+        axvline(x=0.00333,color='k',ls='dashed', label='5 minutes')
+        axvline(x=0.00555,color='k',ls='dotted', label='3 minutes')
+        ax2.set_title('Spectra Fit: Pixel (%ii , %ij)' % (iy, ix), y = 1.01, fontsize=17)
+        plt.text(0.006, 10**-0.31, r'$A$ = {0:0.2e}'.format(h_map[0][iy][ix]), fontsize=23)
+        plt.text(0.0061, 10**-0.51, r'$n$ = {0:0.2f}'.format(h_map[1][iy][ix]), fontsize=23)
+        plt.text(0.006, 10**-0.73, r'$R$ = %0.1f [min]' % ((1./(h_map[2][iy][ix] / h_map[0][iy][ix])**(-1./ h_map[1][iy][ix]))/60.), fontsize=23)
+        plt.text(0.0061, 10**-0.95, r'$\alpha$ = {0:0.2e}'.format(h_map[3][iy][ix]), fontsize=23)
+        plt.text(0.0061, 10**-1.15, r'$\beta$ = {0:0.1f} [min]'.format((1./np.exp(h_map[4][iy][ix]))/60.), fontsize=23)
+        plt.text(0.0061, 10**-1.35, r'$\sigma$ = {0:0.3f}'.format(h_map[5][iy][ix]), fontsize=23)
+        #plt.legend(loc='lower left', prop={'size':20})
+        legend = ax2.legend(loc='lower left', prop={'size':15}, labelspacing=0.35)
+        ax1.scatter(ix, iy, s=200, marker='x', c='white', linewidth=2.5)
+        for label in legend.get_lines():
+                label.set_linewidth(2.0)  # the legend line width
+        plt.draw()
 
     return ix, iy
     
 # define combined-fitting function (Model M2)
 def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
-    return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)    
+    #return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)    
+    return A2*f2**-n2 + C2 + P2*(1./ ((np.pi*fw2)*(1.+((np.log(f2)-fp2)/fw2)**2)))
 
 # define Power-Law-fitting function (Model M1)
 def PowerLaw(f, A, n, C):
@@ -234,15 +239,16 @@ def PowerLaw(f, A, n, C):
         
 # define Gaussian-fitting function
 def Gauss(f, P, fp, fw):
-    return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) 
-
+    #return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) 
+    return P*(1./ ((np.pi*fw)*(1.+((np.log(f)-fp)/fw)**2)))
+    
 
 """
 ##############################################################################
 ##############################################################################
 """
 
-directory = 'F:'
+directory = 'D:'
 #date = '20160327'
 date = '20130626'
 wavelength = 171
@@ -282,6 +288,9 @@ if 1:
     global toggle2
     toggle2 = 0
     
+    global count
+    count = 0
+    
     
     h_map = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
  
@@ -301,7 +310,7 @@ if 1:
         y = [1]
     
     # create list of titles and colorbar names for display on the figures
-    titles = ['Power Law Slope Coeff.', 'Power Law Index', 'Rollover - [min]', 'Gaussian Amplitude', 'Gaussian Location -- [min]', 'Gaussian Width', 'F-Statistic', 'Visual Image - Averaged']
+    titles = ['Power Law Slope Coeff.', 'Power Law Index', 'Rollover [min]', 'Gaussian Amplitude', 'Gaussian Location [min]', 'Gaussian Width', 'F-Statistic', 'Averaged Visual Image']
     
     # create figure with heatmap and spectra side-by-side subplots
     fig1 = plt.figure(figsize=(20,10))
@@ -310,7 +319,7 @@ if 1:
 
     ax1.set_xlim(0, h_map.shape[2]-1)
     ax1.set_ylim(0, h_map.shape[1]-1)  
-    ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[1]), y = 1.01, fontsize=17)
+    ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[1]), y = 1.01, fontsize=17)
     
     # was getting error "'AxesImage' object is not iterable"
     # - found: "Each element in img needs to be a sequence of artists, not a single artist."
@@ -339,6 +348,7 @@ if 1:
     axscatter = plt.axes([0.49, 0.9, 0.05, 0.063])
     axhist = plt.axes([0.55, 0.9, 0.05, 0.063])
     axmask = plt.axes([0.61, 0.9, 0.05, 0.063])
+    axsaveFig = plt.axes([0.67, 0.9, 0.05, 0.063])
  
     # set up spectra subplot
     ax2 = plt.subplot2grid((30,31),(4, 16), colspan=14, rowspan=25)
@@ -377,6 +387,8 @@ if 1:
     bhist.on_clicked(callback.hist)
     bmask = Button(axmask, 'Mask')
     bmask.on_clicked(callback.mask)
+    bsaveFig = Button(axsaveFig, 'Save')
+    bsaveFig.on_clicked(callback.saveFig)
     
 plt.draw()
 
