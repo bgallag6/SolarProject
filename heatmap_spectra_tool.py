@@ -173,7 +173,8 @@ def onclick(event):
     
 # define combined-fitting function (Model M2)
 def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
-    return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)    
+    #return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)  
+    return A2*f2**-n2 + C2 + P2*(1./ ((np.pi*fw2)*(1.+((np.log(f2)-fp2)/fw2)**2)))
 
 # define Power-Law-fitting function (Model M1)
 def PowerLaw(f, A, n, C):
@@ -181,7 +182,9 @@ def PowerLaw(f, A, n, C):
         
 # define Gaussian-fitting function
 def Gauss(f, P, fp, fw):
-    return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) 
+    #return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) 
+    return P*(1./ ((np.pi*fw)*(1.+((np.log(f)-fp)/fw)**2)))
+    
 
 
 """
@@ -190,7 +193,7 @@ def Gauss(f, P, fp, fw):
 """
 
 directory = 'S:'
-date = '20160327'
+date = '20120111'
 wavelength = 1600
 
 global spectra

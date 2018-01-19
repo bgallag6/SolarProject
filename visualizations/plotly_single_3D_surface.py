@@ -16,9 +16,9 @@ from plotly import tools
 from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 plotly.offline.init_notebook_mode() # run at the start of every ipython notebook
 
-directory = 'F:/Users/Brendan/Desktop/SolarProject'
-#directory = 'S:'
-date = '20140819'
+#directory = 'F:/Users/Brendan/Desktop/SolarProject'
+directory = 'S:'
+date = '20151219'
 wavelength1 = 1600
 
 H_1600 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength1))

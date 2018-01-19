@@ -117,7 +117,7 @@ def heatmap(directory, date, wavelength):
     y_ind = [800,600,400,200,0,-200,-400,-600,-800]    
     """
     
-    """
+    #"""
     ### for Global Oscillation Paper
     # trim x/y dimensions equally so that resulting region is 1600x1600    
     #trim_y = (h_map.shape[1]-1200)/2
@@ -130,7 +130,7 @@ def heatmap(directory, date, wavelength):
     y_ticks = [10,210,410,610,810,1010,1210]  
     x_ind = [-600,-400,-200,0,200,400,600]
     y_ind = [600,400,200,0,-200,-400,-600]    
-    """
+    #"""
     
     #h_map = h_map[:, 0:h_map.shape[1]-50, 0:500]  # for 20130626 blobs      
     #x_ticks = [0,100,200,300,400,500]
@@ -139,7 +139,7 @@ def heatmap(directory, date, wavelength):
     #y_ind = [0,100,200,300,400]   
     #y_ticks = [0,100,200,300] # 20120923
     
-    #"""
+    """
     xdim = int(np.floor(h_map.shape[2]/100))
     ydim = int(np.floor(h_map.shape[1]/100))
     
@@ -148,7 +148,7 @@ def heatmap(directory, date, wavelength):
     
     x_ind = x_ticks
     y_ind = y_ticks
-    #"""
+    """
     #x_ticks = [0,100,200,300]
     #y_ticks = [0,100,200,300]  
     
@@ -244,8 +244,8 @@ def heatmap(directory, date, wavelength):
             h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
             #h_min = np.percentile(h_map[i],0.5)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
             #h_max = np.percentile(h_map[i],99.5)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
-            #h_min = 3.5
-            #h_max = 4.5
+            h_min = 3.5
+            h_max = 4.5
             #cmap = 'jet_r'  # reverse color-scale for Gaussian Location, because of flipped frequencies to seconds
             cmap = cm.get_cmap('jet_r', 10)
         elif i == 9:
@@ -360,9 +360,10 @@ def heatmap(directory, date, wavelength):
         plt.ylabel('Bin Count', fontsize=font_size, labelpad=10)
         plt.xticks(fontsize=font_size)
         plt.yticks(fontsize=font_size)
-        plt.xlim(h_min, h_max)
-        y, x, _ = plt.hist(flat_param, bins=200, range=(h_min, h_max))
-        #y, x, _ = plt.hist(flat_param, bins=200, range=(3.5,5))  # possibly use for 1600/1700 so same range
+        #plt.xlim(h_min, h_max)
+        plt.xlim(3.5,5.5)
+        #y, x, _ = plt.hist(flat_param, bins=200, range=(h_min, h_max))
+        y, x, _ = plt.hist(flat_param, bins=200, range=(3.5,5.5))  # possibly use for 1600/1700 so same range
         #n, bins, patches = plt.hist(flat_param, bins=200, range=(h_min, h_max))
         n=y[1:-2]
         bins=x[1:-2]
