@@ -21,6 +21,8 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.widgets import Button
 from matplotlib.widgets import RadioButtons
 from scipy.stats import f as ff
+import os
+from sunpy.map import Map
 
     
 def find_nearest(array,value):
@@ -119,7 +121,6 @@ class Index(object):
         ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[5]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
-
         
     def fstat(self, event):
         global marker
@@ -148,7 +149,8 @@ class Index(object):
         ax2.set_title('Histogram: %s' % titles[marker], y = 1.01, fontsize=17)
         ax2.hist(np.reshape(h_map[marker], (h_map[marker].shape[0]*h_map[marker].shape[1])), bins=25)
         plt.draw()
-        
+    
+    """    
     def scatter(self, event):
         global toggle
         global col
@@ -160,6 +162,7 @@ class Index(object):
             col.remove()
             plt.draw()                
         return toggle
+    """
         
     def mask(self, event):
         global toggle2
@@ -174,7 +177,16 @@ class Index(object):
         
     def saveFig(self, event):
         global count
-        plt.savefig('C:/Users/Brendan/Desktop/Tool_Figures/%s_%i_%i.pdf' % (date, wavelength, count), bbox_inches='tight')
+
+        outdir = 'C:/Users/Brendan/Desktop/Tool_Figures/'
+
+        if not os.path.exists(os.path.dirname(outdir)):
+            try:
+                print "Specified directory not found."
+            except OSError as exc: # Guard against race condition
+                if exc.errno != errno.EEXIST: raise
+        else:
+            plt.savefig('%s%s_%i_%i.pdf' % (outdir, date, wavelength, count), bbox_inches='tight')
         count += 1
         return count
   
@@ -248,18 +260,28 @@ def Gauss(f, P, fp, fw):
 ##############################################################################
 """
 
-directory = 'D:'
+directory = 'F:'
 #date = '20160327'
 date = '20130626'
 wavelength = 171
 
 global spectra
+global param1
 
 cube_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))
 spectra = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
 
-global param1
 param1 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
+
+
+global marker
+global toggle
+global toggle2
+global count
+marker = 1
+toggle = 0
+toggle2 = 0
+count = 0
 
 
 ### determine frequency values that FFT will evaluate
@@ -271,8 +293,6 @@ freq_size = (cube_shape[2]*2)+1
 sample_freq = fftpack.fftfreq(freq_size, d=time_step)
 pidxs = np.where(sample_freq > 0)    
 
-global marker
-marker = 1
 
 if 1:
     
@@ -280,37 +300,22 @@ if 1:
     
     freqs = sample_freq[pidxs]
     print len(freqs)
-    f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],int(spectra.shape[2]))
-        
-    global toggle
-    toggle = 0
-    
-    global toggle2
-    toggle2 = 0
-    
-    global count
-    count = 0
+    f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],int(spectra.shape[2]))   
     
     
     h_map = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
  
-    #vis = np.load('%s/DATA/Output/%s/%i/visual.npy' % (directory, date, wavelength))
-    
-
-    date_title = '%i/%02i/%02i' % (int(date[0:4]),int(date[4:6]),int(date[6:8]))
+    vis = np.load('%s/DATA/Output/%s/%i/visual.npy' % (directory, date, wavelength))
 
     
     # arrays containing interesting points to be clicked for each dataset
     if date == '20120923' and wavelength == 211:
         x = [250, 359, 567, 357, 322, 315, 97, 511, 316, 336]  
         y = [234, 308, 218, 197, 201, 199, 267, 5, 175, 181]
-        
-    if date == '20130530' and wavelength == 193:
-        x = [1]  
-        y = [1]
     
     # create list of titles and colorbar names for display on the figures
     titles = ['Power Law Slope Coeff.', 'Power Law Index', 'Rollover [min]', 'Gaussian Amplitude', 'Gaussian Location [min]', 'Gaussian Width', 'F-Statistic', 'Averaged Visual Image']
+    date_title = '%i/%02i/%02i' % (int(date[0:4]),int(date[4:6]),int(date[6:8]))
     
     # create figure with heatmap and spectra side-by-side subplots
     fig1 = plt.figure(figsize=(20,10))
@@ -345,10 +350,10 @@ if 1:
     axgauss_wid = plt.axes([0.31, 0.9, 0.05, 0.063])
     axfstat = plt.axes([0.37, 0.9, 0.05, 0.063])
     axvisual = plt.axes([0.43, 0.9, 0.05, 0.063])
-    axscatter = plt.axes([0.49, 0.9, 0.05, 0.063])
-    axhist = plt.axes([0.55, 0.9, 0.05, 0.063])
-    axmask = plt.axes([0.61, 0.9, 0.05, 0.063])
-    axsaveFig = plt.axes([0.67, 0.9, 0.05, 0.063])
+    #axscatter = plt.axes([0.49, 0.9, 0.05, 0.063])
+    axhist = plt.axes([0.49, 0.9, 0.05, 0.063])
+    axmask = plt.axes([0.55, 0.9, 0.05, 0.063])
+    axsaveFig = plt.axes([0.61, 0.9, 0.05, 0.063])
  
     # set up spectra subplot
     ax2 = plt.subplot2grid((30,31),(4, 16), colspan=14, rowspan=25)
@@ -381,9 +386,9 @@ if 1:
     bfstat.on_clicked(callback.fstat)
     bvisual = Button(axvisual, 'Visual')
     bvisual.on_clicked(callback.visual)
-    bscatter = Button(axscatter, 'Scatter')
-    bscatter.on_clicked(callback.scatter)
-    bhist = Button(axhist, 'Hist')
+    #bscatter = Button(axscatter, 'Scatter')
+    #bscatter.on_clicked(callback.scatter)
+    bhist = Button(axhist, 'Hist.')
     bhist.on_clicked(callback.hist)
     bmask = Button(axmask, 'Mask')
     bmask.on_clicked(callback.mask)
