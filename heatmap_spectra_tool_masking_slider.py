@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Feb 02 10:07:43 2018
+Created on Fri Feb 09 09:51:19 2018
 
 @author: Brendan
 """
@@ -18,8 +18,7 @@ from scipy import signal
 from scipy import fftpack
 from matplotlib import cm
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from matplotlib.widgets import Button
-from matplotlib.widgets import RadioButtons
+from matplotlib.widgets import Button, RadioButtons, Slider
 from scipy.stats import f as ff
 from scipy.stats.stats import pearsonr
 import os
@@ -29,6 +28,11 @@ from sunpy.map import Map
 def find_nearest(array,value):
     idx = (np.abs(array-value)).argmin()
     return array[idx]
+    
+def update(val):
+    global mask_val
+    mask_val = slid_mask.val
+    return mask_val
 
 def plotMap(p):
     param = h_map[p]
@@ -40,10 +44,10 @@ def plotMap(p):
     plt.draw()
 
 def plotMask(p):
+    global mask_val
     ax1.clear()
     ax1.set_xlim(0, h_map.shape[2]-1)
     ax1.set_ylim(0, h_map.shape[1]-1)  
-    ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[p]), y = 1.01, fontsize=17)
     
     param = h_map[p]
     h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
@@ -52,20 +56,28 @@ def plotMask(p):
     # generate p-value heatmap + masked Gaussian component heatmaps
     df1, df2 = 3, 6  # degrees of freedom for model M1, M2
     p_val = ff.sf(h_map[6], df1, df2)
-    mask_thresh = 0.005  # significance threshold - masked above this value
+    mask_thresh = mask_val  # significance threshold - masked above this value
     param_mask = np.copy(param) 
     param_mask[p_val > mask_thresh] = np.NaN  # mask the Gaussian component arrays with NaNs if above threshold
+    
+    # determine percentage of region masked 
+    count = np.count_nonzero(np.isnan(param_mask))   
+    total_pix = p_val.shape[0]*p_val.shape[1]
+    mask_percent = ((np.float(count))/total_pix)*100
+    
+    ax1.set_title(r'%s: %i $\AA$ | %s | $f_{masked}$ = %0.1f%s' % (date_title, wavelength, titles[p], mask_percent, '%'), y = 1.01, fontsize=17)
     im = ax1.imshow(param_mask, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max, picker=True)
     plt.colorbar(im,cax=cax)
     plt.draw()
         
 def histMask(p):
+    global mask_val
     param = h_map[p]
     
     # generate p-value heatmap + masked Gaussian component heatmaps
     df1, df2 = 3, 6  # degrees of freedom for model M1, M2
     p_val = ff.sf(h_map[6], df1, df2)
-    mask_thresh = 0.005  # significance threshold - masked above this value
+    mask_thresh = mask_val  # significance threshold - masked above this value
     param_mask = np.copy(param) 
     param_mask[p_val > mask_thresh] = 0.  # mask the Gaussian component arrays with NaNs if above threshold
     param1d = np.reshape(param_mask, (param_mask.shape[0]*param_mask.shape[1]))
@@ -533,10 +545,12 @@ global marker
 global toggle
 global toggle2
 global count
+global mask_val
 marker = 1
 toggle = 0
 toggle2 = 0
 count = 0
+mask_val = 0.005
 
 
 ### determine frequency values that FFT will evaluate
@@ -608,8 +622,11 @@ if 1:
     #axscatter = plt.axes([0.49, 0.9, 0.05, 0.063])
     axhist = plt.axes([0.49, 0.9, 0.05, 0.063])
     axmask = plt.axes([0.55, 0.9, 0.05, 0.063])
-    axsaveFig = plt.axes([0.61, 0.9, 0.05, 0.063])
- 
+    axslider = plt.axes([0.64, 0.915, 0.15, 0.03])
+    axsaveFig = plt.axes([0.91, 0.9, 0.05, 0.063])
+
+    
+
     # set up spectra subplot
     ax2 = plt.subplot2grid((30,31),(4, 16), colspan=14, rowspan=25)
     ax2.loglog()
@@ -649,5 +666,8 @@ if 1:
     bmask.on_clicked(callback.mask)
     bsaveFig = Button(axsaveFig, 'Save')
     bsaveFig.on_clicked(callback.saveFig)
+    
+    slid_mask = Slider(axslider, 'Masking', 0.001, 0.1, valinit=0.005)
+    slid_mask.on_changed(update)
     
 plt.draw()
