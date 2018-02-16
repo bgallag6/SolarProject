@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Feb 02 10:07:43 2018
+Created on Sun Feb 11 11:47:42 2018
 
 @author: Brendan
 """
@@ -58,30 +58,10 @@ def plotMask(p):
     im = ax1.imshow(param_mask, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max, picker=True)
     plt.colorbar(im,cax=cax)
     plt.draw()
-        
-def histMask(p):
-    param = h_map[p]
-    
-    # generate p-value heatmap + masked Gaussian component heatmaps
-    df1, df2 = 3, 6  # degrees of freedom for model M1, M2
-    p_val = ff.sf(h_map[6], df1, df2)
-    mask_thresh = 0.005  # significance threshold - masked above this value
-    param_mask = np.copy(param) 
-    param_mask[p_val > mask_thresh] = 0.  # mask the Gaussian component arrays with NaNs if above threshold
-    param1d = np.reshape(param_mask, (param_mask.shape[0]*param_mask.shape[1]))
-    pmask = param1d[param1d != 0]
-    ax2.set_title('Histogram: %s | Masked' % titles[marker], y = 1.01, fontsize=17)
-    ax2.hist(pmask, bins=25)
 
     
 class Index(object):
     ind = 0
-         
-    def coeff(self, event):
-        global marker
-        marker = 0
-        plotMap(marker)  # could just do this
-        return marker       
 
     def index(self, event):
         global marker
@@ -158,30 +138,6 @@ class Index(object):
         plt.colorbar(im,cax=cax)
         plt.draw()
     
-    def hist(self, event):
-        global marker
-        global toggle2
-        ax2.clear()
-        if toggle2 == 0:
-            ax2.set_title('Histogram: %s' % titles[marker], y = 1.01, fontsize=17)
-            ax2.hist(np.reshape(h_map[marker], (h_map[marker].shape[0]*h_map[marker].shape[1])), bins=25)
-        elif toggle2 == 1:
-            histMask(marker)
-        plt.draw()
-    
-    """    
-    def scatter(self, event):
-        global toggle
-        global col
-        if toggle == 0:
-            toggle = 1
-            col = ax1.scatter(x, y, s=50, c='white', picker=True)
-        elif toggle == 1:
-            toggle = 0
-            col.remove()
-            plt.draw()                
-        return toggle
-    """
         
     def mask(self, event):
         global toggle2
@@ -216,6 +172,7 @@ def onclick(event):
     ixx, iyy = event.xdata, event.ydata
     if ixx > 1. and iyy > 1.:
         ax2.clear()
+        ax3.clear()
         del ax1.collections[:]
         plt.draw()
         print ('x = %d, y = %d' % ( ixx, iyy))  # print location of pixel
@@ -223,7 +180,7 @@ def onclick(event):
         iy = int(iyy)
         
         s = np.zeros((spectra.shape[2]))
-    
+        print spectra.shape
         s[:] = spectra[iy][ix][:]
         
         # assign equal weights to all parts of the curve
@@ -234,144 +191,22 @@ def onclick(event):
         ds = df2
         #ds = subcube_StdDev[l][m]
         
-                                               
-        ### fit data to models using SciPy's Levenberg-Marquart method
-                                               
-        try:
-            # initial guesses for fitting parameters
-            M1_low = [-0.002, 0.3, -0.01]
-            M1_high = [0.002, 6., 0.01]
-            nlfit_l, nlpcov_l = scipy.optimize.curve_fit(PowerLaw, f_fit, s, bounds=(M1_low, M1_high), sigma=ds, method='dogbox')
-          
-        except RuntimeError:
-            #print("Error M1 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
-            pass
-        
-        except ValueError:
-            #print("Error M1 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
-            pass
-        
-        A, n, C = nlfit_l  # unpack fitting parameters
-        
-        ## fit data to combined power law plus gaussian component model
-        #"""        
-        try:                                 
-            M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
-            M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
-            #M2_low = [0., 0.3, -0.01, 0.00001, -6.5, 0.05]
-            #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
-            #M2_low = [0., 0.3, -0.01, 0.00001, -6.5, 0.05]
-            #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
-        
-        
-        
-                    
-            # change method to 'dogbox' and increase max number of function evaluations to 3000
-            #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
-            nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f_fit, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
-        
-        except RuntimeError:
-            #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
-            pass
-        
-        except ValueError:
-            #print("Error M2 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
-            pass
-        #"""
-        
-        A2, n2, C2, P2, fp2, fw2 = nlfit_gp  # unpack fitting parameters
-        #print nlfit_gp
-        
-        # unpack uncertainties in fitting parameters from diagonal of covariance matrix
-        #dA2, dn2, dC2, dP2, dfp2, dfw2 = [np.sqrt(nlpcov_gp[j,j]) for j in range(nlfit_gp.size)]
-               
-        try:
-            #if wavelength == 1600 or wavelength == 1700:
-            #    M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]  # try constraining further, now that are specifying initial guess
-            #    M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
-            #else:
-            #    M2_low = [0., 0.3, 0., 0., -6.5, 0.05]  # try constraining further, now that are specifying initial guess
-            #    M2_high = [0.002, 6., 0.01, 0.1, -4.6, 0.8]
-            
-            #nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)    
-            nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f_fit, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)
-           
-        except RuntimeError:
-            #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
-            pass
-        
-        except ValueError:
-            #print("Error M2 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
-            pass
-        
-        A22, n22, C22, P22, fp22, fw22 = nlfit_gp2  # unpack fitting parameters     
-        #print nlfit_gp2
-        m2_param = nlfit_gp2
-        #dA22, dn22, dC22, dP22, dfp22, dfw22 = [np.sqrt(nlpcov_gp[j,j]) for j in range(nlfit_gp.size)]
-        
-        #m2_param = A22, n22, C22, P22, fp22, fw22  # could have used this for params array : = params[0:6,l-1,m-1]
-        #uncertainties = dA22, dn22, dC22, dP22, dfp22, dfw22  # do we want to keep a global array of uncertainties?
-                       
-        # create model functions from fitted parameters 
-        m1_fit = PowerLaw(f_fit, A, n, C)   
-        gaussian = Gauss(f_fit,P22,fp22,fw22)
-        m2_fit = GaussPowerBase(f_fit, A2,n2,C2,P2,fp2,fw2)
-        m2_fit2 = GaussPowerBase(f_fit, A22,n22,C22,P22,fp22,fw22) 
-        #m2_fit = GaussPowerBase(f, 5.65e-7,1.49,1e-4,0.0156,-6.5,0.59)     
-        
-        residsM1 = (s - m1_fit)
-        chisqrM1 =  ((residsM1/ds)**2).sum()
-        redchisqrM1 = ((residsM1/ds)**2).sum()/float(f_fit.size-3)  
-                       
-        #residsM2 = (s - m2_fit)
-        #chisqrM2 = ((residsM2/ds)**2).sum()
-        #redchisqrM2 = ((residsM2/ds)**2).sum()/float(f.size-6)
-        
-        residsM22 = (s - m2_fit2)
-        chisqrM22 = ((residsM22/ds)**2).sum()
-        redchisqrM22 = ((residsM22/ds)**2).sum()/float(f_fit.size-6)
-              
-        #f_test = ((chisqrM1-chisqrM2)/(6-3))/((chisqrM2)/(f.size-6))
-        f_test2 = ((chisqrM1-chisqrM22)/(6-3))/((chisqrM22)/(f_fit.size-6))
-        
-        
-        df1, df2 = 3, 6  # degrees of freedom for model M1, M2
-        p_val = ff.sf(f_test2, df1, df2)
-        
-        r_temp = pearsonr(np.log(m2_fit2), np.log(s))  # calculate r-value correlation coefficient
-        
-        r_temp = pearsonr(m2_fit2, s)  # calculate r-value correlation coefficient
-        r = r_temp[0]
-        
-        rollover = (1. / ((C22 / A22)**(-1. / n22))) / 60.
-        
-        plt.rcParams["font.family"] = "Times New Roman"
-        font_size = 20
-        
-        ax2.loglog(f_fit, m2_fit2, 'r', linewidth=1.3, label='M2 - Gaussian')
-        ax2.loglog(f_fit, gaussian, 'r--', linewidth=1.3, label='Gaussian')
-        ax2.loglog(f_fit, s, 'k', linewidth=1.3)
-        ax2.set_xlabel('Frequency [Hz]', fontsize=font_size, labelpad=10, fontname="Times New Roman")
-        ax2.set_ylabel('Power', fontsize=font_size, labelpad=10, fontname="Times New Roman")
-        plt.text(0.006, 10**-0.4, r'$\chi^2 [Gauss]$ = {0:0.3f}'.format(chisqrM22), fontsize=font_size, fontname="Times New Roman")
-        plt.text(0.006, 10**-0.84, r'$r [Gauss]$ = {0:0.3f}'.format(r), fontsize=font_size, fontname="Times New Roman")
-        
-    
-     
         ## fit data to combined power law plus gaussian component model
         
         try:
             # initial guesses for fitting parameters
             M1_low = [-0.002, 0.3, -0.01]
             M1_high = [0.002, 6., 0.01]
-            nlfit_l, nlpcov_l = scipy.optimize.curve_fit(PowerLaw, f_fit, s, bounds=(M1_low, M1_high), sigma=ds, method='dogbox')
+            nlfit_l, nlpcov_l = scipy.optimize.curve_fit(PowerLaw, f_fit, s, bounds=(M1_low, M1_high), sigma=ds, method='dogbox', max_nfev=3000)
           
         except RuntimeError:
             #print("Error M1 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            print "pl1"
             pass
         
         except ValueError:
             #print("Error M1 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            print "pl2"
             pass
         
         A, n, C = nlfit_l  # unpack fitting parameters
@@ -382,8 +217,6 @@ def onclick(event):
             #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
             M2_low = [0., 0.3, -0.01, 0.00001, -6.5, 0.05]
             M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
-            #M2_low = [0., 0.3, -0.01, 0., -8., 0.01]
-            #M2_high = [0.01, 5., 0.01, 0.2, -4., 2.]
         
                     
             # change method to 'dogbox' and increase max number of function evaluations to 3000
@@ -392,46 +225,34 @@ def onclick(event):
         
         except RuntimeError:
             #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            print "run1"
             pass
         
         except ValueError:
             #print("Error M2 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            print "val1"
             pass
         #"""
         
         A2, n2, C2, P2, fp2, fw2 = nlfit_gp  # unpack fitting parameters
-        #print nlfit_gp
-          
-        # unpack uncertainties in fitting parameters from diagonal of covariance matrix
-        #dA2, dn2, dC2, dP2, dfp2, dfw2 = [np.sqrt(nlpcov_gp[j,j]) for j in range(nlfit_gp.size)]
                
         try:
-            #if wavelength == 1600 or wavelength == 1700:
-            #    M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]  # try constraining further, now that are specifying initial guess
-            #    M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
-            #else:
-            #    M2_low = [0., 0.3, 0., 0., -6.5, 0.05]  # try constraining further, now that are specifying initial guess
-            #    M2_high = [0.002, 6., 0.01, 0.1, -4.6, 0.8]
             
             nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)    
-            #nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(LorentzPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)
-            #nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(LorentzPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)
            
         except RuntimeError:
             #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            print "run2"
             pass
         
         except ValueError:
             #print("Error M2 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            print "val2"
             pass
         
         A22, n22, C22, P22, fp22, fw22 = nlfit_gp2  # unpack fitting parameters     
         #print nlfit_gp2
         m2_param = nlfit_gp2
-        #dA22, dn22, dC22, dP22, dfp22, dfw22 = [np.sqrt(nlpcov_gp[j,j]) for j in range(nlfit_gp.size)]
-         
-        #m2_param = A22, n22, C22, P22, fp22, fw22  # could have used this for params array : = params[0:6,l-1,m-1]
-        #uncertainties = dA22, dn22, dC22, dP22, dfp22, dfw22  # do we want to keep a global array of uncertainties?
                        
         # create model functions from fitted parameters    
         m1_fit = PowerLaw(f_fit, A, n, C)    
@@ -461,29 +282,161 @@ def onclick(event):
         #amp_scale = PowerLaw(np.exp(fp2), A2, n2, C2)  # to extract the gaussian-amplitude scaling factor
         amp_scale2 = PowerLaw(np.exp(fp22), A22, n22, C22)  # to extract the gaussian-amplitude scaling factor
         
-        r_temp = pearsonr(np.log(m2_fit2), np.log(s))  # calculate r-value correlation coefficient
-        
-        r_temp = pearsonr(m2_fit2, s)  # calculate r-value correlation coefficient
-        r = r_temp[0]
+        r = pearsonr(m2_fit2, s)[0]  # calculate r-value correlation coefficient
         
         
-        rollover = (1. / ((C22 / A22)**(-1. / n22))) / 60.
+        # calculate weighted correlation coefficient
+        ds2 = stddev[iy][ix]
+        weight_mean_spec = (ds2*s).sum()/ds2.sum()
+        weight_mean_m2 = (ds2*m2_fit2).sum()/ds2.sum()
+        weight_cov_spec_m2 = (ds2*(s-weight_mean_spec)*(m2_fit2-weight_mean_m2)).sum()/ds2.sum()
+        weight_cov_spec = (ds2*(s-weight_mean_spec)*(s-weight_mean_spec)).sum()/ds2.sum()
+        weight_cov_m2 = (ds2*(m2_fit2-weight_mean_m2)*(m2_fit2-weight_mean_m2)).sum()/ds2.sum()
+        weight_corr = weight_cov_spec_m2/np.sqrt(weight_cov_spec*weight_cov_m2)
         
-        #ax2.loglog(f, m1_fit, 'r', linewidth=1.3, label='M1')
-        #ax2.loglog(f, m2_fit, 'b', linewidth=1.3, label='M2')
-        ax2.loglog(f_fit, m2_fit2, 'b', linewidth=1.3, label='M2 - Lorentz')
-        ax2.loglog(f_fit, lorentz, 'b--', linewidth=1.3, label='Lorentz')
-        ax2.set_xlabel('Frequency [Hz]', fontsize=font_size, labelpad=10, fontname="Times New Roman")
+    
+        
+        plt.rcParams["font.family"] = "Times New Roman"
+        font_size = 20
+        
+        ax2.set_title('Weightings: Frequency Spacing', y = 1.01, fontsize=17) 
+        ax2.loglog(f_fit, m2_fit2, 'b', linewidth=1.3, label='M2 Combined')
+        ax2.loglog(f_fit, lorentz, 'b--', linewidth=1.3, label='Lorentzian')
+        ax2.loglog(f_fit, s, 'k', linewidth=1.3)
+        ax2.loglog(f_fit, ds, 'r', label='Uncertainties')
         ax2.set_ylabel('Power', fontsize=font_size, labelpad=10, fontname="Times New Roman")
-        axvline(x=0.00333,color='k',ls='dashed', label='5 minutes')
-        axvline(x=0.00555,color='k',ls='dotted', label='3 minutes')
-        plt.text(0.006, 10**-0.62, r'$\chi^2 [Lorentz]$ = {0:0.3f}'.format(chisqrM22), fontsize=font_size, fontname="Times New Roman")
-        plt.text(0.006, 10**-1.06, r'$r [Lorentz]$ = {0:0.3f}'.format(r), fontsize=font_size, fontname="Times New Roman")
+        ax2.axvline(x=0.00333,color='k',ls='dashed', label='5 minutes')
+        ax2.axvline(x=0.00555,color='k',ls='dotted', label='3 minutes')
+        ax2.text(0.006, 10**-0.62, r'$\chi^2$ = {0:0.3f}'.format(chisqrM22), fontsize=font_size, fontname="Times New Roman")
+        ax2.text(0.007, 10**-1.06, r'$r$ = {0:0.3f}'.format(r), fontsize=font_size, fontname="Times New Roman")
+        ax2.text(0.006, 10**-1.50, r'$w_r$ = {0:0.3f}'.format(weight_corr), fontsize=font_size, fontname="Times New Roman")
         #plt.vlines((0.0093),10**-8,10**1, linestyles='dotted', label='3 minutes')
         legend = ax2.legend(loc='lower left', prop={'size':15}, labelspacing=0.35)
-        ax2.set_xlim(10**-4.5, 10**-1.3)
+        ax2.set_xlim(10**-4., 10**-1.3)
         ax2.set_ylim(10**-5, 10**0)   
         ax1.scatter(ix, iy, s=200, marker='x', c='white', linewidth=2.5)
+        for label in legend.get_lines():
+                label.set_linewidth(2.0)  # the legend line width   
+                
+        
+
+        ds = stddev[iy][ix]
+        
+        ## fit data to combined power law plus gaussian component model
+        
+        try:
+            # initial guesses for fitting parameters
+            M1_low = [-0.002, 0.3, -0.01]
+            M1_high = [0.002, 6., 0.01]
+            nlfit_l, nlpcov_l = scipy.optimize.curve_fit(PowerLaw, f_fit, s, bounds=(M1_low, M1_high), sigma=ds, method='dogbox')
+          
+        except RuntimeError:
+            #print("Error M1 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            pass
+        
+        except ValueError:
+            #print("Error M1 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            pass
+        
+        A, n, C = nlfit_l  # unpack fitting parameters
+         
+        #"""        
+        try:                                 
+            #M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
+            #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
+            M2_low = [0., 0.3, -0.01, 0.00001, -6.5, 0.05]
+            M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
+        
+                    
+            # change method to 'dogbox' and increase max number of function evaluations to 3000
+            nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
+            #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', ftol=.01, max_nfev=3000)
+        
+        except RuntimeError:
+            #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            pass
+        
+        except ValueError:
+            #print("Error M2 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            pass
+        #"""
+        
+        A2, n2, C2, P2, fp2, fw2 = nlfit_gp  # unpack fitting parameters
+               
+        try:
+           
+            nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)    
+           
+        except RuntimeError:
+            #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            pass
+        
+        except ValueError:
+            #print("Error M2 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
+            pass
+        
+        A22, n22, C22, P22, fp22, fw22 = nlfit_gp2  # unpack fitting parameters     
+        #print nlfit_gp2
+        #dA22, dn22, dC22, dP22, dfp22, dfw22 = [np.sqrt(nlpcov_gp[j,j]) for j in range(nlfit_gp.size)]
+         
+        #m2_param = A22, n22, C22, P22, fp22, fw22  # could have used this for params array : = params[0:6,l-1,m-1]
+        #uncertainties = dA22, dn22, dC22, dP22, dfp22, dfw22  # do we want to keep a global array of uncertainties?
+                       
+        # create model functions from fitted parameters    
+        m1_fit = PowerLaw(f_fit, A, n, C)    
+        lorentz = Lorentz(f_fit,P22,fp22,fw22)
+        m2_fit2 = LorentzPowerBase(f_fit, A22,n22,C22,P22,fp22,fw22) 
+        #m2_fit = GaussPowerBase(f, 5.65e-7,1.49,1e-4,0.0156,-6.5,0.59)     
+        
+        residsM1 = (s - m1_fit)
+        chisqrM1 =  ((residsM1/ds)**2).sum()
+        redchisqrM1 = ((residsM1/ds)**2).sum()/float(f_fit.size-3)  
+         
+        #residsM2 = (s - m2_fit)
+        #chisqrM2 = ((residsM2/ds)**2).sum()
+        #redchisqrM2 = ((residsM2/ds)**2).sum()/float(f.size-6)
+        
+        residsM22 = (s - m2_fit2)
+        chisqrM22 = ((residsM22/ds)**2).sum()
+        redchisqrM22 = ((residsM22/ds)**2).sum()/float(f_fit.size-6) 
+              
+        #f_test = ((chisqrM1-chisqrM2)/(6-3))/((chisqrM2)/(f.size-6))
+        f_test2 = ((chisqrM1-chisqrM22)/(6-3))/((chisqrM22)/(f_fit.size-6))
+        
+        df1, df2 = 3, 6  # degrees of freedom for model M1, M2
+        p_val = ff.sf(f_test2, df1, df2)
+        
+        #amp_scale = PowerLaw(np.exp(fp2), A2, n2, C2)  # to extract the gaussian-amplitude scaling factor
+        amp_scale2 = PowerLaw(np.exp(fp22), A22, n22, C22)  # to extract the gaussian-amplitude scaling factor
+        
+        r = pearsonr(m2_fit2, s)[0]  # calculate r-value correlation coefficient
+        
+        #"""
+        # calculate weighted correlation coefficient
+        weight_mean_spec = (ds*s).sum()/ds.sum()
+        weight_mean_m2 = (ds*m2_fit2).sum()/ds.sum()
+        weight_cov_spec_m2 = (ds*(s-weight_mean_spec)*(m2_fit2-weight_mean_m2)).sum()/ds.sum()
+        weight_cov_spec = (ds*(s-weight_mean_spec)*(s-weight_mean_spec)).sum()/ds.sum()
+        weight_cov_m2 = (ds*(m2_fit2-weight_mean_m2)*(m2_fit2-weight_mean_m2)).sum()/ds.sum()
+        weight_corr = weight_cov_spec_m2/np.sqrt(weight_cov_spec*weight_cov_m2)
+        #"""
+        
+        ax3.set_title('Weightings: 3x3 Std. Dev.', y = 1.01, fontsize=17)
+        ax3.loglog(f_fit, m2_fit2, 'b', linewidth=1.3, label='M2 Combined')
+        ax3.loglog(f_fit, lorentz, 'b--', linewidth=1.3, label='Lorentzian')
+        ax3.loglog(f_fit, s, 'k', linewidth=1.3)
+        ax3.loglog(f_fit, ds, 'r', label='Uncertainties')
+        ax3.set_xlabel('Frequency [Hz]', fontsize=font_size, labelpad=10, fontname="Times New Roman")
+        ax3.set_ylabel('Power', fontsize=font_size, labelpad=10, fontname="Times New Roman")
+        ax3.axvline(x=0.00333,color='k',ls='dashed', label='5 minutes')
+        ax3.axvline(x=0.00555,color='k',ls='dotted', label='3 minutes')
+        ax3.text(0.006, 10**-0.62, r'$\chi^2$ = {0:0.3f}'.format(chisqrM22), fontsize=font_size, fontname="Times New Roman")
+        ax3.text(0.007, 10**-1.06, r'$r$ = {0:0.3f}'.format(r), fontsize=font_size, fontname="Times New Roman")
+        ax3.text(0.006, 10**-1.50, r'$w_r$ = {0:0.3f}'.format(weight_corr), fontsize=font_size, fontname="Times New Roman")
+        #plt.vlines((0.0093),10**-8,10**1, linestyles='dotted', label='3 minutes')
+        legend = ax3.legend(loc='lower left', prop={'size':15}, labelspacing=0.35)
+        ax3.set_xlim(10**-4., 10**-1.3)
+        ax3.set_ylim(10**-5, 10**0)   
         for label in legend.get_lines():
                 label.set_linewidth(2.0)  # the legend line width   
 
@@ -517,15 +470,17 @@ def Gauss(f, P, fp, fw):
 
 directory = 'F:'
 #date = '20160327'
-#date = '20130626'
-date = '20140818'
-wavelength = 1600
+date = '20130626'
+#date = '20140818'
+wavelength = 171
 
 global spectra
 global param1
+global stddev
 
 cube_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))
 spectra = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
+stddev = np.memmap('%s/DATA/Temp/%s/%i/uncertainties_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
 
 param1 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
 
@@ -574,9 +529,9 @@ if 1:
     date_title = '%i/%02i/%02i' % (int(date[0:4]),int(date[4:6]),int(date[6:8]))
     
     # create figure with heatmap and spectra side-by-side subplots
-    fig1 = plt.figure(figsize=(20,10))
+    fig1 = plt.figure(figsize=(18,12))
     ax1 = plt.gca()
-    ax1 = plt.subplot2grid((30,31),(4, 1), colspan=14, rowspan=25)
+    ax1 = plt.subplot2grid((30,28),(4, 1), colspan=14, rowspan=25)
 
     ax1.set_xlim(0, h_map.shape[2]-1)
     ax1.set_ylim(0, h_map.shape[1]-1)  
@@ -598,36 +553,38 @@ if 1:
     
     
     # make toggle buttons to display each parameter's heatmap
-    axcoeff = plt.axes([0.01, 0.9, 0.05, 0.063])
-    axindex = plt.axes([0.07, 0.9, 0.05, 0.063])
-    axroll = plt.axes([0.13, 0.9, 0.05, 0.063])
-    axgauss_amp = plt.axes([0.19, 0.9, 0.05, 0.063])
-    axgauss_loc = plt.axes([0.25, 0.9, 0.05, 0.063])
-    axgauss_wid = plt.axes([0.31, 0.9, 0.05, 0.063])
-    axfstat = plt.axes([0.37, 0.9, 0.05, 0.063])
-    axvisual = plt.axes([0.43, 0.9, 0.05, 0.063])
-    #axscatter = plt.axes([0.49, 0.9, 0.05, 0.063])
-    axhist = plt.axes([0.49, 0.9, 0.05, 0.063])
-    axmask = plt.axes([0.55, 0.9, 0.05, 0.063])
-    axsaveFig = plt.axes([0.61, 0.9, 0.05, 0.063])
+    axindex = plt.axes([0.01, 0.9, 0.05, 0.063])
+    axroll = plt.axes([0.07, 0.9, 0.05, 0.063])
+    axgauss_amp = plt.axes([0.13, 0.9, 0.05, 0.063])
+    axgauss_loc = plt.axes([0.19, 0.9, 0.05, 0.063])
+    axgauss_wid = plt.axes([0.25, 0.9, 0.05, 0.063])
+    axfstat = plt.axes([0.31, 0.9, 0.05, 0.063])
+    axvisual = plt.axes([0.37, 0.9, 0.05, 0.063])
+    axmask = plt.axes([0.43, 0.9, 0.05, 0.063])
+    axsaveFig = plt.axes([0.49, 0.9, 0.05, 0.063])
  
     # set up spectra subplot
-    ax2 = plt.subplot2grid((30,31),(4, 16), colspan=14, rowspan=25)
+    ax2 = plt.subplot2grid((30,28),(1, 17), colspan=10, rowspan=14)
     ax2.loglog()
-    ax2.set_xlim(10**-4.5, 10**-1.3)
+    ax2.set_xlim(10**-4., 10**-1.3)
     ax2.set_ylim(10**-5, 10**0)  
     
     fig1.canvas.mpl_connect('button_press_event', onclick)
     
-    ax2.set_title('Spectra Fit', y = 1.01, fontsize=17)
+    ax2.set_title('Weightings: Frequency Spacing', y = 1.01, fontsize=17)
+    
+    ax3 = plt.subplot2grid((30,28),(15, 17), colspan=10, rowspan=14)
+    ax3.loglog()
+    ax3.set_xlim(10**-4., 10**-1.3)
+    ax3.set_ylim(10**-5, 10**0)  
+    ax3.set_title('Weightings: 3x3 Std. Dev.', y = 1.01, fontsize=17)
+    
     plt.tight_layout()
     
     
     # add callbacks to each button - linking corresponding action
     callback = Index()
     
-    bcoeff = Button(axcoeff, 'Coeff.')
-    bcoeff.on_clicked(callback.coeff)
     bindex = Button(axindex, 'Index')
     bindex.on_clicked(callback.index)
     broll = Button(axroll, 'Rollover')
@@ -642,10 +599,6 @@ if 1:
     bfstat.on_clicked(callback.fstat)
     bvisual = Button(axvisual, 'Visual')
     bvisual.on_clicked(callback.visual)
-    #bscatter = Button(axscatter, 'Scatter')
-    #bscatter.on_clicked(callback.scatter)
-    bhist = Button(axhist, 'Hist.')
-    bhist.on_clicked(callback.hist)
     bmask = Button(axmask, 'Mask')
     bmask.on_clicked(callback.mask)
     bsaveFig = Button(axsaveFig, 'Save')
