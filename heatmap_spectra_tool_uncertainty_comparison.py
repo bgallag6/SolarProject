@@ -294,6 +294,8 @@ def onclick(event):
         weight_cov_m2 = (ds2*(m2_fit2-weight_mean_m2)*(m2_fit2-weight_mean_m2)).sum()/ds2.sum()
         weight_corr = weight_cov_spec_m2/np.sqrt(weight_cov_spec*weight_cov_m2)
         
+        chisqrM22B = ((residsM22/ds2)**2).sum()
+        
     
         
         plt.rcParams["font.family"] = "Times New Roman"
@@ -308,8 +310,9 @@ def onclick(event):
         ax2.axvline(x=0.00333,color='k',ls='dashed', label='5 minutes')
         ax2.axvline(x=0.00555,color='k',ls='dotted', label='3 minutes')
         ax2.text(0.006, 10**-0.62, r'$\chi^2$ = {0:0.3f}'.format(chisqrM22), fontsize=font_size, fontname="Times New Roman")
-        ax2.text(0.007, 10**-1.06, r'$r$ = {0:0.3f}'.format(r), fontsize=font_size, fontname="Times New Roman")
-        ax2.text(0.006, 10**-1.50, r'$w_r$ = {0:0.3f}'.format(weight_corr), fontsize=font_size, fontname="Times New Roman")
+        ax2.text(0.006, 10**-0.98, r'$w_\chi$ = {0:0.3f}'.format(chisqrM22B), fontsize=font_size, fontname="Times New Roman")
+        ax2.text(0.007, 10**-1.34, r'$r$ = {0:0.3f}'.format(r), fontsize=font_size, fontname="Times New Roman")
+        ax2.text(0.006, 10**-1.70, r'$w_r$ = {0:0.3f}'.format(weight_corr), fontsize=font_size, fontname="Times New Roman")
         #plt.vlines((0.0093),10**-8,10**1, linestyles='dotted', label='3 minutes')
         legend = ax2.legend(loc='lower left', prop={'size':15}, labelspacing=0.35)
         ax2.set_xlim(10**-4., 10**-1.3)
