@@ -17,8 +17,8 @@ read -p "Enter the start time [ex. 00:00]: " tstart
 read -p "Enter the duration in hours [ex. 12]: " duration
 read -p "Enter the number of processors [ex. 16]: " num
 
-python make_fits_directory.py $directory $date $wavelength
+:: python make_fits_directory.py $directory $date $wavelength
 
-python -u JSOC_request_url.py $directory $date $wavelength $tstart $duration
+:: python -u JSOC_request_url.py $directory $date $wavelength $tstart $duration
 
 mpiexec -n $num python -u mpi_jsoc_download_complete.py $directory $date $wavelength

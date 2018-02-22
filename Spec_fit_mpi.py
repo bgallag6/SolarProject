@@ -32,21 +32,20 @@ from scipy.stats.stats import pearsonr
 def PowerLaw(f, A, n, C):
     return A*f**-n + C
     
-# define Gaussian-fitting function
-def Gauss(f, P, fp, fw):
-    return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2)
+# define Lorentzian-fitting function
+def Lorentz(f, P, fp, fw):
+    return P*(1./ ((np.pi*fw)*(1.+((np.log(f)-fp)/fw)**2)))
 
 # define combined-fitting function (Model M2)
-def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
-    #return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
+def LorentzPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*(1./ ((np.pi*fw2)*(1.+((np.log(f2)-fp2)/fw2)**2)))
-
+                 
 
 def spec_fit( subcube ):
 #def spec_fit( subcube, subcube_StdDev ):
     
   SPECTRA = subcube
-  print SPECTRA.shape[0], SPECTRA.shape[1]
+  #print(SPECTRA.shape[0], SPECTRA.shape[1], flush=True)
       
   # determine frequency values that FFT will evaluate
   num_freq = SPECTRA.shape[2]  # determine nubmer of frequencies that are used
@@ -111,12 +110,14 @@ def spec_fit( subcube ):
         ## fit data to combined power law plus gaussian component model
         #"""        
         try:                                 
-            M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
+            #M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
+            #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
+            M2_low = [0., 0.3, -0.01, 0.00001, -6.5, 0.05]
             M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
             
             # change method to 'dogbox' and increase max number of function evaluations to 3000
-            nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
-            #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A,n,C,0.1,-5.55,0.425], bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
+            nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
+            #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f, s, p0 = [A,n,C,0.1,-5.55,0.425], bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
         
         except RuntimeError:
             #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
@@ -140,8 +141,8 @@ def spec_fit( subcube ):
             #    M2_low = [0., 0.3, 0., 0., -6.5, 0.05]  # try constraining further, now that are specifying initial guess
             #    M2_high = [0.002, 6., 0.01, 0.1, -4.6, 0.8]
             
-            nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)
-            #nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(GaussPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)
+            nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(LorentzPowerBase, f, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)
+            #nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(LorentzPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)
        
         except RuntimeError:
             #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
@@ -160,7 +161,7 @@ def spec_fit( subcube ):
         # create model functions from fitted parameters
         m1_fit = PowerLaw(f, A, n, C)        
         #m2_fit = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)
-        m2_fit2 = GaussPowerBase(f, A22,n22,C22,P22,fp22,fw22)      
+        m2_fit2 = LorentzPowerBase(f, A22,n22,C22,P22,fp22,fw22)      
 
         residsM1 = (s - m1_fit)
         chisqrM1 =  ((residsM1/ds)**2).sum()
@@ -206,20 +207,20 @@ def spec_fit( subcube ):
         T_est = T_init*(SPECTRA.shape[0])  
         T_min, T_sec = divmod(T_est, 60)
         T_hr, T_min = divmod(T_min, 60)
-        print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (l, SPECTRA.shape[0], T_hr, T_min, T_sec)
+        print("Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (l, SPECTRA.shape[0], T_hr, T_min, T_sec), flush=True)
     else:
         T_est2 = T2*((SPECTRA.shape[0])-l)
         T_min2, T_sec2 = divmod(T_est2, 60)
         T_hr2, T_min2 = divmod(T_min2, 60)
-        print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (l, SPECTRA.shape[0], T_hr2, T_min2, T_sec2)
+        print("Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (l, SPECTRA.shape[0], T_hr2, T_min2, T_sec2), flush=True)
     T1 = T
 
   # print estimated and total program time to screen        
-  print "Beginning Estimated time = %i:%.2i:%.2i" % (T_hr, T_min, T_sec)
+  print("Beginning Estimated time = %i:%.2i:%.2i" % (T_hr, T_min, T_sec), flush=True)
   T_act = timer() - start
   T_min3, T_sec3 = divmod(T_act, 60)
   T_hr3, T_min3 = divmod(T_min3, 60)
-  print "Actual total time = %i:%.2i:%.2i" % (T_hr3, T_min3, T_sec3) 
+  print("Actual total time = %i:%.2i:%.2i" % (T_hr3, T_min3, T_sec3), flush=True) 
 			
   return params
 	
@@ -259,8 +260,8 @@ for i in range(size):
 
 # verify each processor received subcube with correct dimensions
 ss = np.shape(subcube)  # Validation	
-print "Processor", rank, "received an array with dimensions", ss  # Validation
-print "Height = %i, Width = %i, Total pixels = %i" % (subcube.shape[0], subcube.shape[1], subcube.shape[0]*subcube.shape[1])
+print("Processor", rank, "received an array with dimensions", ss, flush=True)  # Validation
+#print("Height = %i, Width = %i, Total pixels = %i" % (subcube.shape[0], subcube.shape[1], subcube.shape[0]*subcube.shape[1]), flush=True)
 
 params_T = spec_fit( subcube )  # Do something with the array
 #params_T = spec_fit( subcube, subcube_StdDev )  # Do something with the array
@@ -269,12 +270,12 @@ newData_p = comm.gather(params_T, root=0)  # Gather all the results
 # Have one node stack the results
 if rank == 0:
   stack_p = np.hstack(newData_p)
-  print stack_p.shape  # Verify we have a summed version of the input cube
+  print(stack_p.shape, flush=True)  # Verify we have a summed version of the input cube
  
   T_final = timer() - start
   T_min_final, T_sec_final = divmod(T_final, 60)
   T_hr_final, T_min_final = divmod(T_min_final, 60)
-  print "Total program time = %i:%.2i:%.2i" % (T_hr_final, T_min_final, T_sec_final)   
-  print "Just finished region: %s %iA" % (date, wavelength)
+  print("Total program time = %i:%.2i:%.2i" % (T_hr_final, T_min_final, T_sec_final), flush=True)   
+  print("Just finished region: %s %iA" % (date, wavelength), flush=True)
 
   np.save('%s/DATA/Output/%s/%i/param' % (directory, date, wavelength), stack_p)

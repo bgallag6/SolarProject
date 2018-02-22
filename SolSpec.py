@@ -126,10 +126,10 @@ def heatmap(directory, date, wavelength):
     
     #x_ticks = [0,200,400,600,800,1000,1200]
     #y_ticks = [0,200,400,600,800,1000,1200]  
-    x_ticks = [10,210,410,610,810,1010,1210]
-    y_ticks = [10,210,410,610,810,1010,1210]  
-    x_ind = [-600,-400,-200,0,200,400,600]
-    y_ind = [600,400,200,0,-200,-400,-600]    
+    #x_ticks = [10,210,410,610,810,1010,1210]
+    #y_ticks = [10,210,410,610,810,1010,1210]  
+    #x_ind = [-600,-400,-200,0,200,400,600]
+    #y_ind = [600,400,200,0,-200,-400,-600]    
     #"""
     
     #h_map = h_map[:, 0:h_map.shape[1]-50, 0:500]  # for 20130626 blobs      
@@ -139,7 +139,7 @@ def heatmap(directory, date, wavelength):
     #y_ind = [0,100,200,300,400]   
     #y_ticks = [0,100,200,300] # 20120923
     
-    """
+    #"""
     xdim = int(np.floor(h_map.shape[2]/100))
     ydim = int(np.floor(h_map.shape[1]/100))
     
@@ -148,7 +148,7 @@ def heatmap(directory, date, wavelength):
     
     x_ind = x_ticks
     y_ind = y_ticks
-    """
+    #"""
     #x_ticks = [0,100,200,300]
     #y_ticks = [0,100,200,300]  
     
@@ -627,11 +627,11 @@ def arc2pix(x1, x2, y1, y2, image):
     m1.peek()
     m2 = Map('%s' % image).submap([x1,x2]*u.arcsec, [y1,y2]*u.arcsec)
     m2.peek()
-    print "[Arcsecond Coordinate] = [Pixel Coordinate]"
-    print "%i arcsec = x1 = %i pixel" % (x1,x1_coord)
-    print "%i arcsec = x2 = %i pixel" % (x2,x2_coord)
-    print "%i arcsec = y1 = %i pixel" % (y1,y1_coord)
-    print "%i arcsec = y2 = %i pixel" % (y2,y2_coord)
+    print("[Arcsecond Coordinate] = [Pixel Coordinate]")
+    print("%i arcsec = x1 = %i pixel" % (x1,x1_coord))
+    print("%i arcsec = x2 = %i pixel" % (x2,x2_coord))
+    print("%i arcsec = y1 = %i pixel" % (y1,y1_coord))
+    print("%i arcsec = y2 = %i pixel" % (y2,y2_coord))
 
 
 def pix2arc(x1, x2, y1, y2, image):
@@ -666,11 +666,11 @@ def pix2arc(x1, x2, y1, y2, image):
     m1.peek()
     m2 = Map('%s' % image).submap([x1,x2]*u.pixel, [y1,y2]*u.pixel)
     m2.peek()
-    print "[Pixel Coordinate] = [Arcsecond Coordinate]"
-    print "%i pixel = x1 = %i arcsec" % (x1,x1_coord)
-    print "%i pixel = x2 = %i arcsec" % (x2,x2_coord)
-    print "%i pixel = y1 = %i arcsec" % (y1,y1_coord)
-    print "%i pixel = y2 = %i arcsec" % (y2,y2_coord)    
+    print("[Pixel Coordinate] = [Arcsecond Coordinate]")
+    print("%i pixel = x1 = %i arcsec" % (x1,x1_coord))
+    print("%i pixel = x2 = %i arcsec" % (x2,x2_coord))
+    print("%i pixel = y1 = %i arcsec" % (y1,y1_coord))
+    print("%i pixel = y2 = %i arcsec" % (y2,y2_coord))    
 
 
    
@@ -755,9 +755,9 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     
     # Use defined coordinates, extract the submaps from each AIA image, and store
     # them in the empty list. This takes many minutes to complete.
-    print " "
-    print "Reading files and extracting submaps. This takes a while..."
-    print " "
+    print(" ")
+    print("Reading files and extracting submaps. This takes a while...")
+    print(" ")
    
     if coords_type == 'pix':
         for filename in flist:
@@ -776,15 +776,15 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     	
     # Create a new Map Cube object to hold our de-rotated data
     new_mapcube = Map(mc_list, cube=True)
-    print " "
-    print "Creating derotated cube..."
-    print "Please wait..."
+    print(" ")
+    print("Creating derotated cube...")
+    print("Please wait...")
     
     # Perform the derotation of the submaps. This take a while too.
     #dr = mapcube_solar_derotate(new_mapcube)
     dr = mapcube_solar_derotate(new_mapcube, layer_index=mid_file)
     
-    print "done derotating"
+    print("done derotating")
     
     
     mid_subarr = dr[mid_file].data		# extract data from middle file of derotated datacube
@@ -840,18 +840,18 @@ def datacube(directory, date, wavelength, sub_reg_coords, coords_type, bin_frac)
     mid_num = (DATA.shape[0]/2)
     mid = DATA[mid_num]
     
-    print "Middle file is number %i" % mid_num
+    print("Middle file is number %i" % mid_num)
     
     # check the two image sizes agree
-    print " Average Image Dimensions = %i, %i" % (AVG.shape[0], AVG.shape[1])
-    print " Middle Image Dimensions = %i, %i" % (mid.shape[0], mid.shape[1])
+    print(" Average Image Dimensions = %i, %i" % (AVG.shape[0], AVG.shape[1]))
+    print(" Middle Image Dimensions = %i, %i" % (mid.shape[0], mid.shape[1]))
     
     # store average and middle images in array
     visual = np.zeros((2,AVG.shape[0],AVG.shape[1]))
     visual[0] = AVG
     visual[1] = mid
     
-    print visual.shape  # check array size agrees with expected
+    print(visual.shape)  # check array size agrees with expected
     
     # save visual-image array
     #np.save('%s/DATA/Output/%s/%i/%i_%ii_%i_%ij_visual.npy' % (directory, date, wavelength, y1, y2, x1, x2), visual)
@@ -924,9 +924,9 @@ def fft_avg(directory, date, wavelength, num_seg):
     
     Ex = np.load('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength))
     
-    print DATA.shape 
+    print(DATA.shape) 
     
-    print "Number of seconds in timeseries = %i" % (TIME[len(TIME)-1] - TIME[0])
+    print("Number of seconds in timeseries = %i" % (TIME[len(TIME)-1] - TIME[0]))
           
     ## determine frequency values that FFT will evaluate
     if wavelength == 1600 or wavelength == 1700:
@@ -947,15 +947,15 @@ def fft_avg(directory, date, wavelength, num_seg):
     freqs = sample_freq[pidxs]
     
     reslt = (DATA.shape[0] == TIME.shape[0])
-    print "DATA and TIME array sizes match: %s" % reslt
+    print("DATA and TIME array sizes match: %s" % reslt)
     
     pixmed=np.empty(DATA.shape[0])  # Initialize array to hold median pixel values
     spectra_seg = np.zeros((DATA.shape[1],DATA.shape[2],len(freqs)))
     
-    print "length time-interp array = %i" % n
-    print "size for FFT to consider = %i" % freq_size
-    print "length of sample freq array = %i" % len(sample_freq)
-    print "length of freqs array = %i (should be 1/2 of two above rows)" % len(freqs)
+    print("length time-interp array = %i" % n)
+    print("size for FFT to consider = %i" % freq_size)
+    print("length of sample freq array = %i" % len(sample_freq))
+    print("length of freqs array = %i (should be 1/2 of two above rows)" % len(freqs))
     
     
     start = timer()
@@ -1006,21 +1006,21 @@ def fft_avg(directory, date, wavelength, num_seg):
             T_est = T_init*(spectra_seg.shape[0])  
             T_min, T_sec = divmod(T_est, 60)
             T_hr, T_min = divmod(T_min, 60)
-            print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spectra_seg.shape[0], T_hr, T_min, T_sec)
+            print("Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spectra_seg.shape[0], T_hr, T_min, T_sec))
         else:
             T_est2 = T2*(spectra_seg.shape[0]-ii)
             T_min2, T_sec2 = divmod(T_est2, 60)
             T_hr2, T_min2 = divmod(T_min2, 60)
-            print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spectra_seg.shape[0], T_hr2, T_min2, T_sec2)
+            print("Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spectra_seg.shape[0], T_hr2, T_min2, T_sec2))
         T1 = T
         
         
     # print estimated and total program time to screen 
-    print "Beginning Estimated time = %i:%.2i:%.2i" % (T_hr, T_min, T_sec)
+    print("Beginning Estimated time = %i:%.2i:%.2i" % (T_hr, T_min, T_sec))
     T_act = timer() - start
     T_min3, T_sec3 = divmod(T_act, 60)
     T_hr3, T_min3 = divmod(T_min3, 60)
-    print "Actual total time = %i:%.2i:%.2i" % (T_hr3, T_min3, T_sec3) 
+    print("Actual total time = %i:%.2i:%.2i" % (T_hr3, T_min3, T_sec3)) 
     
     
     # initialize arrays to hold temporary results for calculating arithmetic average (changed from geometric)
@@ -1151,9 +1151,9 @@ def fft_overlap(directory, date, wavelength, window_length, overlap_pct, pixel_b
     
     Ex = np.load('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength))
     
-    print DATA.shape 
+    print(DATA.shape)
     
-    print "Number of seconds in timeseries = %i" % (TIME[len(TIME)-1] - TIME[0])    
+    print("Number of seconds in timeseries = %i" % (TIME[len(TIME)-1] - TIME[0]))    
         
     ## determine frequency values that FFT will evaluate
     if wavelength == 1600 or wavelength == 1700:
@@ -1170,20 +1170,20 @@ def fft_overlap(directory, date, wavelength, window_length, overlap_pct, pixel_b
     freqs = sample_freq[pidxs]
     
     reslt = (DATA.shape[0] == TIME.shape[0])
-    print "DATA and TIME array sizes match: %s" % reslt
+    print("DATA and TIME array sizes match: %s" % reslt)
     
     #pixmed=np.empty(DATA.shape[0])  # Initialize array to hold median pixel values
     #spectra_seg = np.zeros((DATA.shape[1],DATA.shape[2],len(freqs)))
     
     n_segments = ((len(t_interp)-freq_size) / int(freq_size*(1.-(overlap_pct/100.)))) + 1   
-    print n_segments
-    print len(freqs)
+    print(n_segments)
+    print(len(freqs))
     spec_array = np.zeros((n_segments,DATA.shape[1],DATA.shape[2],len(freqs)))
     
-    print "length time-interp array = %i" % len(t_interp)
-    print "size for FFT to consider = %i" % freq_size
-    print "length of sample freq array = %i" % len(sample_freq)
-    print "length of freqs array = %i (should be 1/2 of two above rows)" % len(freqs)
+    print("length time-interp array = %i" % len(t_interp))
+    print("size for FFT to consider = %i" % freq_size)
+    print("length of sample freq array = %i" % len(sample_freq))
+    print("length of freqs array = %i (should be 1/2 of two above rows)" % len(freqs))
     
     
     start = timer()
@@ -1255,21 +1255,21 @@ def fft_overlap(directory, date, wavelength, window_length, overlap_pct, pixel_b
             T_est = T_init*(spec_array.shape[1])  
             T_min, T_sec = divmod(T_est, 60)
             T_hr, T_min = divmod(T_min, 60)
-            print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spec_array.shape[1], T_hr, T_min, T_sec)
+            print("Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spec_array.shape[1], T_hr, T_min, T_sec))
         else:
             T_est2 = T2*(spec_array.shape[1]-ii)
             T_min2, T_sec2 = divmod(T_est2, 60)
             T_hr2, T_min2 = divmod(T_min2, 60)
-            print "Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spec_array.shape[1], T_hr2, T_min2, T_sec2)
+            print("Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spec_array.shape[1], T_hr2, T_min2, T_sec2))
         T1 = T
         
         
     # print estimated and total program time to screen 
-    print "Beginning Estimated time = %i:%.2i:%.2i" % (T_hr, T_min, T_sec)
+    print("Beginning Estimated time = %i:%.2i:%.2i" % (T_hr, T_min, T_sec))
     T_act = timer() - start
     T_min3, T_sec3 = divmod(T_act, 60)
     T_hr3, T_min3 = divmod(T_min3, 60)
-    print "Actual total time = %i:%.2i:%.2i" % (T_hr3, T_min3, T_sec3) 
+    print("Actual total time = %i:%.2i:%.2i" % (T_hr3, T_min3, T_sec3))
     
     if pixel_box == True:
         # initialize arrays to hold temporary results for calculating arithmetic average (changed from geometric)
@@ -1344,7 +1344,7 @@ def mem_map(directory, date, wavelength):
     # load original array 
     original = np.load('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength))
     #original_StdDev = np.load('%s/DATA/Temp/%s/%i/uncertainties.npy' % (directory, date, wavelength))
-    print original.shape
+    print(original.shape)
     
     if original.ndim == 3:
         orig_shape = np.array([original.shape[0], original.shape[1], original.shape[2]])

@@ -22,7 +22,7 @@ outdir = '%s/FITS/%s/%i/' % (directory, date, wavelength)
 
 if not os.path.exists(os.path.dirname(outdir)):
     try:
-        print "Making output directory structure..."
+        print("Making output directory structure...")
         os.makedirs(os.path.dirname(outdir))
     except OSError as exc: # Guard against race condition
         if exc.errno != errno.EEXIST: raise

@@ -15,7 +15,7 @@ import SolSpec as ss
 """
 
 directory = 'S:'
-date = '20120111'
+date = '20140822'
 wavelength = 1600
 
 """

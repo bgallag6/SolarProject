@@ -193,7 +193,7 @@ def Gauss(f, P, fp, fw):
 """
 
 directory = 'S:'
-date = '20120111'
+date = '20140822'
 wavelength = 1600
 
 global spectra
@@ -220,7 +220,7 @@ if 1:
     global f_fit
     
     freqs = sample_freq[pidxs]
-    print len(freqs)
+    print(len(freqs))
     f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],int(spectra.shape[2]))
         
     global toggle

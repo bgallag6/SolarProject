@@ -7,14 +7,15 @@ Created on Mon Oct 02 19:04:02 2017
 
 import numpy as np
 from mpi4py import MPI
-import urllib
-import urllib2
+import urllib.request
+#import urllib  # Python 2
+#import urllib2  # Python 2
 
 #"""
 def get_data_fill(arr_need, arr_rename, directory):
     
     if rank == 0:
-        print "Please wait while request is being processed."    
+        print("Please wait while request is being processed.")    
         sub_arr_len = len(arr_need)
     
     counter = 0
@@ -41,12 +42,12 @@ def get_data_fill(arr_need, arr_rename, directory):
         
         if wavelength in wavelengths:
         
-            urllib.urlretrieve("%s" % arr_need[i], "%s/FITS/%s/%s/%s" % (directory, date, wavelength, arr_rename[i]))
+            urllib.request.urlretrieve("%s" % arr_need[i], "%s/FITS/%s/%s/%s" % (directory, date, wavelength, arr_rename[i]))
             
             counter += 1
         
         if rank == 0:
-            print "Probably downloading file %i/%i" % (counter*size, sub_arr_len*size)
+            print("Probably downloading file %i/%i" % (counter*size, sub_arr_len*size))
     return counter
 
 
@@ -70,8 +71,10 @@ arr_need = []
 arr_rename = []
 
 #page=urllib2.urlopen(jsoc_url)
-page=urllib2.urlopen(str(r_url))
-data=page.read().split("<td><A HREF=")
+#page=urllib2.urlopen(str(r_url))  # Python 2
+#data=page.read().split("<td><A HREF=")  # Python 2
+page=urllib.request.urlopen(str(r_url))  # Python 3
+data=page.read().decode("utf8").split("<td><A HREF=")  # Python 3
 tag=".fits"
 endtag="</tr>"
 for item in data:
@@ -158,5 +161,5 @@ filesPart = get_data_fill(sub_arr, sub_arrB, directory)  # Do something with the
 filesTot = comm.gather(filesPart, root=0)  # Gather all the results  **check if this is ever different from actual, maybe just increasing counter even when miss file?
 
 if rank == 0: 
-    print "Downloaded %i/%i files" % (np.sum(filesTot), len(arr_rename0))
+    print("Downloaded %i/%i files" % (np.sum(filesTot), len(arr_rename0)))
 #"""

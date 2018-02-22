@@ -157,7 +157,7 @@ class Index(object):
 
         if not os.path.exists(os.path.dirname(outdir)):
             try:
-                print "Specified directory not found."
+                print ("Specified directory not found.")
             except OSError as exc: # Guard against race condition
                 if exc.errno != errno.EEXIST: raise
         else:
@@ -180,7 +180,6 @@ def onclick(event):
         iy = int(iyy)
         
         s = np.zeros((spectra.shape[2]))
-        print spectra.shape
         s[:] = spectra[iy][ix][:]
         
         # assign equal weights to all parts of the curve
@@ -201,12 +200,12 @@ def onclick(event):
           
         except RuntimeError:
             #print("Error M1 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
-            print "pl1"
+            print ("pl1")
             pass
         
         except ValueError:
             #print("Error M1 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
-            print "pl2"
+            print ("pl2")
             pass
         
         A, n, C = nlfit_l  # unpack fitting parameters
@@ -225,12 +224,12 @@ def onclick(event):
         
         except RuntimeError:
             #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
-            print "run1"
+            print ("run1")
             pass
         
         except ValueError:
             #print("Error M2 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
-            print "val1"
+            print ("val1")
             pass
         #"""
         
@@ -242,12 +241,12 @@ def onclick(event):
            
         except RuntimeError:
             #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
-            print "run2"
+            print ("run2")
             pass
         
         except ValueError:
             #print("Error M2 - inf/NaN - %i, %i" % (l,m))  # turn off because would print too many to terminal
-            print "val2"
+            print ("val2")
             pass
         
         A22, n22, C22, P22, fp22, fw22 = nlfit_gp2  # unpack fitting parameters     
@@ -513,7 +512,7 @@ if 1:
     global f_fit
     
     freqs = sample_freq[pidxs]
-    print len(freqs)
+    print (len(freqs))
     f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],int(spectra.shape[2]))   
     
     

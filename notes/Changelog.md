@@ -106,3 +106,16 @@
 - added FITS directory creation to jsoc_mpi_download2.sh
 - revised jsoc_mpi_download2.sh scripts to identify correct character position for file names + accept 171, 193, 211, 304, 1600, 1700, magnetogram, and continuum wavelength requests
 - revised heatmap_spectra_tool.py title of plots, added white cross as current-pixel marker
+
+
+2018
+----
+
+February: 
+- improved heatmap spectra tool: better layout, added masking button, added button to save figures, displays masked histogram when masking heatmaps
+- made heatmap spectra tool that compares different methods of weighting / uncertainties.  Displays spectra + fits in separate plot
+
+2/22:
+- added parenthesis to print statements in several scripts
+- added Lorentzian model to Spec_fit_mpi.py
+- revised download scripts to be compatible with Python 3
