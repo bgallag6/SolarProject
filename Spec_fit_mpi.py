@@ -41,8 +41,8 @@ def LorentzPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*(1./ ((np.pi*fw2)*(1.+((np.log(f2)-fp2)/fw2)**2)))
                  
 
-def spec_fit( subcube ):
-#def spec_fit( subcube, subcube_StdDev ):
+#def spec_fit( subcube ):
+def spec_fit( subcube, subcube_StdDev ):
     
   SPECTRA = subcube
   #print(SPECTRA.shape[0], SPECTRA.shape[1], flush=True)
@@ -63,7 +63,8 @@ def spec_fit( subcube ):
 
   # initialize arrays to hold parameter values
   #params = np.zeros((9, SPECTRA.shape[0], SPECTRA.shape[1]))
-  params = np.zeros((10, SPECTRA.shape[0], SPECTRA.shape[1]))
+  #params = np.zeros((10, SPECTRA.shape[0], SPECTRA.shape[1]))
+  params = np.zeros((11, SPECTRA.shape[0], SPECTRA.shape[1]))
 
   # Uncertainties = np.zeros((6, SPECTRA.shape[0], SPECTRA.shape[1]))  # not using right now
   
@@ -162,7 +163,7 @@ def spec_fit( subcube ):
         m1_fit = PowerLaw(f, A, n, C)        
         #m2_fit = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)
         m2_fit2 = LorentzPowerBase(f, A22,n22,C22,P22,fp22,fw22)      
-
+        
         residsM1 = (s - m1_fit)
         chisqrM1 =  ((residsM1/ds)**2).sum()
         redchisqrM1 = ((residsM1/ds)**2).sum()/float(f.size-3)  
@@ -171,9 +172,13 @@ def spec_fit( subcube ):
         #chisqrM2 = ((residsM2/ds)**2).sum()
         #redchisqrM2 = ((residsM2/ds)**2).sum()/float(f.size-6)
         
+        weights = subcube_StdDev[l][m]
+        
         residsM22 = (s - m2_fit2)
-        chisqrM22 = ((residsM22/ds)**2).sum()
-        redchisqrM22 = ((residsM22/ds)**2).sum()/float(f.size-6) 
+        #chisqrM22 = ((residsM22/ds)**2).sum()
+        #redchisqrM22 = ((residsM22/ds)**2).sum()/float(f.size-6) 
+        chisqrM22 = ((residsM22/weights)**2).sum()
+        redchisqrM22 = chisqrM22 / float(f.size-6)
               
         #f_test = ((chisqrM1-chisqrM2)/(6-3))/((chisqrM2)/(f.size-6))
         f_test2 = ((chisqrM1-chisqrM22)/(6-3))/((chisqrM22)/(f.size-6))
@@ -197,6 +202,7 @@ def spec_fit( subcube ):
         params[7][l][m] = P22 / amp_scale2
         params[8][l][m] = r
         params[9][l][m] = rollover
+        params[10][l][m] = redchisqrM22
         
         
     # estimate time remaining and print to screen  (looks to be much better - not sure why had above?)
@@ -246,25 +252,25 @@ wavelength = int(sys.argv[3])
 # load memory-mapped array as read-only
 cube_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))
 cube = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
-#cube_StdDev = np.memmap('%s/DATA/Temp/%s/%i/uncertainties_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
+cube_StdDev = np.memmap('%s/DATA/Temp/%s/%i/uncertainties_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
 #cube = np.load('F:/Users/Brendan/Desktop/SolarProject/data/20120923/171/20120923_171_-100_100i_-528_-132j_spectra.npy')
 
 chunks = np.array_split(cube, size)  # Split the data based on no. of processors
-#chunks_StdDev = np.array_split(cube_StdDev, size)  # Split the data based on no. of processors
+chunks_StdDev = np.array_split(cube_StdDev, size)  # Split the data based on no. of processors
 
 # specify which chunks should be handled by each processor
 for i in range(size):
     if rank == i:
         subcube = chunks[i]
-        #subcube_StdDev = chunks_StdDev[i]
+        subcube_StdDev = chunks_StdDev[i]
 
 # verify each processor received subcube with correct dimensions
 ss = np.shape(subcube)  # Validation	
 print("Processor", rank, "received an array with dimensions", ss, flush=True)  # Validation
 #print("Height = %i, Width = %i, Total pixels = %i" % (subcube.shape[0], subcube.shape[1], subcube.shape[0]*subcube.shape[1]), flush=True)
 
-params_T = spec_fit( subcube )  # Do something with the array
-#params_T = spec_fit( subcube, subcube_StdDev )  # Do something with the array
+#params_T = spec_fit( subcube )  # Do something with the array
+params_T = spec_fit( subcube, subcube_StdDev )  # Do something with the array
 newData_p = comm.gather(params_T, root=0)  # Gather all the results
 
 # Have one node stack the results
