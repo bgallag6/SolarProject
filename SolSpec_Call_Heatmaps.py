@@ -14,9 +14,9 @@ import SolSpec as ss
 ## generate heatmaps
 """
 
-directory = 'S:'
-date = '20140822'
-wavelength = 1600
+directory = 'F:'
+date = '20130626'
+wavelength = 171
 
 """
 import sys

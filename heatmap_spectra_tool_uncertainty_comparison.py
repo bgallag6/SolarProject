@@ -237,7 +237,8 @@ def onclick(event):
                
         try:
             
-            nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)    
+            nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)
+            #nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)
            
         except RuntimeError:
             #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
@@ -256,7 +257,7 @@ def onclick(event):
         # create model functions from fitted parameters    
         m1_fit = PowerLaw(f_fit, A, n, C)    
         lorentz = Lorentz(f_fit,P22,fp22,fw22)
-        m2_fit = LorentzPowerBase(f_fit, A2,n2,C2,P2,fp2,fw2)
+        #m2_fit = LorentzPowerBase(f_fit, A2,n2,C2,P2,fp2,fw2)
         m2_fit2 = LorentzPowerBase(f_fit, A22,n22,C22,P22,fp22,fw22) 
         #m2_fit = GaussPowerBase(f, 5.65e-7,1.49,1e-4,0.0156,-6.5,0.59)     
         
@@ -294,8 +295,10 @@ def onclick(event):
         weight_corr = weight_cov_spec_m2/np.sqrt(weight_cov_spec*weight_cov_m2)
         
         chisqrM22B = ((residsM22/ds2)**2).sum()
+        chisqrM1B =  ((residsM1/ds2)**2).sum()
+        f_test2B = ((chisqrM1B-chisqrM22B)/(6-3))/((chisqrM22B)/(f_fit.size-6))
+        #print(f_test2, f_test2B)
         
-    
         
         plt.rcParams["font.family"] = "Times New Roman"
         font_size = 20
