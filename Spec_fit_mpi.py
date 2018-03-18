@@ -41,8 +41,8 @@ def LorentzPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     return A2*f2**-n2 + C2 + P2*(1./ ((np.pi*fw2)*(1.+((np.log(f2)-fp2)/fw2)**2)))
                  
 
-#def spec_fit( subcube ):
-def spec_fit( subcube, subcube_StdDev ):
+def spec_fit( subcube ):
+#def spec_fit( subcube, subcube_StdDev ):
     
   SPECTRA = subcube
   #print(SPECTRA.shape[0], SPECTRA.shape[1], flush=True)
@@ -164,23 +164,18 @@ def spec_fit( subcube, subcube_StdDev ):
         #m2_fit = GaussPowerBase(f, A2,n2,C2,P2,fp2,fw2)
         m2_fit2 = LorentzPowerBase(f, A22,n22,C22,P22,fp22,fw22)      
         
+        #weights = subcube_StdDev[l][m]
+        
         residsM1 = (s - m1_fit)
         chisqrM1 =  ((residsM1/ds)**2).sum()
-        redchisqrM1 = ((residsM1/ds)**2).sum()/float(f.size-3)  
-                       
-        #residsM2 = (s - m2_fit)
-        #chisqrM2 = ((residsM2/ds)**2).sum()
-        #redchisqrM2 = ((residsM2/ds)**2).sum()/float(f.size-6)
-        
-        weights = subcube_StdDev[l][m]
+        #chisqrM1 =  ((residsM1/weights)**2).sum()
+        redchisqrM1 = chisqrM1 / float(f.size-3)  
         
         residsM22 = (s - m2_fit2)
-        #chisqrM22 = ((residsM22/ds)**2).sum()
-        #redchisqrM22 = ((residsM22/ds)**2).sum()/float(f.size-6) 
-        chisqrM22 = ((residsM22/weights)**2).sum()
-        redchisqrM22 = chisqrM22 / float(f.size-6)
-              
-        #f_test = ((chisqrM1-chisqrM2)/(6-3))/((chisqrM2)/(f.size-6))
+        chisqrM22 = ((residsM22/ds)**2).sum()
+        #chisqrM22 = ((residsM22/weights)**2).sum()
+        redchisqrM22 = chisqrM22 / float(f.size-6)         
+        
         f_test2 = ((chisqrM1-chisqrM22)/(6-3))/((chisqrM22)/(f.size-6))
         
         #amp_scale = PowerLaw(np.exp(fp2), A2, n2, C2)  # to extract the gaussian-amplitude scaling factor

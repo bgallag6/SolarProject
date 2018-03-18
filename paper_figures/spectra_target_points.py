@@ -186,7 +186,9 @@ for l in range(1):
         ## fit data to combined power law plus gaussian component model
         #"""        
         try:                                 
-            M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
+            #M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
+            #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
+            M2_low = [0., 0.3, -0.01, 0.00001, -6.5, 0.05]
             M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
             #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]  # see what happens if force middle of range above where slopes are
             

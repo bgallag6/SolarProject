@@ -220,7 +220,7 @@ def onclick(event):
                     
             # change method to 'dogbox' and increase max number of function evaluations to 3000
             nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
-            #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', ftol=.01, max_nfev=3000)
+            #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', ftol=.01, max_nfev=3000)
         
         except RuntimeError:
             #print("Error M2 - curve_fit failed - %i, %i" % (l,m))  # turn off because would print too many to terminal
@@ -298,6 +298,8 @@ def onclick(event):
         chisqrM1B =  ((residsM1/ds2)**2).sum()
         f_test2B = ((chisqrM1B-chisqrM22B)/(6-3))/((chisqrM22B)/(f_fit.size-6))
         #print(f_test2, f_test2B)
+        
+        print(A22, n22, fp22, fw22)
         
         
         plt.rcParams["font.family"] = "Times New Roman"

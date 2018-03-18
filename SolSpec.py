@@ -51,8 +51,9 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.stats import f as ff
 from matplotlib import cm
 from scipy import stats
+import matplotlib
 
-def heatmap(directory, date, wavelength):
+def heatmap(directory, date, wavelength, savefig):
 #def heatmap(heatmaps, visual, date, wavelength, path_name):
     """
     Generates heatmaps and histograms for each of the parameters:
@@ -84,10 +85,18 @@ def heatmap(directory, date, wavelength):
     
     # create arrays to store titles for heatmaps, the names to use when saving the files, and colorbar lables
     #titles = [r'Power Law Slope-Coefficient [flux] - $A$', r'(b) Power Law Index $n$', r'Power Law Tail - $C$', r'Gaussian Amplitude [flux] - $\alpha$', r'(c) Gauss. Loc. $\beta$ [min]', r'Gaussian Width - $\sigma$', 'F-Statistic', r'Gaussian Amplitude Scaled - $\alpha$', 'p-Value']
-    titles = [r'Power Law Slope-Coefficient [flux] - $A$', r'(b) Power Law Index $n$', r'Power Law Tail - $C$', r'Gaussian Amplitude [flux] - $\alpha$', r'(c) Gauss. Loc. $\beta$ [min]', r'Gaussian Width - $\sigma$', 'F-Statistic', r'Gaussian Amplitude Scaled - $\alpha$', r'$r$-Value: Correlation Coefficient', r'(d) Rollover Period $T_r$ [min]'] # 10-param-list
+    #titles = [r'Power Law Slope-Coefficient [flux] - $A$', r'(b) Power Law Index $n$', r'Power Law Tail - $C$', r'Gaussian Amplitude [flux] - $\alpha$', r'(c) Gauss. Loc. $\beta$ [min]', r'Gaussian Width - $\sigma$', 'F-Statistic', r'Gaussian Amplitude Scaled - $\alpha$', r'$r$-Value: Correlation Coefficient', r'(d) Rollover Period $T_r$ [min]'] # 10-param-list
     #titles = [r'Power Law Slope-Coefficient [flux] - $A$', r'Power Law Index $n$', r'Power Law Tail - $C$', r'Gaussian Amplitude [flux] - $\alpha$', r'Gauss. Loc. $\beta$ [min] - ', r'Gaussian Width - $\sigma$', 'F-Statistic', r'Gaussian Amplitude Scaled - $\alpha$', 'p-Value']
-    names = ['slope_coeff', 'index', 'tail', 'gauss_amp', 'gauss_loc', 'gauss_wid', 'f_test', 'gauss_amp_scaled', 'r_value', 'roll_freq']
-    cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [min]', 'Width', 'F-Statistic', 'Amplitude Scaled', r'$r$-Value: Correlation Coefficient', r'(d) Rollover Period $T_r$ [min]']
+    #names = ['slope_coeff', 'index', 'tail', 'gauss_amp', 'gauss_loc', 'gauss_wid', 'f_test', 'gauss_amp_scaled', 'r_value', 'roll_freq']
+    #cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [min]', 'Width', 'F-Statistic', 'Amplitude Scaled', r'$r$-Value: Correlation Coefficient', r'(d) Rollover Period $T_r$ [min]']
+    
+    #matplotlib.rc('text', usetex = True)  # use with latex commands
+    
+    # 11-param-list
+    titles = [r'Power Law Slope-Coefficient [flux] - A', r'(b) Power Law Index n', r'Power Law Tail - C', r'Gaussian Amplitude [flux] - α', r'(c) Gauss. Loc. β [min]', r'Gaussian Width - σ', 'F-Statistic', r'Gaussian Amplitude Scaled - α', r'$r$-Value: Correlation Coefficient', r'(d) Rollover Period $T_r$ [min]', r'$\chi^2$']
+    #titles = [r'Power Law Slope-Coefficient [flux] - $A$', r'(b) Power Law Index $n$', r'Power Law Tail - C', r'Gaussian Amplitude [flux] - $\alpha$', r'(c) Gauss. Loc. $\beta$ [min]', r'Gaussian Width - $\sigma$', 'F-Statistic', r'Gaussian Amplitude Scaled - $\alpha$', r'$r$-Value: Correlation Coefficient', r'(d) Rollover Period $T_r$ [min]', r'$\chi^2$']
+    cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'Location [min]', 'Width', 'F-Statistic', 'Amplitude Scaled', r'$r$-Value: Correlation Coefficient', r'(d) Rollover Period $T_r$ [min]', r'$\chi^2$']
+    names = ['slope_coeff', 'index', 'tail', 'lorentz_amp', 'lorentz_loc', 'lorentz_wid', 'f_test', 'lorentz_amp_scaled', 'r_value', 'roll_freq', 'chisqr']
     
     #vmin = [10**-11, 0.5, 10**-6, 10**-6, -6.5, 0.1, 2.]  # think don't need anymore  (or option to set ranges for specific wavelengths?)
     #vmax = [10**-6, 2.5, 0.003, 10**-2, -4.5, 0.8, 15.]  # think don't need anymore
@@ -306,14 +315,15 @@ def heatmap(directory, date, wavelength):
         cbar.set_ticks(c_ticks)
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
-        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf', bbox_inches='tight')
+        if savefig == True:
+            plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf', bbox_inches='tight')
         
         
         if i == 3 or i == 4 or i == 5:   
             fig = plt.figure(figsize=(fig_width,fig_height))
             ax = plt.gca()  # get current axis -- to set colorbar 
             
-            plt.title(r'%s; $p$ < %0.3f | f$_{masked}$ = %0.1f%s' % (titles[i], mask_thresh, mask_percent, '%'), y = 1.02, fontsize=font_size, fontname="Times New Roman")
+            plt.title(r'%s; p < %0.3f | f$_{masked}$ = %0.1f%s' % (titles[i], mask_thresh, mask_percent, '%'), y = 1.02, fontsize=font_size, fontname="Times New Roman")
             #plt.title(r'(d) %i $\AA$ | f_{masked} = %0.1f%s' % (wavelength, mask_percent, '%'), y = 1.02, fontsize=font_size, fontname="Times New Roman")
             #plt.title(r'%i$\AA$ Gaussian Location [min]: | f_{masked} = %0.1f' % (wavelength, mask_percent), y = 1.02, fontsize=font_size)
             #plt.title(r'%s: $p$ < %0.3f' % (titles[i], mask_thresh), y = 1.02, fontsize=font_size)
@@ -344,7 +354,8 @@ def heatmap(directory, date, wavelength):
             cbar.set_ticks(c_ticks)
             #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.jpeg' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)))
             #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.pdf' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)), format='pdf')
-            plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.pdf' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)), format='pdf', bbox_inches='tight')
+            if savefig == True:
+                plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.pdf' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)), format='pdf', bbox_inches='tight')
             
         
         #"""
@@ -404,7 +415,8 @@ def heatmap(directory, date, wavelength):
             label.set_linewidth(2.0)  # the legend line width
         
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf', bbox_inches='tight')
+        if savefig == True:
+            plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_Histogram_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf', bbox_inches='tight')
         #"""
     
     ## generate p-value masked plot
@@ -438,7 +450,8 @@ def heatmap(directory, date, wavelength):
     cbar.ax.tick_params(labelsize=font_size, pad=5) 
     cbar.set_ticks(c_ticks)
     #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s_mask_%i.jpeg' % (directory, date, wavelength, date, wavelength, names[i], (1./mask_thresh)))
-    plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_p_value_mask_%i.pdf' % (directory, date, wavelength, date, wavelength, (1./mask_thresh)), format='pdf', bbox_inches='tight')
+    if savefig == True:
+        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_p_value_mask_%i.pdf' % (directory, date, wavelength, date, wavelength, (1./mask_thresh)), format='pdf', bbox_inches='tight')
             
             
     # generate 'rollover frequency' heatmap
@@ -462,7 +475,7 @@ def heatmap(directory, date, wavelength):
         c_ticks[h] = h_min + h_step*h
      
     cmap = cm.get_cmap('jet', 10)    
-
+    
     im = ax.imshow(np.flipud(roll_freq), cmap = cmap, vmin=h_min, vmax=h_max)
     #im = ax.imshow(roll_freq, cmap = cmap, vmin=h_min, vmax=h_max)
     #plt.xlabel('X-Position [Pixels]', fontsize=font_size, labelpad=10)
@@ -480,7 +493,8 @@ def heatmap(directory, date, wavelength):
     cbar.set_ticks(c_ticks)
     #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freq.jpeg' % (directory, date, wavelength, date, wavelength))
     #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freqB.pdf' % (directory, date, wavelength, date, wavelength), format='pdf')
-    plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freqB.pdf' % (directory, date, wavelength, date, wavelength), format='pdf', bbox_inches='tight')
+    if savefig == True:
+        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_roll_freqB.pdf' % (directory, date, wavelength, date, wavelength), format='pdf', bbox_inches='tight')
     
     
     
@@ -533,7 +547,8 @@ def heatmap(directory, date, wavelength):
 
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.jpeg' % (directory, date, wavelength, date, wavelength, names_vis[i]))
         #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
-        plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf', bbox_inches='tight')
+        if savefig == True:
+            plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf', bbox_inches='tight')
     
     
         dates = ['20101208','20111210','20121018', '20131118', '20140112', '20140606', '20140818', '20140910', '20141227', '20150104','20160414', '20160426', '20160520', '20160905', '20170329']
@@ -575,7 +590,8 @@ def heatmap(directory, date, wavelength):
             cbar = plt.colorbar(im,cax=cax)
             cbar.ax.tick_params(labelsize=font_size, pad=5) 
             #plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s_umbra.jpeg' % (directory, date, wavelength, date, wavelength, names_vis[i]))
-            plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s_umbra.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
+            if savefig == True:
+                plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_visual_%s_umbra.pdf' % (directory, date, wavelength, date, wavelength, names_vis[i]), format='pdf')
     #"""
 
 
@@ -942,7 +958,7 @@ def fft_avg(directory, date, wavelength, num_seg):
     n_segments = num_seg  # break data into 12 segments of equal length
     n = len(t_interp)
     rem = n % n_segments
-    freq_size = (n - rem) / n_segments 
+    freq_size = (n - rem) // n_segments 
     
     sample_freq = fftpack.fftfreq(freq_size, d=time_step)
     pidxs = np.where(sample_freq > 0)

@@ -55,7 +55,7 @@ wavelength = int(sys.argv[3])
 ## create derotated region datacube
 """
 #ss.datacube(directory='F:/Users/Brendan/Desktop/SolarProject/data/20120923/304', date='20120923', wavelength=304, sub_reg_coords=[-528,-132,-100,100], coords_type='arc', bin_frac=1)
-ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-395,395,-375,375], coords_type='arc', bin_frac=1)
+#ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, sub_reg_coords=[-395,395,-375,375], coords_type='arc', bin_frac=1)
 
 
 """
@@ -65,7 +65,7 @@ ss.datacube(directory='%s' % (directory), date='%s' % (date), wavelength= wavele
 #TIME = np.load('%s/DATA/Temp/%s/%i/*time.npy')
 #EXPOSURE = np.load('%s/DATA/Temp/%s/%i/*exposure.npy')
 
-ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, num_seg = 2)  # 3 seg for 20120923, 6 seg for rest
+ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= wavelength, num_seg = 6)  # 3 seg for 20120923, 6 seg for rest
 #spectra_array = ss.fft_avg(directory='%s' % (directory), date='%s' % (date), wavelength= '%i' % (wavelength), datacube = DATA, timeseries = TIME, exposure_array = EXPOSURE, num_seg = 6)
 #np.save('F:/Users/Brendan/Desktop/SolarProject/data/20120923/304/20120923_304_-100_100i_-528_-132j_spectra', spectra_array)
 #np.save('C:/Users/Brendan/Desktop/SDO/spectra_20130530_193_2300_2600_2200_3000', spectra)  # now this
