@@ -201,7 +201,7 @@ class Index(object):
 
         if not os.path.exists(os.path.dirname(outdir)):
             try:
-                print "Specified directory not found."
+                print("Specified directory not found.")
             except OSError as exc: # Guard against race condition
                 if exc.errno != errno.EEXIST: raise
         else:
@@ -516,10 +516,8 @@ def Gauss(f, P, fp, fw):
 """
 
 directory = 'F:'
-#date = '20160327'
-#date = '20130626'
-date = '20140818'
-wavelength = 1600
+date = '20130626'
+wavelength = 1700
 
 global spectra
 global param1
@@ -555,7 +553,7 @@ if 1:
     global f_fit
     
     freqs = sample_freq[pidxs]
-    print len(freqs)
+    print(len(freqs))
     f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],int(spectra.shape[2]))   
     
     

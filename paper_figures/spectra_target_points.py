@@ -28,8 +28,7 @@ from scipy.stats import f
 import matplotlib.patches as patches
 from scipy.stats import f as ff
 from scipy.stats.stats import pearsonr
-
-from scipy import fftpack    
+import matplotlib   
 
 # define Power-Law-fitting function (Model M1)
 def PowerLaw(f, A, n, C):
@@ -37,7 +36,8 @@ def PowerLaw(f, A, n, C):
     
 # define Gaussian-fitting function
 def Gauss(f, P, fp, fw):
-    return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2)
+    #return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2)
+    return P*(1./ ((np.pi*fw)*(1.+((np.log(f)-fp)/fw)**2)))
 
 # define combined-fitting function (Model M2)
 def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
@@ -78,36 +78,6 @@ pidxs = np.where(sample_freq > 0)
 freqs = sample_freq[pidxs]
 
 
-start = timer()
-T1 = 0
-
-
-#m2 = [790, 767, 757, 765, 867, 525, 762, 649, 722, 485, 743, 708, 744, 14] #use
-#l2 = [235, 547, 319, 325, 864, 551, 1529, 1548, 1441, 535, 322, 352, 272, 330] #use
-
-#m2 = [722]
-#l2 = [1441]
-
-#m2 = [14, 58, 283, 512, 629, 810, 909, 901, 1342, 767, 873]
-#l2 = [330, 394, 482, 538, 379, 293, 400, 409, 1239, 1160, 1261]
-
-#m2 = [743, 708, 525, 757, 765, 722, 867]
-#l2 = [322, 352, 551, 319, 325, 1441, 864]
-
-#m2 = [722, 525, 757, 743]  # 171
-#l2 = [1441, 551, 319, 322]  # 171
-
-#m2 = [722, 722, 722, 722]  # tail possibilities
-#l2 = [1423, 1427, 1438, 1441]
-
-#m2 = [727,726] # gaussian possibilities
-#l2 = [323,328]
-
-#m2 = [516,525,525,524,174,788,189,193,188,187]
-#l2 = [551,547,550,548,417,1163,522,521,523,524]
-
-#m2 = [1288,1238,1234,1212,1215,1217,1234,1235,1291,1299]
-#l2 = [701,701,701,901,901,901,901,901,901,901]
 """
 x2 = [187, 188, 189, 726, 727, 722, 722, 867, 765, 757, 525, 708, 743, 790, 790, 790, 794, 796, 797, 798, 858, 861, 863, 872, 872, 876]  # used in timeseries generation
 y2 = [524, 523, 522, 328, 323, 1441, 1427, 864, 325, 319, 551, 352, 322, 650, 653, 659, 642, 648, 667, 669, 866, 867, 863, 865, 875, 879]
@@ -127,13 +97,15 @@ l2 = [523, 328, 1427, 875] # 323, 1441, 522, 524, 864, 325, 319, 551, 352, 322, 
 #m2 = [867, 765, 757, 525, 708, 743, 790, 790, 790, 794, 796, 797, 798, 858, 861, 863, 872, 872, 876]
 #l2 = [864, 325, 319, 551, 352, 322, 650, 653, 659, 642, 648, 667, 669, 866, 867, 863, 865, 875, 879]
 
-m2_title = ['(c) Power Law Dominated w/o Gaussian', '(d) Power Law Dominated w/ Gaussian', '(a) Tail Dominated w/o Gaussian', '(b) Tail Dominated w/o Gaussian']
+m2_title = ['(c) Power Law Dominated w/o Lorentzian', '(d) Power Law Dominated w/ Lorentzian', '(a) Tail Dominated w/o Lorentzian', '(b) Tail Dominated w/o Lorentzian']
 #m2_title = 
 point_label = ['C', 'D', 'A', 'B']
 
 #m2_title = ['Tail Dominated w/o Gaussian']
 #point_label = ['B']
 
+#matplotlib.rc('text', usetex = True)  # use with latex commands
+#plt.rc('font',**{'family':'serif','serif':['Times']})
 
 #for l in range(321,322):
 for l in range(1):
@@ -318,50 +290,47 @@ for l in range(1):
         #plt.title('Power-Law Dominated : Pixel %ii, %ij' % (l2[m],m2[m]), y = 1.01, fontsize=25)
         #plt.title('%s: Pixel %ix, %iy' % (m2_title[m], m2[m],l2[m]), y = 1.01, fontsize=30)
         #plt.title('171: %ix, %iy' % (m2[m],l2[m]), y = 1.01, fontsize=30)
-        plt.title('%s: Point %s' % (m2_title[m], point_label[m]), y = 1.01, fontsize=font_size, fontname="Times New Roman")
+        plt.title(r'%s: Point %s' % (m2_title[m], point_label[m]), y = 1.01, fontsize=font_size)
         #plt.title('%s: Point %s' % (m2_title[m-17], point_label[m-17]), y = 1.01, fontsize=30)
         plt.ylim((10**-4.7,10**0))
         plt.xlim((10**-4.,10**-1.3))
-        plt.xticks(fontsize=font_size, fontname="Times New Roman")
-        plt.yticks(fontsize=font_size, fontname="Times New Roman")
+        plt.xticks(fontsize=font_size)
+        plt.yticks(fontsize=font_size)
         ax.tick_params(axis='both', which='major', pad=10)
-        plt.loglog(f,s,'k')
+        plt.loglog(f,s,'k', label='Averaged Spectrum')
         plt.loglog(f, m1_fit, label='M1 - Power Law', linewidth=1.3)
         plt.loglog(f, m2P_fit, 'g', label='M2 - Power Law', linewidth=1.3)
-        plt.loglog(f, m2G_fit, 'g--', label='M2 - Gaussian', linewidth=1.3)
+        plt.loglog(f, m2G_fit, 'g--', label='M2 - Lorentzian', linewidth=1.3)
         plt.loglog(f, m2_fit2, 'purple', label='M2 - Combined', linewidth=1.3)
-        #plt.loglog(f, m1_fit, linewidth=1.3)
-        #plt.loglog(f, m2P_fit, 'g', label=r'$A\nu^{-n} + C$', linewidth=1.3)
-        #plt.loglog(f, m2G_fit, 'g--', label=r'$\alpha\ e^{{-\frac{(\ln\nu-\beta)^{2}}{\sigma^{2}}}}$', linewidth=1.3)
-        #plt.loglog(f, m2_fit2, 'purple', label='Combined Model', linewidth=1.3)
-        plt.xlabel('Frequency [Hz]', fontsize=font_size, labelpad=10, fontname="Times New Roman")
-        plt.ylabel('Power', fontsize=font_size, labelpad=10, fontname="Times New Roman")
+
+        plt.xlabel(r'Frequency [Hz]', fontsize=font_size, labelpad=10)
+        plt.ylabel(r'Power', fontsize=font_size, labelpad=10)
         plt.vlines((1.0/300.),10**-8,10**1, linestyles='dashed', label='5 minutes')
         plt.vlines((1.0/180.),10**-8,10**1, linestyles='dotted', label='3 minutes')
         #plt.vlines((0.0093),10**-8,10**1, linestyles='dotted', label='3 minutes')
         
         #rect = patches.Rectangle((0.004,0.015), 0.012, 0.8, color='white', fill=True)
         #ax.add_patch(rect)
-        #"""
-        plt.text(0.00725, 10**-0.41, r'$A$ = {0:0.2e}'.format(m2_param[0]), fontsize=font_size, fontname="Times New Roman")
-        plt.text(0.0076, 10**-0.61, r'$n$ = {0:0.2f}'.format(m2_param[1]), fontsize=font_size, fontname="Times New Roman")
+        """
+        #plt.text(0.00725, 10**-0.41, r'$A$ = {0:0.2e}'.format(m2_param[0]), fontsize=font_size, fontname="Times New Roman")
+        plt.text(0.0076, 10**-0.5, r'$n$ = {0:0.2f}'.format(m2_param[1]), fontsize=font_size)
         #plt.text(0.008, 10**-0.75, r'$C$ =  {0:0.3e}'.format(m2_param[2]), fontsize=25)
         #plt.text(0.007, 10**-0.73, r'$(C/A)^{-\frac{1}{n}}$ = %f [s]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
-        plt.text(0.00725, 10**-0.83, r'$R$ = %0.1f [min]' % ((1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1]))/60.), fontsize=font_size, fontname="Times New Roman")
+        #plt.text(0.00725, 10**-0.83, r'$R$ = %0.1f [min]' % ((1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1]))/60.), fontsize=font_size, fontname="Times New Roman")
         #plt.text(0.007, 10**-0.73, r'$r$ = %i [s]' % (1./(m2_param[2] / m2_param[0])**(-1./ m2_param[1])), fontsize=30)
-        plt.text(0.0075, 10**-1.05, r'$\alpha$ = {0:0.2e}'.format(m2_param[3]), fontsize=font_size, fontname="Times New Roman")
+        #plt.text(0.0075, 10**-0.83, r'$\alpha$ = {0:0.2e}'.format(m2_param[3]), fontsize=font_size, fontname="Times New Roman")
         #plt.text(0.007, 10**-1.09, r'$\beta$ = {0:0.3f}'.format(m2_param[4]), fontsize=25)
-        plt.text(0.00763, 10**-1.26, r'$\beta$ = {0:0.1f} [min]'.format((1./np.exp(m2_param[4]))/60.), fontsize=font_size, fontname="Times New Roman")
-        plt.text(0.0079, 10**-1.47, r'$\delta$ = {0:0.3f}'.format(m2_param[5]), fontsize=font_size, fontname="Times New Roman")
+        plt.text(0.00763, 10**-0.75, r'$\beta$ = {0:0.1f} [min]'.format((1./np.exp(m2_param[4]))/60.), fontsize=font_size)
+        plt.text(0.0079, 10**-1., r'$\delta$ = {0:0.3f}'.format(m2_param[5]), fontsize=font_size)
         #plt.text(0.007, 10**-1.55, r'$\chi^2$ = {0:0.3f}'.format(chisqrM22), fontsize=30)
         #plt.text(0.007, 10**-1.75, r'$p$ = {0:0.2e}'.format(p_val), fontsize=30)
-        plt.text(0.0077, 10**-1.67, r'$p$ = {0:0.3g}'.format(p_val), fontsize=font_size, fontname="Times New Roman")
-        plt.text(0.00786, 10**-1.87, r'$r$ = {0:0.3g}'.format(r_val[0]), fontsize=font_size, fontname="Times New Roman")
+        plt.text(0.0077, 10**-1.25, r'$p$ = {0:0.3g}'.format(p_val), fontsize=font_size)
+        plt.text(0.00786, 10**-1.5, r'$r$ = {0:0.3g}'.format(r_val[0]), fontsize=font_size)
         #legend = ax.legend(loc='upper right', prop={'size':30}, labelspacing=0.35)
-        legend = ax.legend(loc='lower left', prop={'size':font_size}, labelspacing=0.35)
+        legend = ax.legend(loc='lower left', prop={'size':font_size-2}, labelspacing=0.35)
         for label in legend.get_lines():
             label.set_linewidth(3.0)  # the legend line width
-        #"""
+        """
         """
         plt.text(0.00015, 10**-3.15, r'$A$ =  {0:0.3e}'.format(m2_param[0]), fontsize=25)
         plt.text(0.00015, 10**-3.32, r'$n$ =  {0:0.3f}'.format(m2_param[1]), fontsize=25)
