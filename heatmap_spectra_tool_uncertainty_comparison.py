@@ -125,7 +125,7 @@ class Index(object):
         #h_min = np.percentile(NaN_replace,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         #h_max = np.percentile(NaN_replace,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         h_min = 0
-        h_max = 30
+        h_max = 100
         im = ax1.imshow(param, cmap='jet', interpolation='none', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[6]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
@@ -133,7 +133,9 @@ class Index(object):
         
     def visual(self, event):
         param = vis[0]
-        im = ax1.imshow(param, cmap='sdoaia%i' % wavelength, interpolation='nearest', picker=True)
+        h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        im = ax1.imshow(param, cmap='sdoaia%i' % wavelength, interpolation='nearest', vmin=h_min, vmax=h_max, picker=True)
         ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[7]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
@@ -219,8 +221,9 @@ def onclick(event):
         
                     
             # change method to 'dogbox' and increase max number of function evaluations to 3000
-            nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', loss='huber', max_nfev=3000)
-            #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, p0 = [A,n,0.,0.1,-5.55,0.425], bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
+            nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
+            #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', loss='huber', max_nfev=3000)
+            #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, p0 = [A,n,0.,0.1,-5.55,0.425], bounds=(M2_low, M2_high), sigma=ds, method='dogbox', loss='huber',max_nfev=3000)
             #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', ftol=.01, max_nfev=3000)
         
         except RuntimeError:
@@ -254,6 +257,9 @@ def onclick(event):
         A22, n22, C22, P22, fp22, fw22 = nlfit_gp2  # unpack fitting parameters     
         #print nlfit_gp2
         m2_param = nlfit_gp2
+        #print('%0.3g %0.3g' % (A,A22))
+        #print('%0.3f %0.3f' % (n,n22))
+        #print('%0.3g %0.3g' % (C,C22))
                        
         # create model functions from fitted parameters    
         m1_fit = PowerLaw(f_fit, A, n, C)    
@@ -300,6 +306,8 @@ def onclick(event):
         f_test2B = ((chisqrM1B-chisqrM22B)/(6-3))/((chisqrM22B)/(f_fit.size-6))
         #print(f_test2, f_test2B)
         
+        print('fstat = {0:0.3f}'.format(f_test2), 'fstatB = {0:0.3f}'.format(f_test2B))
+        
         #print(A22, n22, fp22, fw22)
         
         
@@ -307,7 +315,7 @@ def onclick(event):
         font_size = 20
         
         ax2.set_title('Weightings: Frequency Spacing', y = 1.01, fontsize=17) 
-        #ax2.loglog(f_fit, m1_fit, 'r--', linewidth=1.3, label='M1')
+        ax2.loglog(f_fit, m1_fit, 'r--', linewidth=1.3, label='M1')
         ax2.loglog(f_fit, m2_fit2, 'b', linewidth=1.3, label='M2 Combined')
         ax2.loglog(f_fit, lorentz, 'b--', linewidth=1.3, label='Lorentzian')
         ax2.loglog(f_fit, s, 'k', linewidth=1.3)
@@ -358,7 +366,8 @@ def onclick(event):
         
                     
             # change method to 'dogbox' and increase max number of function evaluations to 3000
-            nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
+            nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, p0 = [A,n,0.,0.1,-5.55,0.425], bounds=(M2_low, M2_high), sigma=ds, method='dogbox', loss='huber',max_nfev=3000)
+            #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
             #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', ftol=.01, max_nfev=3000)
         
         except RuntimeError:

@@ -35,7 +35,7 @@ def Gauss(f, P, fp, fw):
 
 directory = 'F:'
 date = '20130626'
-wavelength = 1700
+wavelength = 193
 
 #del matplotlib.font_manager.weight_dict['roman']
 #matplotlib.font_manager._rebuild()
@@ -146,10 +146,10 @@ for i in [4,5]:  # use this from now on
         h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         #h_min = np.percentile(h_map[i],0.5)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         #h_max = np.percentile(h_map[i],99.5)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
-        h_min = 3.
-        h_max = 5.
-        #h_min = 1.0
-        #h_max = 11.0
+        #h_min = 3.
+        #h_max = 5.
+        h_min = 1.0
+        h_max = 11.0
         #cmap = 'jet_r'  # reverse color-scale for Gaussian Location, because of flipped frequencies to seconds
         cmap = cm.get_cmap('jet_r', 10)
     elif i == 9:

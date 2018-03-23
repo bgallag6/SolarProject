@@ -90,16 +90,16 @@ class Index(object):
         plt.draw()
         
     def fstat(self, event):
-        #param = h_map[6]
-        param = h_map[10] # reduced chi^2
+        param = h_map[6]
+        #param = h_map[10] # reduced chi^2
         param[param > 100.] = 100.
         NaN_replace = np.nan_to_num(param)  # NaN's in chi^2 heatmap were causing issue, replace with 0?
         #h_min = np.percentile(NaN_replace,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         #h_max = np.percentile(NaN_replace,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
-        #h_min = 0
-        #h_max = 30
-        h_min = 0.7
-        h_max = 2.
+        h_min = 0
+        h_max = 30
+        #h_min = 0.7
+        #h_max = 2.
         im = ax1.imshow(param, cmap='jet', interpolation='none', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[6]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
@@ -150,6 +150,7 @@ def onclick(event):
     g = Gauss(f_fit, param1[3][iy][ix], param1[4][iy][ix], param1[5][iy][ix])
     pl = PowerLaw(f_fit, param1[0][iy][ix], param1[1][iy][ix], param1[2][iy][ix])
     
+            
     ax2.loglog(f_fit, s, 'blue')
     ax2.loglog(f_fit, m, 'purple', label='M2 Combined')
     ax2.loglog(f_fit, g, 'g--', label='Gaussian')
@@ -173,7 +174,7 @@ def onclick(event):
             label.set_linewidth(2.0)  # the legend line width
     plt.draw()
     
-    print('fstat = {0:0.2f}'.format(h_map[6][iy][ix]), '  ', 'rval = {0:0.2f}'.format(h_map[8][iy][ix]), '  ', 'chi = {0:0.2f}'.format(h_map[10][iy][ix]))
+    #print('fstat = {0:0.2f}'.format(h_map[6][iy][ix]), '  ', 'rval = {0:0.2f}'.format(h_map[8][iy][ix]), '  ', 'chi = {0:0.2f}'.format(h_map[10][iy][ix]))
 
     return ix, iy
     

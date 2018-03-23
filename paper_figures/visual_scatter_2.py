@@ -22,8 +22,8 @@ import matplotlib.patches as patches
 
 plt.rcParams["font.family"] = "Times New Roman"
 
-v171 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/visual.npy')
-p171 = np.load('F:/Users/Brendan/Desktop/SolarProject/DATA/Output/20130626/171/param.npy')
+v171 = np.load('F:/DATA/Output/20130626/171/visual.npy')
+p171 = np.load('F:/DATA/Output/20130626/171/param.npy')
 #v171 = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_visual.npy')
 #p171 = np.load('C:/Users/Brendan/Desktop/solar_final/20130626_171_-500_500i_-500_600j_param_slope6_arthm.npy')
 #v1600 = np.load('C:/Users/Brendan/Desktop/1600/visual_1600.npy')
@@ -84,8 +84,8 @@ titles_vis = ['Average', 'Middle-File']
 names_vis = ['average', 'mid']
 
 vis = v171
-trim_yv = (vis.shape[1]-1600)/2
-trim_xv = (vis.shape[2]-1600)/2
+trim_yv = (vis.shape[1]-1600)//2
+trim_xv = (vis.shape[2]-1600)//2
 vis = vis[:, trim_yv:vis.shape[1]-trim_yv, trim_xv:vis.shape[2]-trim_xv]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)  
 #vis1600 = v1600[:, 19:v1600.shape[1]-19, 12:v1600.shape[2]-11]  # trim to 1600x1600 (derotate based on mid-file, take off even amounts from both sides)  
 
@@ -224,4 +224,4 @@ for i in range(1):
     ax2.add_patch(rect9)
     """
     #plt.savefig('C:/Users/Brendan/Desktop/171_final_points/171_visual_%s_points_overlay_revised7.jpeg' % names_vis[i])
-    plt.savefig('C:/Users/Brendan/Desktop/vis_pointsF.pdf', format='pdf')
+    #plt.savefig('C:/Users/Brendan/Desktop/vis_pointsF.pdf', format='pdf')
