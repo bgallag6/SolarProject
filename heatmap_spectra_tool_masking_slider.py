@@ -530,7 +530,7 @@ def Gauss(f, P, fp, fw):
 directory = 'F:'
 #date = '20160327'
 date = '20130626'
-wavelength = 171
+wavelength = 1700
 
 global spectra
 global param1

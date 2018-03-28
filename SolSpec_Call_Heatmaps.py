@@ -16,7 +16,7 @@ import SolSpec as ss
 
 directory = 'F:'
 date = '20130626'
-wavelength = 193
+wavelength = 171
 
 """
 import sys

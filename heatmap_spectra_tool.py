@@ -73,8 +73,10 @@ class Index(object):
         
     def gauss_loc(self, event):
         param = (1./(np.exp(h_map[4]))/60.)
-        h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-        h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        #h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        #h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        h_min = 1.
+        h_max = 11.
         im = ax1.imshow(param, cmap='jet_r', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[4]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
@@ -96,8 +98,8 @@ class Index(object):
         NaN_replace = np.nan_to_num(param)  # NaN's in chi^2 heatmap were causing issue, replace with 0?
         #h_min = np.percentile(NaN_replace,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         #h_max = np.percentile(NaN_replace,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
-        h_min = 0
-        h_max = 30
+        h_min = -10
+        h_max = 5
         #h_min = 0.7
         #h_max = 2.
         im = ax1.imshow(param, cmap='jet', interpolation='none', vmin=h_min, vmax=h_max,  picker=True)
@@ -201,7 +203,7 @@ def Gauss(f, P, fp, fw):
 
 directory = 'F:'
 date = '20130626'
-wavelength = 171
+wavelength = 1700
 
 global spectra
 
