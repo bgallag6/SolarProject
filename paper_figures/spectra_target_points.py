@@ -57,6 +57,7 @@ spectra_array = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, da
 #spectra_array = np.load('C:/Users/Brendan/Desktop/1600/spectra.npy')
 ## load in array of segment-averaged pixel FFTs
 SPECTRA = spectra_array
+stddev = np.memmap('%s/DATA/Temp/%s/%i/uncertainties_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
 
 #print "The region size is %ii x %ij" % (SPECTRA.shape[0], SPECTRA.shape[1])
 #print "%i frequencies were evaluated in the FFT" % SPECTRA.shape[2] 
@@ -89,7 +90,8 @@ m2_title = ['(a) Tail Dominated w/o Gaussian', '(b) Power Law Dominated w/o Gaus
 """
 
 m2 = [188, 726, 722, 872] # 727, 722, 189, 187, 867, 765, 757, 525, 708, 743, 790, 790, 790, 794, 796, 797, 798, 858, 861, 863, 872, 872, 876]
-l2 = [523, 328, 1427, 875] # 323, 1441, 522, 524, 864, 325, 319, 551, 352, 322, 650, 653, 659, 642, 648, 667, 669, 866, 867, 863, 865, 875, 879]
+l2 = [523, 328, 1427, 875] # used in paper
+#l2 = [524, 328, 1428, 875]
 
 #l2 = [684,828]
 #m2 = [858,638]
@@ -127,7 +129,8 @@ for l in range(1):
         df2 = np.zeros_like(f)
         df2[0:len(df)] = df
         df2[len(df2)-1] = df2[len(df2)-2]
-        ds = df2
+        #ds = df2
+        ds = stddev[l2[m],m2[m]]
         #ds = 0.1*s
         
                                                
@@ -243,6 +246,7 @@ for l in range(1):
         p_val = ff.sf(f_test2, df1, df2)
         
         r_val = pearsonr(m2_fit2, s)
+        print(f_test2)
         
         """
         fig = plt.figure(figsize=(15,15))
@@ -311,7 +315,7 @@ for l in range(1):
         
         #rect = patches.Rectangle((0.004,0.015), 0.012, 0.8, color='white', fill=True)
         #ax.add_patch(rect)
-        """
+        #"""
         #plt.text(0.00725, 10**-0.41, r'$A$ = {0:0.2e}'.format(m2_param[0]), fontsize=font_size, fontname="Times New Roman")
         plt.text(0.0076, 10**-0.5, r'$n$ = {0:0.2f}'.format(m2_param[1]), fontsize=font_size)
         #plt.text(0.008, 10**-0.75, r'$C$ =  {0:0.3e}'.format(m2_param[2]), fontsize=25)
@@ -330,7 +334,7 @@ for l in range(1):
         legend = ax.legend(loc='lower left', prop={'size':font_size-2}, labelspacing=0.35)
         for label in legend.get_lines():
             label.set_linewidth(3.0)  # the legend line width
-        """
+        #"""
         """
         plt.text(0.00015, 10**-3.15, r'$A$ =  {0:0.3e}'.format(m2_param[0]), fontsize=25)
         plt.text(0.00015, 10**-3.32, r'$n$ =  {0:0.3f}'.format(m2_param[1]), fontsize=25)
@@ -345,8 +349,4 @@ for l in range(1):
         """
         #plt.show()
         #plt.savefig('C:/Users/Brendan/Desktop/sample_spectra_%s_lorentz.pdf' % (point_label[m]), format='pdf', bbox_inches='tight')
-        #plt.savefig('C:/Users/Brendan/Desktop/211_%ix_%iyF.pdf' % (m2[m],l2[m]), format='pdf')
-        #plt.savefig('C:/Users/Brendan/Desktop/171_slice2_double_optimize/171A_%ii_%ij.jpeg' % (l,m))
-        #plt.savefig('C:/Users/Brendan/Desktop/171_points_square/pixel_%ii_%ij_new.jpeg' % (l2[m],m2[m]))
-        #plt.savefig('C:/Users/Brendan/Desktop/SDO/20120923_%ii_%ij_598_interp.jpeg' % (l,m))
         #plt.close()

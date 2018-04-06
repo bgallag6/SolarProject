@@ -99,8 +99,10 @@ class Index(object):
         global marker
         marker = 4
         param = (1./(np.exp(h_map[4]))/60.)
-        h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-        h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        #h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        #h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        h_min = 1.
+        h_max = 11.
         im = ax1.imshow(param, cmap='jet_r', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[4]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
@@ -460,7 +462,7 @@ def onclick(event):
                 label.set_linewidth(2.0)  # the legend line width   
         
         #print(chisqrM1, chisqrM22)        
-        #print(f_test2)
+        print(f_test2)
 
     return ix, iy
     
@@ -494,7 +496,7 @@ directory = 'F:'
 #date = '20160327'
 date = '20130626'
 #date = '20140818'
-wavelength = 1700
+wavelength = 171
 
 global spectra
 global param1

@@ -10,17 +10,15 @@ Folder structure is currently:
 *directory*/FITS/*date*/*wavelength*/{}.fits
 "
 
-read -p "Enter the JSOC url: " url_jsoc
 read -p "Enter a directory for files to be saved [ex. /media/solar/Gallagher]: " directory
 read -p "Enter the date [ex. 20130626]: " date
+read -p "Enter the wavelength [ex. 1600]: " wavelength
+read -p "Enter the start time [ex. 00:00]: " tstart
+read -p "Enter the duration in hours [ex. 12]: " duration
 read -p "Enter the number of processors [ex. 16]: " num
 
-:: mpiexec -n $num python mpi_jsoc_download.py $url_jsoc $directory $date
+python make_fits_directory.py $directory $date $wavelength
 
-:: mpiexec -n $num python mpi_jsoc_euv_download.py $url_jsoc $directory $date
+python -u JSOC_request_url.py $directory $date $wavelength $tstart $duration
 
-:: mpiexec -n $num python mpi_jsoc_hmi_download.py $url_jsoc $directory $date
-
-:: mpiexec -n $num python mpi_jsoc_continuum_download.py $url_jsoc $directory $date
-
-mpiexec -n $num python -u mpi_jsoc_download_complete.py $url_jsoc $directory $date
+mpiexec -n $num python -u mpi_jsoc_download_complete.py $directory $date $wavelength

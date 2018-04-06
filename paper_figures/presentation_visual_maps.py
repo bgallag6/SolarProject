@@ -23,7 +23,7 @@ sq = 1000 * u.arcsec
 
 
 # Create a SunPy Map, and a second submap over the region of interest.
-smap = sunpy.map.Map('F:/Users/Brendan/Desktop/SolarProject/FITS/20130626/171/aia_lev1_171a_2013_06_26t00_00_11_34z_image_lev1.fits').submap(u.Quantity([-sq,sq]),u.Quantity([-sq,sq]))
+smap = sunpy.map.Map('F:/FITS/20130626/171/aia_lev1_171a_2013_06_26t00_00_11_34z_image_lev1.fits').submap(u.Quantity([-sq,sq]),u.Quantity([-sq,sq]))
 submap = smap.submap(u.Quantity([x0 - length, x0 + length]),
                      u.Quantity([y0 - length, y0 + length]))
             

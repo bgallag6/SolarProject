@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Jan 29 18:38:48 2017
+Created on Wed Apr  4 13:08:31 2018
 
 @author: Brendan
 """
@@ -33,6 +33,7 @@ from timeit import default_timer as timer
 #import accelerate  # switch on if computer has installed
 from mpi4py import MPI
 from scipy import fftpack
+import yaml
 
 def fft_avg(subcube):
     
@@ -41,14 +42,14 @@ def fft_avg(subcube):
     DATA = subcube
     
     reslt = (DATA.shape[0] == TIME.shape[0])
-    print("DATA and TIME array sizes match: %s" % reslt, flush=True)
+    #print("DATA and TIME array sizes match: %s" % reslt, flush=True)
     
     pixmed=np.empty(DATA.shape[0])  # Initialize array to hold median pixel values
     spectra_seg = np.zeros((DATA.shape[1],DATA.shape[2],len(freqs)))
     
-    print("length time-interp array = %i" % n, flush=True)
-    print("length of sample freq array = %i" % len(sample_freq), flush=True)
-    print("length of freqs array = %i (should be 1/2 of row above)" % len(freqs), flush=True)
+    #print("length time-interp array = %i" % n, flush=True)
+    #print("length of sample freq array = %i" % len(sample_freq), flush=True)
+    #print("length of freqs array = %i (should be 1/2 of row above)" % len(freqs), flush=True)
     
     start_sub = timer()
     T1 = 0    
@@ -130,15 +131,17 @@ start = timer()
 size = MPI.COMM_WORLD.Get_size()  # How many processors do we have? (pulls from "-n 4" specified in terminal execution command) 
 
 
-import sys
+stream = open('specFit_config.yaml', 'r')
+cfg = yaml.load(stream)
 
-# set variables from command line
-directory = sys.argv[1]
-date = sys.argv[2]
-wavelength = int(sys.argv[3])
-  
-cube = np.load('%s/DATA/Temp/%s/%i/derotated.npy' % (directory, date, wavelength))
-#cube = np.memmap('F:/Users/Brendan/Desktop/SolarProject/data/20130530/20130530_193_2300_2600i_2200_3000j_data_rebin1_mmap.npy', dtype='int16', mode='r', shape=(2926,297,630))
+directory = cfg['temp_dir']
+date = cfg['date']
+wavelength = cfg['wavelength']
+mmap_spectra = cfg['mmap_spectra']
+save_temp = cfg['save_temp']
+
+cube_shape = np.load('%s/DATA/Temp/%s/%i/derotated_mmap_shape.npy' % (directory, date, wavelength))
+cube = np.memmap('%s/DATA/Temp/%s/%i/derotated_mmap.npy' % (directory, date, wavelength), dtype='int16', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
 
 chunks = np.array_split(cube, size, axis=1)  # Split the data based on no. of processors
 
@@ -149,7 +152,7 @@ for i in range(size):
 
 TIME = np.load('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength))
 exposure = np.load('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength))
-num_seg = 1
+num_seg = 2
 
 # determine frequency values that FFT will evaluate
 if wavelength in [1600,1700]:
@@ -219,5 +222,25 @@ if rank == 0:
     print("Total program time = %i sec" % T_final, flush=True)
     
     
-    np.save('C:/Users/Brendan/Desktop/spectra.npy', spectra_array)
-    #np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_array)
+    if mmap_spectra == "y":
+        orig_shape = np.array([spectra_array.shape[0], spectra_array.shape[1], spectra_array.shape[2]])
+        
+        # create memory-mapped array with similar datatype and shape to original array
+        mmap_arr = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='%s' % spectra_array.dtype, mode='w+', shape=tuple(orig_shape))
+        
+        # write data to memory-mapped array
+        mmap_arr[:] = spectra_array[:]
+        
+        # save memory-mapped array dimensions to use when loading
+        np.save('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength), orig_shape)
+    
+        # save original array if specified
+        if save_temp == "y":
+            np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_array)
+        
+        # flush memory changes to disk, then remove memory-mapped object and original array
+        del mmap_arr
+        del spectra_array
+        
+    else:
+        np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_array)

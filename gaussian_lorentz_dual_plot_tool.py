@@ -242,7 +242,7 @@ if 1:
     global f_fit
     
     freqs = sample_freq[pidxs]
-    print len(freqs)
+    print(len(freqs))
     f_fit = np.linspace(freqs[0],freqs[len(freqs)-1],int(spectra.shape[2]))
         
     global toggle

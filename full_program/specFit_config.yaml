@@ -1,0 +1,12 @@
+fits_dir: !!python/str "S:"
+date: !!python/str "20001010"
+wavelength: !!python/int "1600"
+sub_reg_coords: [-395,395,-375,375]
+coords_type: !!python/str "arc"
+bin_frac: !!python/int "1"
+
+temp_dir: !!python/str "S:"
+mmap_derotate: !!python/str "y"
+save_temp: !!python/str "n"
+
+mmap_spectra: !!python/str "y"

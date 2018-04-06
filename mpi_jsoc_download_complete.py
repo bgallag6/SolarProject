@@ -10,6 +10,7 @@ from mpi4py import MPI
 import urllib.request
 #import urllib  # Python 2
 #import urllib2  # Python 2
+import os
 
 #"""
 def get_data_fill(arr_need, arr_rename, directory):
@@ -41,8 +42,11 @@ def get_data_fill(arr_need, arr_rename, directory):
         wavelengths = ['magnetogram', 'continuum', '1700', '1600', '304', '171', '193', '211']
         
         if wavelength in wavelengths:
-        
-            urllib.request.urlretrieve("%s" % arr_need[i], "%s/FITS/%s/%s/%s" % (directory, date, wavelength, arr_rename[i]))
+            
+            fn=("%s/FITS/%s/%s/%s" % (directory, date, wavelength, arr_rename[i]))
+
+            if not os.path.isfile(fn):
+                urllib.request.urlretrieve("%s" % arr_need[i], fn) 
             
             counter += 1
         

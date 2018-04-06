@@ -13,12 +13,16 @@ from scipy.stats import f as ff
 from matplotlib import cm
 from scipy import stats
 import matplotlib
+import scipy
+
+def Gauss(f, P, fp, fw):
+    #return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) + C
+    return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2)
 
 
 directory = 'F:'
 date = '20130626'
 wavelength = 171
-
 
 matplotlib.rc('text', usetex = True)  # use with latex commands
 
@@ -100,23 +104,16 @@ loc_mask = (1./np.exp(loc_mask))/60.  # convert Gaussian location to minutes
 plots = [p_mask, amp_mask, loc_mask, wid_mask]  # make array of masked plots to iterate over
 
 
-fig_width = 10+2  # works better for 20130626 (with no x/y labels)
-#fig_width = 10+3  # works better for 20130626 (with x/y labels)
-fig_height = 10  # works better for 20130626
+fig_width = 12
+fig_height = 10
 
 
-i = 1
 fig = plt.figure(figsize=(fig_width,fig_height))
 ax = plt.gca()  # get current axis -- to set colorbar 
-#plt.title(r'%s: %i $\AA$  [%s]' % (date_title, wavelength, titles[i]), y = 1.01, fontsize=25)
-#plt.title('Power Law Index | No Mask', y = 1.02, fontsize=font_size, fontname="Times New Roman")  # no date / wavelength
 plt.title(r'(b) Power Law Index $n$', y = 1.02, fontsize=font_size, fontname="Times New Roman")  # no date / wavelength
 
-
-
-h_min = np.percentile(h_map[i],1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
-#cmap = 'jet'
+h_min = np.percentile(h_map[1],1)
+h_max = np.percentile(h_map[1],99)
 cmap = cm.get_cmap('jet', 10)
 
 # specify colorbar ticks to be at boundaries of segments
@@ -126,7 +123,7 @@ c_ticks = np.zeros((11))
 for h in range(11):
     c_ticks[h] = h_min + h_step*h 
     
-im = ax.imshow(np.flipud(h_map[i]), cmap = cmap, vmin=h_min, vmax=h_max)
+im = ax.imshow(np.flipud(h_map[1]), cmap = cmap, vmin=h_min, vmax=h_max)
 plt.xticks(x_ticks,x_ind,fontsize=font_size, fontname="Times New Roman")
 plt.yticks(y_ticks,y_ind,fontsize=font_size, fontname="Times New Roman")
 ax.tick_params(axis='both', which='major', pad=10)
@@ -134,42 +131,80 @@ divider = make_axes_locatable(ax)  # set colorbar to heatmap axis
 cax = divider.append_axes("right", size="3%", pad=0.07)
 
 cbar = plt.colorbar(im,cax=cax, format='%0.2f')
-#cbar.set_label('%s' % cbar_labels[i], size=20, labelpad=10)
 cbar.ax.tick_params(labelsize=font_size, pad=5) 
 cbar.set_ticks(c_ticks)
-#plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.jpeg' % (directory, date, wavelength, date, wavelength, names[i]))
-#plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf')
 
-#plt.savefig('%s/DATA/Output/%s/%i/Figures/%s_%i_%s.pdf' % (directory, date, wavelength, date, wavelength, names[i]), format='pdf', bbox_inches='tight')
 #plt.savefig('C:/Users/Brendan/Desktop/%s_%i_index.pdf' % (date, wavelength), format='pdf', bbox_inches='tight')
 
 
 
-
-
 #"""
-flat_param = np.reshape(h_map[i], (h_map[i].shape[0]*h_map[i].shape[1]))
+flat_param = np.reshape(h_map[1], (h_map[1].shape[0]*h_map[1].shape[1]))
 
 # calculate some statistics
 mean = np.mean(flat_param)
 sigma = np.std(flat_param)   
+print('Index: mean = %0.2f, sigma = %0.2f' % (mean, sigma))
 
 fig = plt.figure(figsize=(fig_width+1,fig_height))
-plt.title('Power Law Index', y = 1.02, fontsize=font_size)  # no date / wavelength
-plt.xlabel('%s' % cbar_labels[i], fontsize=font_size, labelpad=10)
+plt.title('%i \AA\\ | Power Law Index' % wavelength, y = 1.02, fontsize=font_size)  # no date / wavelength
+plt.xlabel('%s' % cbar_labels[1], fontsize=font_size, labelpad=10)
 plt.ylabel('Bin Count', fontsize=font_size, labelpad=10)
 plt.xticks(fontsize=font_size)
 plt.yticks(fontsize=font_size)
-plt.xlim(h_min, h_max)
-y, x, _ = plt.hist(flat_param, bins=200, range=(h_min, h_max), edgecolor='black')
+#plt.xlim(h_min, h_max)
+y, x, _ = plt.hist(flat_param, bins=200, edgecolor='black')
+#y, x, _ = plt.hist(flat_param, bins=100, range=(h_min, h_max), edgecolor='black')
 
-#plt.xlim(3.5,5.5)
-#y, x, _ = plt.hist(flat_param, bins=200, range=(3.5,5.5))  # possibly use for 1600/1700 so same range
 
-#n, bins, patches = plt.hist(flat_param, bins=200, range=(h_min, h_max))
 n=y[1:-2]
 bins=x[1:-2]
 elem = np.argmax(n)
 bin_max = bins[elem]
 plt.ylim(0, y.max()*1.1)
-#plt.savefig('C:/Users/Brendan/Desktop/%s_%i_index_hist.pdf' % (date, wavelength), format='pdf', bbox_inches='tight')
+
+f = x[:-1]
+s = y
+#f = x[:-26]  # for 1700 so will compute gaussian fit
+#s = y[:-25]
+
+p_low = [0.,-1.,0.]
+p_high = [1e6, 2., 5.]
+#nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(Gauss, f, s, method='dogbox', max_nfev=10000)     
+nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(Gauss, f, s, bounds=(p_low, p_high))       
+#P, fp, fw, C = nlfit_gp  # unpack fitting parameters
+P, fp, fw = nlfit_gp  # unpack fitting parameters          
+#g_fit = Gauss(f, P,fp,fw, C)  
+g_fit = Gauss(f, P,fp,fw)       
+gauss_center = np.exp(fp)
+gauss_wid = fw
+
+plt.plot(f,s, linewidth=1.5)
+plt.xlim(h_min,h_max)
+plt.plot(f,g_fit, linestyle='dashed', linewidth=2.)
+plt.vlines(gauss_center,0,y.max()*1.1, linestyle='dashed', color='red', linewidth=2., label='center=%0.4f' % gauss_center)
+plt.vlines(0, 0, y.max()*1.1, color='white', linestyle='dashed', linewidth=1.5, label='width=%0.4f' % gauss_wid)
+
+
+plt.vlines(bin_max, 0, y.max()*1.1, color='black', linestyle='dotted', linewidth=2., label='mode=%0.4f' % bin_max)  
+plt.vlines(0, 0, y.max()*1.1, color='white', linestyle='dashed', linewidth=1.5, label='sigma=%0.4f' % sigma)
+
+legend = plt.legend(loc='upper right', prop={'size':20}, labelspacing=0.35)
+for label in legend.get_lines():
+    label.set_linewidth(2.0)
+
+#plt.savefig('C:/Users/Brendan/Desktop/20130626_%i_index_histB.pdf' % wavelength, format='pdf', bbox_inches='tight')
+   
+    
+## r values
+r_mean = np.mean(h_map[8])
+r_sigma = np.std(h_map[8])   
+print('R-value: mean = %0.2f, sigma = %0.2f' % (r_mean, r_sigma))
+
+
+## percentage of pixels using M1 over M2
+m1count = np.count_nonzero(np.isnan(h_map[4]))   
+total_pix = h_map[4].shape[0]*h_map[4].shape[1]
+m1percent = ((np.float(m1count))/total_pix)*100
+print('M1 percent = %0.2f' % m1percent)
+
