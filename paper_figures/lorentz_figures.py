@@ -21,9 +21,13 @@ def Gauss(f, P, fp, fw):
     return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2)
 
 
-directory = 'F:'
-date = '20130626'
-wavelength = 1600
+#directory = 'F:'
+#date = '20130626'
+#wavelength = 1600
+
+directory = 'S:'
+date = '20111210'
+wavelength = 171
 
 #del matplotlib.font_manager.weight_dict['roman']
 #matplotlib.font_manager._rebuild()
@@ -37,11 +41,11 @@ cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'L
 names = ['slope_coeff', 'index', 'tail', 'lorentz_amp', 'lorentz_loc', 'lorentz_wid', 'f_test', 'lorentz_amp_scaled', 'r_value', 'roll_freq', 'chisqr']
 
 # load parameter array and visual images from file tree structure 
-heatmaps = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
+heatmaps = np.load('%s/DATA/Output/%s/%i/check_if_matches_this/param.npy' % (directory, date, wavelength))
 visual = np.load('%s/DATA/Output/%s/%i/visual.npy'% (directory, date, wavelength))  
 
 #visual = visual[1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
-visual = visual[:,1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
+visual = visual[1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
 h_map = heatmaps    
 
 plt.rcParams["font.family"] = "Times New Roman"
@@ -50,7 +54,7 @@ font_size = 27  # set the font size to be used for all text - titles, tick marks
 
 wavelength = wavelength    
 
-#"""
+"""
 # trim x/y dimensions equally so that resulting region is 1600x1600    
 trim_y = int((h_map.shape[1]-1600)/2)
 trim_x = int((h_map.shape[2]-1600)/2)
@@ -60,7 +64,16 @@ x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
 y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
 x_ind = [-800,-600,-400,-200,0,200,400,600,800]
 y_ind = [800,600,400,200,0,-200,-400,-600,-800]    
-#"""
+"""
+
+xdim = int(np.floor(h_map.shape[2]/100))
+ydim = int(np.floor(h_map.shape[1]/100))
+
+x_ticks = [100*i for i in range(xdim+1)]
+y_ticks = [100*i for i in range(ydim+1)]
+
+x_ind = x_ticks
+y_ind = y_ticks
 
 # generate p-value heatmap + masked Gaussian component heatmaps
 df1, df2 = 3, 6  # degrees of freedom for model M1, M2
@@ -76,23 +89,6 @@ wid_mask = np.copy(h_map[5])
 loc_mask[p_val > mask_thresh] = np.NaN
 wid_mask[p_val > mask_thresh] = np.NaN
 
-
-#"""
-# for creating sunspot umbra + PPV contour overlays from 1600
-v1600 = np.load('%s/DATA/Output/%s/1600/visual.npy'% (directory, date))  
-v1600 = v1600[:,1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
-p1600 = np.load('%s/DATA/Output/%s/1600/param.npy'% (directory, date)) 
-
-h_map = h_map[:,:p1600.shape[1],:p1600.shape[2]]
-visual = visual[:,:v1600.shape[1],:v1600.shape[2]]
-
-#v_mask = np.copy(visual[0])
-p1600_val = ff.sf(p1600[6], df1, df2)
-#p1600_mask = np.copy(p1600_val)
-v_mask = np.copy(v1600[0])
-   
-v_mask[p1600_val < mask_thresh] = 1.  # invert mask, set equal to 1. -- so can make contour
-#""" 
 
 
 # determine percentage of region masked 

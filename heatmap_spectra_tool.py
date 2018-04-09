@@ -62,30 +62,40 @@ class Index(object):
         plt.colorbar(im,cax=cax)
         plt.draw()
         
-    def gauss_amp(self, event):
+    def lorentz_amp(self, event):
         param = h_map[3]
-        h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-        h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        pflat = np.reshape(param, (param.shape[0]*param.shape[1]))
+        pNaN = pflat[~np.isnan(pflat)]
+        h_min = np.percentile(pNaN,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        h_max = np.percentile(pNaN,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[3]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
         
-    def gauss_loc(self, event):
+    def lorentz_loc(self, event):
         param = (1./(np.exp(h_map[4]))/60.)
+        pflat = np.reshape(param, (param.shape[0]*param.shape[1]))
+        pNaN = pflat[~np.isnan(pflat)]
+        h_min = np.percentile(pNaN,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        h_max = np.percentile(pNaN,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         #h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         #h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
-        h_min = 1.
-        h_max = 11.
+        #h_min = 1.
+        #h_max = 11.
         im = ax1.imshow(param, cmap='jet_r', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[4]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
         
-    def gauss_wid(self, event):
+    def lorentz_wid(self, event):
         param = h_map[5]
-        h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-        h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        pflat = np.reshape(param, (param.shape[0]*param.shape[1]))
+        pNaN = pflat[~np.isnan(pflat)]
+        h_min = np.percentile(pNaN,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        h_max = np.percentile(pNaN,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        #h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        #h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title(r'%s: %i $\AA$ [%s]' % (date_title, wavelength, titles[5]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
@@ -183,7 +193,7 @@ def onclick(event):
 # define combined-fitting function (Model M2)
 def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     #return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)  
-    return A2*f2**-n2 + C2 + P2*(1./ ((np.pi*fw2)*(1.+((np.log(f2)-fp2)/fw2)**2)))
+    return A2*f2**-n2 + C2 + P2*(1./ (1.+((np.log(f2)-fp2)/fw2)**2))
 
 # define Power-Law-fitting function (Model M1)
 def PowerLaw(f, A, n, C):
@@ -192,7 +202,7 @@ def PowerLaw(f, A, n, C):
 # define Gaussian-fitting function
 def Gauss(f, P, fp, fw):
     #return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) 
-    return P*(1./ ((np.pi*fw)*(1.+((np.log(f)-fp)/fw)**2)))
+    return P*(1./ (1.+((np.log(f)-fp)/fw)**2))
     
 
 
@@ -201,9 +211,13 @@ def Gauss(f, P, fp, fw):
 ##############################################################################
 """
 
-directory = 'F:'
-date = '20130626'
-wavelength = 1700
+#directory = 'F:'
+#date = '20130626'
+#wavelength = 1700
+
+directory = 'S:'
+date = '20111210'
+wavelength = 171
 
 global spectra
 
@@ -254,7 +268,7 @@ if 1:
         y = [1]
     
     # create list of titles and colorbar names for display on the figures
-    titles = ['Power Law Slope Coeff.', 'Power Law Index', 'Rollover - [min]', 'Gaussian Amplitude', 'Gaussian Location -- [min]', 'Gaussian Width', 'F-Statistic', 'Visual Image - Averaged']
+    titles = ['Power Law Slope Coeff.', 'Power Law Index', 'Rollover - [min]', 'Lorentzian Amplitude', 'Lorentzian Location -- [min]', 'Lorentzian Width', 'F-Statistic', 'Visual Image - Averaged']
     
     # create figure with heatmap and spectra side-by-side subplots
     fig1 = plt.figure(figsize=(20,10))
@@ -285,9 +299,9 @@ if 1:
     axcoeff = plt.axes([0.01, 0.9, 0.05, 0.063])
     axindex = plt.axes([0.07, 0.9, 0.05, 0.063])
     axroll = plt.axes([0.13, 0.9, 0.05, 0.063])
-    axgauss_amp = plt.axes([0.19, 0.9, 0.05, 0.063])
-    axgauss_loc = plt.axes([0.25, 0.9, 0.05, 0.063])
-    axgauss_wid = plt.axes([0.31, 0.9, 0.05, 0.063])
+    axlorentz_amp = plt.axes([0.19, 0.9, 0.05, 0.063])
+    axlorentz_loc = plt.axes([0.25, 0.9, 0.05, 0.063])
+    axlorentz_wid = plt.axes([0.31, 0.9, 0.05, 0.063])
     axfstat = plt.axes([0.37, 0.9, 0.05, 0.063])
     axvisual = plt.axes([0.43, 0.9, 0.05, 0.063])
     axscatter = plt.axes([0.49, 0.9, 0.05, 0.063])
@@ -313,12 +327,12 @@ if 1:
     bindex.on_clicked(callback.index)
     broll = Button(axroll, 'Rollover')
     broll.on_clicked(callback.roll)
-    bgauss_amp = Button(axgauss_amp, 'Gauss Amp')
-    bgauss_amp.on_clicked(callback.gauss_amp)
-    bgauss_loc = Button(axgauss_loc, 'Gauss Loc')
-    bgauss_loc.on_clicked(callback.gauss_loc)
-    bgauss_wid = Button(axgauss_wid, 'Gauss Wid')
-    bgauss_wid.on_clicked(callback.gauss_wid)
+    blorentz_amp = Button(axlorentz_amp, 'Lorentz Amp')
+    blorentz_amp.on_clicked(callback.lorentz_amp)
+    blorentz_loc = Button(axlorentz_loc, 'Lorentz Loc')
+    blorentz_loc.on_clicked(callback.lorentz_loc)
+    blorentz_wid = Button(axlorentz_wid, 'Lorentz Wid')
+    blorentz_wid.on_clicked(callback.lorentz_wid)
     bfstat = Button(axfstat, 'F-Stat')
     bfstat.on_clicked(callback.fstat)
     bvisual = Button(axvisual, 'Visual')

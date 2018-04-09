@@ -38,14 +38,12 @@ import yaml
 def fft_avg(subcube):
     
     from scipy import fftpack
+
+    check_dim = (subcube.shape[0] == time.shape[0])
+    #print("DATA and TIME array sizes match: %s" % check_dim, flush=True)
     
-    DATA = subcube
-    
-    reslt = (DATA.shape[0] == TIME.shape[0])
-    #print("DATA and TIME array sizes match: %s" % reslt, flush=True)
-    
-    pixmed=np.empty(DATA.shape[0])  # Initialize array to hold median pixel values
-    spectra_seg = np.zeros((DATA.shape[1],DATA.shape[2],len(freqs)))
+    pixmed=np.empty(subcube.shape[0])  # Initialize array to hold median pixel values
+    spectra_seg = np.zeros((subcube.shape[1],subcube.shape[2],len(freqs)))
     
     #print("length time-interp array = %i" % n, flush=True)
     #print("length of sample freq array = %i" % len(sample_freq), flush=True)
@@ -59,9 +57,9 @@ def fft_avg(subcube):
         for jj in range(0,spectra_seg.shape[1]):        
         
         
-            pixmed = DATA[:,ii,jj] / exposure  # extract timeseries + normalize by exposure time   
+            pixmed = subcube[:,ii,jj] / exposure  # extract timeseries + normalize by exposure time   
         
-            v_interp = np.interp(t_interp,TIME,pixmed)  # interpolate pixel-intensity values onto specified time grid
+            v_interp = np.interp(t_interp,time,pixmed)  # interpolate pixel-intensity values onto specified time grid
             
             data = v_interp
             
@@ -139,6 +137,7 @@ date = cfg['date']
 wavelength = cfg['wavelength']
 mmap_spectra = cfg['mmap_spectra']
 save_temp = cfg['save_temp']
+n_segments = cfg['num_segments']  # break data into # segments of equal length
 
 cube_shape = np.load('%s/DATA/Temp/%s/%i/derotated_mmap_shape.npy' % (directory, date, wavelength))
 cube = np.memmap('%s/DATA/Temp/%s/%i/derotated_mmap.npy' % (directory, date, wavelength), dtype='int16', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
@@ -150,9 +149,9 @@ for i in range(size):
     if rank == i:
         subcube = chunks[i]
 
-TIME = np.load('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength))
+time = np.load('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength))
 exposure = np.load('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength))
-num_seg = 2
+#num_seg = 6
 
 # determine frequency values that FFT will evaluate
 if wavelength in [1600,1700]:
@@ -160,9 +159,9 @@ if wavelength in [1600,1700]:
 else:
     time_step = 12
 
-t_interp = np.linspace(0, TIME[len(TIME)-1], (TIME[len(TIME)-1]/time_step)+1)  # interpolate onto default-cadence time-grid
+t_interp = np.linspace(0, time[len(time)-1], (time[len(time)-1]/time_step)+1)  # interpolate onto default-cadence time-grid
     
-n_segments = num_seg  # break data into # segments of equal length
+#n_segments = num_seg
 n = len(t_interp)
 rem = n % n_segments
 freq_size = (n - rem) // n_segments
@@ -194,7 +193,8 @@ if rank == 0:
     """
 
     temp = np.zeros((9,spectra_seg.shape[2]))  # maybe have 3x3 to be generalized   
-    spectra_array = np.zeros((spectra_seg.shape[0]-2, spectra_seg.shape[1]-2, spectra_seg.shape[2]))  # would pre-allocating help? (seems to)  
+    spectra_array = np.zeros((spectra_seg.shape[0]-2, spectra_seg.shape[1]-2, spectra_seg.shape[2]))
+    spectra_StdDev = np.zeros((spectra_seg.shape[0]-2, spectra_seg.shape[1]-2, spectra_seg.shape[2]))
     
     ### calculate 3x3 pixel-box average, start at 1 and end 1 before to deal with edges
     
@@ -215,6 +215,8 @@ if rank == 0:
             p_avg = np.average(temp, axis=0)
             
             spectra_array[l-1][m-1] = p_avg
+            spectra_StdDev[l-1][m-1] = np.std(temp, axis=0)
+
     
     T_final = timer() - start
     T_min_final, T_sec_final = divmod(T_final, 60)
@@ -227,9 +229,11 @@ if rank == 0:
         
         # create memory-mapped array with similar datatype and shape to original array
         mmap_arr = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='%s' % spectra_array.dtype, mode='w+', shape=tuple(orig_shape))
+        mmap_StdDev = np.memmap('%s/DATA/Temp/%s/%i/3x3_stddev_mmap.npy' % (directory, date, wavelength), dtype='%s' % spectra_array.dtype, mode='w+', shape=tuple(orig_shape))
         
         # write data to memory-mapped array
         mmap_arr[:] = spectra_array[:]
+        mmap_StdDev[:] = spectra_StdDev[:]
         
         # save memory-mapped array dimensions to use when loading
         np.save('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength), orig_shape)
@@ -237,10 +241,14 @@ if rank == 0:
         # save original array if specified
         if save_temp == "y":
             np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_array)
+            np.save('%s/DATA/Temp/%s/%i/3x3_stddev.npy' % (directory, date, wavelength), spectra_StdDev)
         
         # flush memory changes to disk, then remove memory-mapped object and original array
         del mmap_arr
+        del mmap_StdDev
         del spectra_array
+        del spectra_StdDev        
         
     else:
         np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_array)
+        np.save('%s/DATA/Temp/%s/%i/3x3_stddev.npy' % (directory, date, wavelength), spectra_StdDev)

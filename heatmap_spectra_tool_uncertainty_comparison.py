@@ -32,8 +32,12 @@ def find_nearest(array,value):
 
 def plotMap(p):
     param = h_map[p]
-    h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-    h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+    pflat = np.reshape(param, (param.shape[0]*param.shape[1]))
+    pNaN = pflat[~np.isnan(pflat)]
+    h_min = np.percentile(pNaN,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+    h_max = np.percentile(pNaN,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+    #h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+    #h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
     im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max, picker=True)
     ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[p]), y = 1.01, fontsize=17)
     plt.colorbar(im,cax=cax)
@@ -46,8 +50,12 @@ def plotMask(p):
     ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[p]), y = 1.01, fontsize=17)
     
     param = h_map[p]
-    h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-    h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+    pflat = np.reshape(param, (param.shape[0]*param.shape[1]))
+    pNaN = pflat[~np.isnan(pflat)]
+    h_min = np.percentile(pNaN,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+    h_max = np.percentile(pNaN,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+    #h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+    #h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
     
     # generate p-value heatmap + masked Gaussian component heatmaps
     df1, df2 = 3, 6  # degrees of freedom for model M1, M2
@@ -84,36 +92,53 @@ class Index(object):
         plt.colorbar(im,cax=cax)
         plt.draw()      
         
-    def gauss_amp(self, event):
+    def lorentz_amp(self, event):
         global marker
         marker = 3
+        im = ax1.imshow(p_white, cmap='PiYG', vmin=-1, vmax=1)
         param = h_map[3]
-        h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-        h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        pflat = np.reshape(param, (param.shape[0]*param.shape[1]))
+        pNaN = pflat[~np.isnan(pflat)]
+        h_min = np.percentile(pNaN,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        h_max = np.percentile(pNaN,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        #h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        #h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[3]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
     
-    def gauss_loc(self, event):
+    def lorentz_loc(self, event):
         global marker
         marker = 4
+        im = ax1.imshow(p_white, cmap='PiYG', vmin=-1, vmax=1)
         param = (1./(np.exp(h_map[4]))/60.)
+        pflat = np.reshape(param, (param.shape[0]*param.shape[1]))
+        pNaN = pflat[~np.isnan(pflat)]
+        h_min = np.percentile(pNaN,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        h_max = np.percentile(pNaN,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
         #h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
         #h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
-        h_min = 1.
-        h_max = 11.
+        #h_min = 1.
+        #h_max = 11.
         im = ax1.imshow(param, cmap='jet_r', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[4]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
         plt.draw()
         
-    def gauss_wid(self, event):
+    def lorentz_wid(self, event):
         global marker
         marker = 5
+        im = ax1.imshow(p_white, cmap='PiYG', vmin=-1, vmax=1)
         param = h_map[5]
-        h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-        h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        pflat = np.reshape(param, (param.shape[0]*param.shape[1]))
+        pNaN = pflat[~np.isnan(pflat)]
+        h_min = np.percentile(pNaN,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        h_max = np.percentile(pNaN,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        #h_min = np.percentile(param,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        #h_max = np.percentile(param,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        #h_min = 0.05
+        #h_max = 0.5
         im = ax1.imshow(param, cmap='jet', interpolation='nearest', vmin=h_min, vmax=h_max,  picker=True)
         ax1.set_title(r'%s: %i $\AA$ | %s' % (date_title, wavelength, titles[5]), y = 1.01, fontsize=17)
         plt.colorbar(im,cax=cax)
@@ -384,7 +409,7 @@ def onclick(event):
         A2, n2, C2, P2, fp2, fw2 = nlfit_gp  # unpack fitting parameters
                
         try:
-           
+            
             nlfit_gp2, nlpcov_gp2 = scipy.optimize.curve_fit(LorentzPowerBase, f_fit, s, p0 = [A2, n2, C2, P2, fp2, fw2], bounds=(M2_low, M2_high), sigma=ds, max_nfev=3000)    
            
         except RuntimeError:
@@ -468,7 +493,7 @@ def onclick(event):
     
 # define combined-fitting function (Model M2)
 def LorentzPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
-    return A2*f2**-n2 + C2 + P2*(1./ ((np.pi*fw2)*(1.+((np.log(f2)-fp2)/fw2)**2)))
+    return A2*f2**-n2 + C2 + P2*(1./ (1.+((np.log(f2)-fp2)/fw2)**2))
              
 # define combined-fitting function (Model M2)
 def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
@@ -480,7 +505,7 @@ def PowerLaw(f, A, n, C):
         
 # define Gaussian-fitting function
 def Lorentz(f, P, fp, fw):
-    return P*(1./ ((np.pi*fw)*(1.+((np.log(f)-fp)/fw)**2)))
+    return P*(1./ (1.+((np.log(f)-fp)/fw)**2))
     
 # define Gaussian-fitting function
 def Gauss(f, P, fp, fw):
@@ -493,7 +518,7 @@ def Gauss(f, P, fp, fw):
 """
 
 directory = 'F:'
-#date = '20160327'
+#date = '20001111'
 date = '20130626'
 #date = '20140818'
 wavelength = 171
@@ -505,6 +530,7 @@ global stddev
 cube_shape = np.load('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength))
 spectra = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
 stddev = np.memmap('%s/DATA/Temp/%s/%i/uncertainties_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
+#stddev = np.memmap('%s/DATA/Temp/%s/%i/3x3_stddev_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
 
 param1 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
 
@@ -539,6 +565,8 @@ if 1:
     
     
     h_map = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
+    
+    p_white = np.zeros_like(h_map[0])
  
     vis = np.load('%s/DATA/Output/%s/%i/visual.npy' % (directory, date, wavelength))
 
@@ -549,7 +577,7 @@ if 1:
         y = [234, 308, 218, 197, 201, 199, 267, 5, 175, 181]
     
     # create list of titles and colorbar names for display on the figures
-    titles = ['Power Law Slope Coeff.', 'Power Law Index', 'Rollover [min]', 'Gaussian Amplitude', 'Gaussian Location [min]', 'Gaussian Width', 'F-Statistic', 'Averaged Visual Image']
+    titles = ['Power Law Slope Coeff.', 'Power Law Index', 'Rollover [min]', 'Lorentzian Amplitude', 'Lorentzian Location [min]', 'Lorentzian Width', 'F-Statistic', 'Averaged Visual Image']
     date_title = '%i/%02i/%02i' % (int(date[0:4]),int(date[4:6]),int(date[6:8]))
     
     # create figure with heatmap and spectra side-by-side subplots
@@ -579,9 +607,9 @@ if 1:
     # make toggle buttons to display each parameter's heatmap
     axindex = plt.axes([0.01, 0.9, 0.05, 0.063])
     axroll = plt.axes([0.07, 0.9, 0.05, 0.063])
-    axgauss_amp = plt.axes([0.13, 0.9, 0.05, 0.063])
-    axgauss_loc = plt.axes([0.19, 0.9, 0.05, 0.063])
-    axgauss_wid = plt.axes([0.25, 0.9, 0.05, 0.063])
+    axlorentz_amp = plt.axes([0.13, 0.9, 0.05, 0.063])
+    axlorentz_loc = plt.axes([0.19, 0.9, 0.05, 0.063])
+    axlorentz_wid = plt.axes([0.25, 0.9, 0.05, 0.063])
     axfstat = plt.axes([0.31, 0.9, 0.05, 0.063])
     axvisual = plt.axes([0.37, 0.9, 0.05, 0.063])
     axmask = plt.axes([0.43, 0.9, 0.05, 0.063])
@@ -613,12 +641,12 @@ if 1:
     bindex.on_clicked(callback.index)
     broll = Button(axroll, 'Rollover')
     broll.on_clicked(callback.roll)
-    bgauss_amp = Button(axgauss_amp, 'Gauss Amp')
-    bgauss_amp.on_clicked(callback.gauss_amp)
-    bgauss_loc = Button(axgauss_loc, 'Gauss Loc')
-    bgauss_loc.on_clicked(callback.gauss_loc)
-    bgauss_wid = Button(axgauss_wid, 'Gauss Wid')
-    bgauss_wid.on_clicked(callback.gauss_wid)
+    blorentz_amp = Button(axlorentz_amp, 'Lorentz Amp')
+    blorentz_amp.on_clicked(callback.lorentz_amp)
+    blorentz_loc = Button(axlorentz_loc, 'Lorentz Loc')
+    blorentz_loc.on_clicked(callback.lorentz_loc)
+    blorentz_wid = Button(axlorentz_wid, 'Lorentz Wid')
+    blorentz_wid.on_clicked(callback.lorentz_wid)
     bfstat = Button(axfstat, 'F-Stat')
     bfstat.on_clicked(callback.fstat)
     bvisual = Button(axvisual, 'Visual')

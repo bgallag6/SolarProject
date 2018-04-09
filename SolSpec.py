@@ -1043,10 +1043,9 @@ def fft_avg(directory, date, wavelength, num_seg):
     
     # initialize arrays to hold temporary results for calculating arithmetic average (changed from geometric)
     temp = np.zeros((9,spectra_seg.shape[2]))  # maybe have 3x3 to be generalized   
-    #temp = np.zeros((25,spectra_seg.shape[2]))  # maybe have 3x3 to be generalized
-    #p_avg = np.zeros((spectra_seg.shape[2]))  # would pre-allocating help? (seems to)
+    #temp = np.zeros((25,spectra_seg.shape[2]))
     spectra_array = np.zeros((spectra_seg.shape[0]-2, spectra_seg.shape[1]-2, spectra_seg.shape[2]))
-    #spectra_StdDev = np.zeros((spectra_seg.shape[0]-2, spectra_seg.shape[1]-2, spectra_seg.shape[2]))
+    spectra_StdDev = np.zeros((spectra_seg.shape[0]-2, spectra_seg.shape[1]-2, spectra_seg.shape[2]))
     #spectra_array = np.zeros((spectra_seg.shape[0]-4, spectra_seg.shape[1]-4, spectra_seg.shape[2]))    
     
     ### calculate 3x3 pixel-box arithmetic average.  start at 1 and end 1 before to deal with edges.
@@ -1099,16 +1098,14 @@ def fft_avg(directory, date, wavelength, num_seg):
             temp[8] = spectra_seg[l+1][m+1]*w
             """            
 
-            #temp9 = np.sum(temp, axis=0)
-            #p_avg = temp9 / 9.
             p_avg = np.average(temp, axis=0)
-            #p_avg = temp9
-            #spectra_array[l-1][m-1] = np.power(10,p_geometric)
+
             spectra_array[l-1][m-1] = p_avg
-            #spectra_StdDev[l-1][m-1] = np.std(temp, axis=0)
+            spectra_StdDev[l-1][m-1] = np.std(temp, axis=0)
+            
             
     np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_array)
-    #np.save('%s/DATA/Temp/%s/%i/uncertainties.npy' % (directory, date, wavelength), spectra_StdDev)
+    np.save('%s/DATA/Temp/%s/%i/3x3_stddev.npy' % (directory, date, wavelength), spectra_StdDev)
     #np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_seg)  # for no 3x3 pixel box averaging
     #return spectra_array
     
@@ -1361,15 +1358,15 @@ def mem_map(directory, date, wavelength):
     
     # load original array 
     original = np.load('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength))
-    #original_StdDev = np.load('%s/DATA/Temp/%s/%i/uncertainties.npy' % (directory, date, wavelength))
+    original_StdDev = np.load('%s/DATA/Temp/%s/%i/3x3_stddev.npy' % (directory, date, wavelength))
     print(original.shape)
     
     if original.ndim == 3:
         orig_shape = np.array([original.shape[0], original.shape[1], original.shape[2]])
         
         # create memory-mapped array with similar datatype and shape to original array
-        mmap_arr = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='w+', shape=(original.shape[0],original.shape[1],original.shape[2]))
-        #mmap_StdDev = np.memmap('%s/DATA/Temp/%s/%i/uncertainties_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='w+', shape=(original.shape[0],original.shape[1],original.shape[2]))
+        mmap_arr = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='w+', shape=tuple(orig_shape))
+        mmap_StdDev = np.memmap('%s/DATA/Temp/%s/%i/3x3_stddev_mmap.npy' % (directory, date, wavelength), dtype='float64', mode='w+', shape=tuple(orig_shape))
         
         
     elif original.ndim == 4:
@@ -1380,10 +1377,10 @@ def mem_map(directory, date, wavelength):
      
     # write data to memory-mapped array
     mmap_arr[:] = original[:]
-    #mmap_StdDev[:] = original_StdDev[:]
+    mmap_StdDev[:] = original_StdDev[:]
     
     # flush memory changes to disk, then remove memory-mapped object
     del mmap_arr
-    #del mmap_StdDev
+    del mmap_StdDev
     
     np.save('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength), orig_shape)

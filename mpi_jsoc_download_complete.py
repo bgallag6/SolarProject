@@ -12,7 +12,7 @@ import urllib.request
 #import urllib2  # Python 2
 import os
 
-#"""
+
 def get_data_fill(arr_need, arr_rename, directory):
     
     if rank == 0:
@@ -44,7 +44,8 @@ def get_data_fill(arr_need, arr_rename, directory):
         if wavelength in wavelengths:
             
             fn=("%s/FITS/%s/%s/%s" % (directory, date, wavelength, arr_rename[i]))
-
+            
+            # check if file exists, then download
             if not os.path.isfile(fn):
                 urllib.request.urlretrieve("%s" % arr_need[i], fn) 
             
@@ -63,9 +64,6 @@ size = MPI.COMM_WORLD.Get_size()  # How many processors do we have? (pulls from 
 
 import sys
 
-#jsoc_url = sys.argv[1]
-#directory = sys.argv[2]
-#date = sys.argv[3]
 directory = sys.argv[1]
 date = sys.argv[2]
 wavelength = sys.argv[3]
@@ -74,6 +72,7 @@ r_url = np.load('%s/FITS/%s/%s_request_url.npy' % (directory, date, wavelength))
 arr_need = []
 arr_rename = []
 
+## scrub JSOC url for files to download & rename the files to match VSO 
 #page=urllib2.urlopen(jsoc_url)
 #page=urllib2.urlopen(str(r_url))  # Python 2
 #data=page.read().split("<td><A HREF=")  # Python 2
@@ -166,4 +165,3 @@ filesTot = comm.gather(filesPart, root=0)  # Gather all the results  **check if 
 
 if rank == 0: 
     print("Downloaded %i/%i files" % (np.sum(filesTot), len(arr_rename0)))
-#"""

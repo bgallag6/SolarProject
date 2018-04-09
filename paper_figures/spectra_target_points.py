@@ -37,12 +37,13 @@ def PowerLaw(f, A, n, C):
 # define Gaussian-fitting function
 def Gauss(f, P, fp, fw):
     #return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2)
-    return P*(1./ ((np.pi*fw)*(1.+((np.log(f)-fp)/fw)**2)))
+    #return P*(1./ ((np.pi*fw)*(1.+((np.log(f)-fp)/fw)**2)))
+    return P*(1./ ((1.+((np.log(f)-fp)/fw)**2)))
 
 # define combined-fitting function (Model M2)
 def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
     #return A2*f2**-n2 + C2 + P2*np.exp(-0.5*(((np.log(f2))-fp2)/fw2)**2)
-    return A2*f2**-n2 + C2 + P2*(1./ ((np.pi*fw2)*(1.+((np.log(f2)-fp2)/fw2)**2)))
+    return A2*f2**-n2 + C2 + P2*(1./ ((1.+((np.log(f2)-fp2)/fw2)**2)))
     
 directory = 'F:'
 #directory = 'D:/Users/Brendan/Desktop/SolarProject'

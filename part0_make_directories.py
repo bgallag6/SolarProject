@@ -1,21 +1,20 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Nov 13 15:10:30 2017
+Created on Fri Apr  6 14:24:12 2018
 
 @author: Brendan
 """
-
-
 import os
-import sys
+import yaml
 
-# set variables from command line
-directory = sys.argv[1]
-date = sys.argv[2]
-wavelength = int(sys.argv[3])
-#directory = 'S:'
-#date = '20101213'
-#wavelength = 1700
+
+stream = open('specFit_config.yaml', 'r')
+cfg = yaml.load(stream)
+
+directory = cfg['fits_dir']
+date = cfg['date']
+wavelength = cfg['wavelength']
+
 
 """
 # make FITS directory
@@ -48,4 +47,3 @@ if not os.path.exists(os.path.dirname(outdir)):
         os.makedirs(os.path.dirname(outdir))
     except OSError as exc: # Guard against race condition
         if exc.errno != errno.EEXIST: raise
-            

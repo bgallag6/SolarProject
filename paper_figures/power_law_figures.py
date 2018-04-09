@@ -20,9 +20,13 @@ def Gauss(f, P, fp, fw):
     return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2)
 
 
-directory = 'F:'
-date = '20130626'
-wavelength = 171
+#directory = 'F:'
+#date = '20130626'
+#wavelength = 171
+
+directory = 'S:'
+date = '20001111'
+wavelength = 1600
 
 matplotlib.rc('text', usetex = True)  # use with latex commands
 
