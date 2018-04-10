@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Jan 29 18:38:48 2017
+Created on Tue Apr 10 09:49:17 2018
 
 @author: Brendan
 """
@@ -33,34 +33,33 @@ from timeit import default_timer as timer
 #import accelerate  # switch on if computer has installed
 from mpi4py import MPI
 from scipy import fftpack
+import yaml
 
 def fft_avg(subcube):
     
     from scipy import fftpack
+
+    check_dim = (subcube.shape[0] == time.shape[0])
+    #print("DATA and TIME array sizes match: %s" % check_dim, flush=True)
     
-    DATA = subcube
+    pixmed=np.empty(subcube.shape[0])  # Initialize array to hold median pixel values
+    spectra_seg = np.zeros((subcube.shape[1],subcube.shape[2],len(freqs)))
     
-    reslt = (DATA.shape[0] == TIME.shape[0])
-    print("DATA and TIME array sizes match: %s" % reslt, flush=True)
-    
-    pixmed=np.empty(DATA.shape[0])  # Initialize array to hold median pixel values
-    spectra_seg = np.zeros((DATA.shape[1],DATA.shape[2],len(freqs)))
-    
-    print("length time-interp array = %i" % n, flush=True)
-    print("length of sample freq array = %i" % len(sample_freq), flush=True)
-    print("length of freqs array = %i (should be 1/2 of row above)" % len(freqs), flush=True)
+    #print("length time-interp array = %i" % n, flush=True)
+    #print("length of sample freq array = %i" % len(sample_freq), flush=True)
+    #print("length of freqs array = %i (should be 1/2 of row above)" % len(freqs), flush=True)
     
     start_sub = timer()
     T1 = 0    
     
-    for ii in range(0,spectra_seg.shape[0]):
+    for ii in range(spectra_seg.shape[0]):
     
-        for jj in range(0,spectra_seg.shape[1]):        
+        for jj in range(spectra_seg.shape[1]):        
         
         
-            pixmed = DATA[:,ii,jj] / exposure  # extract timeseries + normalize by exposure time   
+            pixmed = subcube[:,ii,jj] / exposure  # extract timeseries + normalize by exposure time   
         
-            v_interp = np.interp(t_interp,TIME,pixmed)  # interpolate pixel-intensity values onto specified time grid
+            v_interp = np.interp(t_interp,time,pixmed)  # interpolate pixel-intensity values onto specified time grid
             
             data = v_interp
             
@@ -130,26 +129,37 @@ start = timer()
 size = MPI.COMM_WORLD.Get_size()  # How many processors do we have? (pulls from "-n 4" specified in terminal execution command) 
 
 
-import sys
+stream = open('specFit_config.yaml', 'r')
+cfg = yaml.load(stream)
 
-# set variables from command line
-directory = sys.argv[1]
-date = sys.argv[2]
-wavelength = int(sys.argv[3])
-  
-cube = np.load('%s/DATA/Temp/%s/%i/derotated.npy' % (directory, date, wavelength))
-#cube = np.memmap('F:/Users/Brendan/Desktop/SolarProject/data/20130530/20130530_193_2300_2600i_2200_3000j_data_rebin1_mmap.npy', dtype='int16', mode='r', shape=(2926,297,630))
+directory = cfg['temp_dir']
+date = cfg['date']
+wavelength = cfg['wavelength']
+mmap_spectra = cfg['mmap_spectra']
+save_temp = cfg['save_temp']
+n_segments = cfg['num_segments']  # break data into # segments of equal length
 
-chunks = np.array_split(cube, size, axis=1)  # Split the data based on no. of processors
+cube_shape = np.load('%s/DATA/Temp/%s/%i/derotated_mmap_shape.npy' % (directory, date, wavelength))
+cube = np.memmap('%s/DATA/Temp/%s/%i/derotated_mmap.npy' % (directory, date, wavelength), dtype='int16', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
+
+
+## trim top/bottom rows of input cube so that it divides cleanly by the # of processors
+trim_top = int(np.floor((cube_shape[1] % size) / 2))
+trim_bot = -int(np.ceil((cube_shape[1] % size) / 2))
+
+if trim_top == trim_bot == 0:
+    chunks = np.array_split(cube, size, axis=1)  # Split the data based on no. of processors
+else:
+    chunks = np.array_split(cube[:,trim_top:trim_bot], size, axis=1)
 
 # specify which chunks should be handled by each processor
 for i in range(size):
     if rank == i:
         subcube = chunks[i]
 
-TIME = np.load('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength))
+time = np.load('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength))
 exposure = np.load('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength))
-num_seg = 6
+#num_seg = 6
 
 # determine frequency values that FFT will evaluate
 if wavelength in [1600,1700]:
@@ -157,9 +167,9 @@ if wavelength in [1600,1700]:
 else:
     time_step = 12
 
-t_interp = np.linspace(0, TIME[len(TIME)-1], (TIME[len(TIME)-1]/time_step)+1)  # interpolate onto default-cadence time-grid
+t_interp = np.linspace(0, time[len(time)-1], (time[len(time)-1]/time_step)+1)  # interpolate onto default-cadence time-grid
     
-n_segments = num_seg  # break data into # segments of equal length
+#n_segments = num_seg
 n = len(t_interp)
 rem = n % n_segments
 freq_size = (n - rem) // n_segments
@@ -178,11 +188,17 @@ ss = np.shape(subcube)  # Validation
 print("Processor", rank, "received an array with dimensions", ss, flush=True)  # Validation
 
 spectra_seg_part = fft_avg(subcube)  # Do something with the array
-newData_s = comm.gather(spectra_seg_part, root=0)  # Gather all the results
+
+spectra_seg = None 
+
+if rank == 0:
+    spectra_seg = np.empty((cube_shape[1]-(trim_top-trim_bot),cube_shape[2],len(freqs)), dtype='float64')  # allocate receive buffer    
+
+comm.Gather(spectra_seg_part, spectra_seg, root=0)  # Gather all the results
 
 # Have one node do the last bit
 if rank == 0:
-    spectra_seg = np.vstack(newData_s)
+    #spectra_seg = np.vstack(recvbuf0)
     print(spectra_seg.shape, flush=True)  # Verify we have a summed version of the input cube
  
 
@@ -214,12 +230,39 @@ if rank == 0:
             
             spectra_array[l-1][m-1] = p_avg
             spectra_StdDev[l-1][m-1] = np.std(temp, axis=0)
+
     
     T_final = timer() - start
     T_min_final, T_sec_final = divmod(T_final, 60)
     T_hr_final, T_min_final = divmod(T_min_final, 60)
     print("Total program time = %i sec" % T_final, flush=True)
     
-
-    np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_array)
-    np.save('%s/DATA/Temp/%s/%i/3x3_stddev.npy' % (directory, date, wavelength), spectra_StdDev)
+    
+    if mmap_spectra == "y":
+        orig_shape = np.array([spectra_array.shape[0], spectra_array.shape[1], spectra_array.shape[2]])
+        
+        # create memory-mapped array with similar datatype and shape to original array
+        mmap_arr = np.memmap('%s/DATA/Temp/%s/%i/spectra_mmap.npy' % (directory, date, wavelength), dtype='%s' % spectra_array.dtype, mode='w+', shape=tuple(orig_shape))
+        mmap_StdDev = np.memmap('%s/DATA/Temp/%s/%i/3x3_stddev_mmap.npy' % (directory, date, wavelength), dtype='%s' % spectra_array.dtype, mode='w+', shape=tuple(orig_shape))
+        
+        # write data to memory-mapped array
+        mmap_arr[:] = spectra_array[:]
+        mmap_StdDev[:] = spectra_StdDev[:]
+        
+        # save memory-mapped array dimensions to use when loading
+        np.save('%s/DATA/Temp/%s/%i/spectra_mmap_shape.npy' % (directory, date, wavelength), orig_shape)
+    
+        # save original array if specified
+        if save_temp == "y":
+            np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_array)
+            np.save('%s/DATA/Temp/%s/%i/3x3_stddev.npy' % (directory, date, wavelength), spectra_StdDev)
+        
+        # flush memory changes to disk, then remove memory-mapped object and original array
+        del mmap_arr
+        del mmap_StdDev
+        del spectra_array
+        del spectra_StdDev        
+        
+    else:
+        np.save('%s/DATA/Temp/%s/%i/spectra.npy' % (directory, date, wavelength), spectra_array)
+        np.save('%s/DATA/Temp/%s/%i/3x3_stddev.npy' % (directory, date, wavelength), spectra_StdDev)
