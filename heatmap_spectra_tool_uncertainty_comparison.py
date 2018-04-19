@@ -486,8 +486,9 @@ def onclick(event):
         for label in legend.get_lines():
                 label.set_linewidth(2.0)  # the legend line width   
         
-        #print(chisqrM1, chisqrM22)        
-        print(f_test2)
+        #print(chisqrM1, chisqrM22) 
+        #print(chisqrM1-chisqrM22)  
+        #print(f_test2)
 
     return ix, iy
     

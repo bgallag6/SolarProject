@@ -15,7 +15,7 @@ def GaussianM2(f, A, n, C, P, fp, fw):
     #return A*f**-n
     
 def LorentzianM2(f, A, n, C, P, fp, fw):
-    return A*f**-n + C + P*(1./ ((np.pi*fw)*(1.+((np.log(f)-fp)/fw)**2)))
+    return A*f**-n + C + P*(1./ (1.+((np.log(f)-fp)/fw)**2))
 
     
 #SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/spectra_20120923_211A_(528)_(132)x_(100)_100y.npy')
@@ -57,8 +57,11 @@ fig, ax = plt.subplots(figsize=(15,10))
 plt.subplots_adjust(bottom=0.4)
 l, = plt.loglog(f, s, lw=2, color='red')
 plt.xlim(10**-4.5, 10**-1)
-plt.ylim(10**-6, 10**1)
-
+plt.ylim(10**-6, 10**0)
+plt.vlines((1./180.),10**-6,10**0, linestyle='dotted')
+plt.vlines((1./300.),10**-6,10**0, linestyle='dashed')
+plt.vlines((1./600.),10**-6,10**0, linestyle='dashed')
+plt.vlines((1./1200.),10**-6,10**0, linestyle='dashed')
 
 # setup parameter value sliders
 axcoeff = plt.axes([0.2, 0.26, 0.6, 0.02])

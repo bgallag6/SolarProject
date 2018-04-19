@@ -18,16 +18,17 @@ import scipy
 # define Gaussian-fitting function
 def Gauss(f, P, fp, fw):
     #return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) + C
-    return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2)
+    #return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2)
+    return P*np.exp(-0.5*((f-fp)/fw)**2)
 
 
-#directory = 'F:'
-#date = '20130626'
-#wavelength = 1600
+directory = 'F:'
+date = '20130626'
+wavelength = 1700
 
-directory = 'S:'
-date = '20111210'
-wavelength = 171
+#directory = 'S:'
+#date = '20111210'
+#wavelength = 171
 
 #del matplotlib.font_manager.weight_dict['roman']
 #matplotlib.font_manager._rebuild()
@@ -41,7 +42,7 @@ cbar_labels = ['Slope Coefficient', 'Index Value', 'Tail Value', 'Amplitude', 'L
 names = ['slope_coeff', 'index', 'tail', 'lorentz_amp', 'lorentz_loc', 'lorentz_wid', 'f_test', 'lorentz_amp_scaled', 'r_value', 'roll_freq', 'chisqr']
 
 # load parameter array and visual images from file tree structure 
-heatmaps = np.load('%s/DATA/Output/%s/%i/check_if_matches_this/param.npy' % (directory, date, wavelength))
+heatmaps = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
 visual = np.load('%s/DATA/Output/%s/%i/visual.npy'% (directory, date, wavelength))  
 
 #visual = visual[1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
@@ -265,7 +266,7 @@ for i in [1,4,5]:  # use this from now on
                 P, fp, fw = nlfit_gp  # unpack fitting parameters          
                 #g_fit = Gauss(f, P,fp,fw, C)  
                 g_fit = Gauss(f, P,fp,fw)       
-                gauss_center = np.exp(fp)
+                gauss_center = fp
                 gauss_wid = np.exp(fw)
                 print(gauss_wid)
             

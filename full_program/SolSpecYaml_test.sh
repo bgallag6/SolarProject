@@ -15,6 +15,6 @@ read -p "Enter the number of processors [ex. 16]: " num
 
 :: python part15B_merge_diff_chunks.py $num
 
-mpiexec -n $num python part2B_fft_avg_mpi_Gather.py
+:: mpiexec -n $num python part2B_fft_avg_mpi_Gather.py
 
-:: mpiexec -n $num python part3_spec_fit_mpi.py
+mpiexec -n $num python part3B_spec_fit_mpi_master.py

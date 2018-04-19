@@ -20,13 +20,13 @@ def Gauss(f, P, fp, fw):
     return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2)
 
 
-#directory = 'F:'
-#date = '20130626'
-#wavelength = 171
+directory = 'F:'
+date = '20130626'
+wavelength = 193
 
-directory = 'S:'
-date = '20001111'
-wavelength = 1600
+#directory = 'S:'
+#date = '20001111'
+#wavelength = 1600
 
 matplotlib.rc('text', usetex = True)  # use with latex commands
 
@@ -41,7 +41,7 @@ heatmaps = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, waveleng
 visual = np.load('%s/DATA/Output/%s/%i/visual.npy'% (directory, date, wavelength))  
 
 #visual = visual[1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
-visual = visual[:,1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
+visual = visual[1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
 h_map = heatmaps    
 
 plt.rcParams["font.family"] = "Times New Roman"
@@ -81,7 +81,7 @@ amp_mask[p_val > mask_thresh] = np.NaN
 loc_mask[p_val > mask_thresh] = np.NaN
 wid_mask[p_val > mask_thresh] = np.NaN
 
-#"""
+"""
 # for creating sunspot umbra + PPV contour overlays from 1600
 v1600 = np.load('%s/DATA/Output/%s/1600/visual.npy'% (directory, date))  
 v1600 = v1600[:,1:-1,1:-1]  # to make same size as heatmaps (if using 3x3 pixel box averaging)
@@ -96,7 +96,7 @@ p1600_val = ff.sf(p1600[6], df1, df2)
 v_mask = np.copy(v1600[0])
    
 v_mask[p1600_val < mask_thresh] = 1.  # invert mask, set equal to 1. -- so can make contour
-#""" 
+""" 
 
 
 # determine percentage of region masked 
@@ -212,3 +212,7 @@ total_pix = h_map[4].shape[0]*h_map[4].shape[1]
 m1percent = ((np.float(m1count))/total_pix)*100
 print('M1 percent = %0.2f' % m1percent)
 
+
+print(np.min(h_map[0]))
+print(np.min(h_map[1]))
+print(np.min(h_map[2]))

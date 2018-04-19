@@ -194,7 +194,7 @@ spectra_seg = None
 if rank == 0:
     spectra_seg = np.empty((cube_shape[1]-(trim_top-trim_bot),cube_shape[2],len(freqs)), dtype='float64')  # allocate receive buffer    
 
-comm.Gather(spectra_seg_part, spectra_seg, root=0)  # Gather all the results
+comm.Gather(sendbuf=spectra_seg_part, recvbuf=spectra_seg, root=0)  # Gather all the results
 
 # Have one node do the last bit
 if rank == 0:
