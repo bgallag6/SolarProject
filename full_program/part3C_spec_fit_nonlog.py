@@ -86,8 +86,8 @@ def spec_fit( subcube, subcube_StdDev ):
             #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
             #M2_low = [0., 0.3, -0.01, 0., (1./660.), -0.01]
             #M2_high = [0.002, 6., 0.01, 0.2, (1./100.), 0.01]
-            M2_low = [0., 0.5, -0.01, 10**-7, (1./660.), 5e-4]  # maybe 5e-4?  convert 0.05 to here
-            M2_high = [0.002, 5., 0.01, 0.1, (1./100.), 0.005]  # maybe 0.012? convert 0.8 to here
+            M2_low = [0., 0.3, -0.01, 10**-7, (1./660.), 5e-4]  # maybe 5e-4?  convert 0.05 to here
+            M2_high = [0.002, 6., 0.01, 0.1, (1./100.), 0.005]  # maybe 0.012? convert 0.8 to here
             
             nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f, s, bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)
             #nlfit_gp, nlpcov_gp = scipy.optimize.curve_fit(LorentzPowerBase, f, s, p0 = [A,n,C,0.1,-5.55,0.425], bounds=(M2_low, M2_high), sigma=ds, method='dogbox', max_nfev=3000)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Mar 25 21:16:11 2018
+Created on Fri May  4 07:44:37 2018
 
 @author: Brendan
 """
@@ -55,7 +55,7 @@ font_size = 27  # set the font size to be used for all text - titles, tick marks
 
 wavelength = wavelength    
 
-"""
+#"""
 # trim x/y dimensions equally so that resulting region is 1600x1600    
 trim_y = int((h_map.shape[1]-1600)/2)
 trim_x = int((h_map.shape[2]-1600)/2)
@@ -65,8 +65,9 @@ x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
 y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
 x_ind = [-800,-600,-400,-200,0,200,400,600,800]
 y_ind = [800,600,400,200,0,-200,-400,-600,-800]    
-"""
+#"""
 
+"""
 xdim = int(np.floor(h_map.shape[2]/100))
 ydim = int(np.floor(h_map.shape[1]/100))
 
@@ -75,6 +76,7 @@ y_ticks = [100*i for i in range(ydim+1)]
 
 x_ind = x_ticks
 y_ind = y_ticks
+"""
 
 # generate p-value heatmap + masked Gaussian component heatmaps
 df1, df2 = 3, 6  # degrees of freedom for model M1, M2
@@ -97,15 +99,17 @@ count = np.count_nonzero(np.isnan(loc_mask))
 total_pix = p_val.shape[0]*p_val.shape[1]
 mask_percent = ((np.float(count))/total_pix)*100
             
-loc_mask = (1./np.exp(loc_mask))/60.  # convert Gaussian location to minutes
-
+#loc_mask = (1./np.exp(loc_mask))/60.  # convert Gaussian location to minutes
+h_map[4] = (1./h_map[4])/60.
+loc_mask = (1./loc_mask)/60.
+wid_mask = wid_mask/60.
 
 fig_width = 12
 fig_height = 10
 
 #for i in range(len(titles)-1):
-for i in [1,4,5]:  # use this from now on
-#for i in range(4,5):
+#for i in [1,4,5]:  # use this from now on
+for i in [4,5,1]:
     
     #fig = plt.figure(figsize=(13,9))
     fig = plt.figure(figsize=(fig_width,fig_height))
@@ -118,7 +122,7 @@ for i in [1,4,5]:  # use this from now on
         h_max = np.percentile(h_map[i],99)  # set heatmap vmax to 99% of data
         cmap = cm.get_cmap('jet', 10)
     elif i == 4:
-        h_map[i] = (1./(np.exp(h_map[i])))/60.
+        #h_map[i] = (1./(np.exp(h_map[i])))/60.
         if wavelength in [1600,1700]:
             h_min = 3.
             h_max = 5.
@@ -131,8 +135,10 @@ for i in [1,4,5]:  # use this from now on
         flat_param3 = flat_param3[~np.isnan(flat_param3)]
         #h_min = np.percentile(h_map[i],1)
         #h_max = np.percentile(h_map[i],99)
-        h_min = np.percentile(flat_param3,1)
-        h_max = np.percentile(flat_param3,99)
+        #h_min = np.percentile(flat_param3,1)
+        #h_max = np.percentile(flat_param3,99)
+        h_min = 0.
+        h_max = 5000.
         #cmap = 'jet'
         cmap = cm.get_cmap('jet', 10)
 
@@ -141,7 +147,8 @@ for i in [1,4,5]:  # use this from now on
     h_step = h_range / 10.
     c_ticks = np.zeros((11))
     for h in range(11):
-        c_ticks[h] = h_min + h_step*h 
+        c_ticks[h] = h_min + h_step*h
+
         
     im = ax.imshow(np.flipud(h_map[i]), cmap = cmap, vmin=h_min, vmax=h_max)
 
@@ -156,6 +163,9 @@ for i in [1,4,5]:  # use this from now on
 
     cbar.ax.tick_params(labelsize=font_size, pad=5) 
     cbar.set_ticks(c_ticks)
+    
+    #if i == 1:
+        #plt.savefig('C:/Users/Brendan/Desktop/%s_%i_%s_mask_nonlog.pdf' % (date, wavelength, names[i]), format='pdf', bbox_inches='tight')
 
     
     
@@ -163,7 +173,7 @@ for i in [1,4,5]:  # use this from now on
         fig = plt.figure(figsize=(fig_width,fig_height))
         ax = plt.gca()  # get current axis -- to set colorbar 
         
-        plt.title(r'(c) Lorentz. Loc. $\beta$ [min]; $p$ $<$ %0.3f \textbar\  $f_{masked}$ = %0.1f\%s' % (mask_thresh, mask_percent, '%'), y = 1.02, fontsize=font_size, fontname="Times New Roman")
+        plt.title(r'(c) Lorentz. Loc. $\beta$ [min]; $p$ $<$ %0.3f |  $f_{masked}$ = %0.1f\%s' % (mask_thresh, mask_percent, '%'), y = 1.02, fontsize=font_size, fontname="Times New Roman")
 
         cmap = cm.get_cmap('jet_r', 10)
                    
@@ -180,25 +190,28 @@ for i in [1,4,5]:  # use this from now on
         cbar.ax.tick_params(labelsize=font_size, pad=5) 
         cbar.set_ticks(c_ticks)
         
-        #plt.savefig('C:/Users/Brendan/Desktop/%s_%i_%s_mask.pdf' % (date, wavelength, names[i]), format='pdf', bbox_inches='tight')
+        #plt.savefig('C:/Users/Brendan/Desktop/%s_%i_%s_mask_nonlog.pdf' % (date, wavelength, names[i]), format='pdf', bbox_inches='tight')
     
     
     elif i == 5:
         flat_param3 = np.reshape(wid_mask, (wid_mask.shape[0]*wid_mask.shape[1]))
         flat_param3 = flat_param3[~np.isnan(flat_param3)]
-        h_min = np.percentile(flat_param3,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
-        h_max = np.percentile(flat_param3,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        #h_min = np.percentile(flat_param3,1)  # set heatmap vmin to 1% of data (could lower to 0.5% or 0.1%)
+        #h_max = np.percentile(flat_param3,99)  # set heatmap vmax to 99% of data (could up to 99.5% or 99.9%)
+        h_min = 0.
+        h_max = 40.
         
         h_range = np.abs(h_max-h_min)
         h_step = h_range / 10.
         c_ticks = np.zeros((11))
         for h in range(11):
             c_ticks[h] = h_min + h_step*h 
+        print(i, c_ticks)
         
         fig = plt.figure(figsize=(fig_width,fig_height))
         ax = plt.gca()  # get current axis -- to set colorbar 
         
-        plt.title(r'(d) Lorentz. Wid. $\sigma$ [min]; $p$ $<$ %0.3f \textbar\  $f_{masked}$ = %0.1f\%s' % (mask_thresh, mask_percent, '%'), y = 1.02, fontsize=font_size, fontname="Times New Roman")
+        plt.title(r'(d) Lorentz. Wid. $\sigma$ [min]; $p$ $<$ %0.3f |  $f_{masked}$ = %0.1f\%s' % (mask_thresh, mask_percent, '%'), y = 1.02, fontsize=font_size, fontname="Times New Roman")
 
         cmap = cm.get_cmap('jet', 10)                    
             
@@ -215,7 +228,7 @@ for i in [1,4,5]:  # use this from now on
         cbar.ax.tick_params(labelsize=font_size, pad=5) 
         cbar.set_ticks(c_ticks)
         
-        #plt.savefig('C:/Users/Brendan/Desktop/%s_%i_%s_mask.pdf' % (date, wavelength, names[i]), format='pdf', bbox_inches='tight')
+        #plt.savefig('C:/Users/Brendan/Desktop/%s_%i_%s_mask_nonlog.pdf' % (date, wavelength, names[i]), format='pdf', bbox_inches='tight')
         
         
     
