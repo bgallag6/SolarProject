@@ -23,7 +23,7 @@ import h5py
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.pyplot import figure, show
 
-directory = 'F:/Users/Brendan/Desktop/SolarProject'
+directory = 'F:'
 date = '20130626'
 wavelength = 304
 
@@ -40,7 +40,7 @@ h_map0 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength
 
 def update_min(val):
     vmin = s_vmin.val
-    print vmin
+#    print vmin
     h_map = np.copy(h_map0)
     #for i in range(R.shape[0]):
     #    for j in range(R.shape[1]):
@@ -68,7 +68,7 @@ def update_min(val):
     
 def update_max(val):
     vmax = s_vmax.val
-    print vmax
+#    print vmax
     h_map = np.copy(h_map0)
     #for i in range(R.shape[0]):
     #    for j in range(R.shape[1]):

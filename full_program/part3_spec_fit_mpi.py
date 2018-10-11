@@ -55,7 +55,7 @@ def spec_fit( subcube, subcube_StdDev ):
         f = freqs
         s = subcube[l][m]
                
-        ds = subcube_StdDev[l][m]  # use 3x3 pixel-box std.dev. as fitting uncertainties   
+        #ds = subcube_StdDev[l][m]  # use 3x3 pixel-box std.dev. as fitting uncertainties   
                                                
         ### fit data to models using SciPy's Levenberg-Marquart method
         
@@ -251,7 +251,7 @@ df = np.log10(freqs[1:len(freqs)]) - np.log10(freqs[0:len(freqs)-1])
 df2 = np.zeros_like(freqs)
 df2[0:len(df)] = df
 df2[len(df2)-1] = df2[len(df2)-2]
-#ds = df2
+ds = df2
 
 # verify each processor received subcube with correct dimensions
 ss = np.shape(subcube)  # Validation	

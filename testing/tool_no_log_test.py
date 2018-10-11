@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Feb 11 11:47:42 2018
+Created on Fri Apr 20 12:59:46 2018
 
 @author: Brendan
 """
@@ -243,8 +243,12 @@ def onclick(event):
         try:                                 
             #M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
             #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
-            M2_low = [0., 0.3, -0.01, 0.00001, -6.5, 0.05]
-            M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
+            #M2_low = [0., 0.3, -0.01, 0.00001, -6.5, 0.05]
+            #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
+            #M2_low = [0., 0.3, -0.01, 0., (1./660.), -0.01] #1700 best / good for 171 too
+            #M2_high = [0.002, 6., 0.01, 0.2, (1./100.), 0.01] #1700 best
+            M2_low = [0., 0.3, -0.01, 10**-7, (1./660.), 5e-4] #1700 best  -- 10**-7 seems to work for amp
+            M2_high = [0.002, 6., 0.01, 0.1, (1./100.), 0.005] #1700 best
         
                     
             # change method to 'dogbox' and increase max number of function evaluations to 3000
@@ -320,7 +324,6 @@ def onclick(event):
         
         
         # calculate weighted correlation coefficient
-        #ds2 = ds
         ds2 = stddev[iy][ix]
         weight_mean_spec = (ds2*s).sum()/ds2.sum()
         weight_mean_m2 = (ds2*m2_fit2).sum()/ds2.sum()
@@ -363,9 +366,10 @@ def onclick(event):
         for label in legend.get_lines():
                 label.set_linewidth(2.0)  # the legend line width   
                 
-        
-        if wavelength not in [1600,1700]:
-            ds = stddev[iy][ix]
+        print("index: ", '%0.3f' % n22, "amp: ", '%0.3e' % P22, " loc: ", '%0.3i' % (1./fp22), " wid: ", '%0.5f' % fw22)
+
+
+        ds = stddev[iy][ix]
         
         ## fit data to combined power law plus gaussian component model
         
@@ -389,8 +393,15 @@ def onclick(event):
         try:                                 
             #M2_low = [-0.002, 0.3, -0.01, 0.00001, -6.5, 0.05]
             #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
-            M2_low = [0., 0.3, -0.01, 0.00001, -6.5, 0.05]
-            M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
+            #M2_low = [0., 0.3, -0.01, 0.00001, -6.5, 0.05]
+            #M2_high = [0.002, 6., 0.01, 0.2, -4.6, 0.8]
+            #M2_low = [0., 0.3, -0.01, 0., (1./660.), -0.01] #1700 best
+            #M2_high = [0.002, 6., 0.01, 0.2, (1./100.), 0.01] #1700 best
+            #M2_low = [0., 0.5, -0.01, 10**-7, (1./660.), -0.01] #1700 best  -- 10**-7 seems to work for amp
+            #M2_low = [0., 0.5, -0.01, 10**-7, (1./660.), 5e-4] #5/4
+            #M2_high = [0.002, 5., 0.01, 0.1, (1./100.), 0.005] #5/4
+            M2_low = [0., 0.3, -0.01, 10**-7, (1./660.), 5e-4] #1700 best  -- 10**-7 seems to work for amp
+            M2_high = [0.002, 6., 0.01, 0.1, (1./100.), 0.005] #1700 best
         
                     
             # change method to 'dogbox' and increase max number of function evaluations to 3000
@@ -488,14 +499,16 @@ def onclick(event):
                 label.set_linewidth(2.0)  # the legend line width   
         
         #print(chisqrM1, chisqrM22) 
-        #print(chisqrM1-chisqrM22)  
+        print("index: ", '%0.3f' % n22, "amp: ", '%0.3e' % P22, " loc: ", '%0.3i' % (1./fp22), " wid: ", '%0.3e' % fw22)
+        print(chisqrM1-chisqrM22)  
         #print(f_test2)
 
     return ix, iy
     
 # define combined-fitting function (Model M2)
 def LorentzPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
-    return A2*f2**-n2 + C2 + P2*(1./ (1.+((np.log(f2)-fp2)/fw2)**2))
+    #return A2*f2**-n2 + C2 + P2*(1./ (1.+((np.log(f2)-fp2)/fw2)**2))
+    return A2*f2**-n2 + C2 + P2*(1./ (1.+((f2-fp2)/fw2)**2))
              
 # define combined-fitting function (Model M2)
 def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
@@ -507,7 +520,8 @@ def PowerLaw(f, A, n, C):
         
 # define Gaussian-fitting function
 def Lorentz(f, P, fp, fw):
-    return P*(1./ (1.+((np.log(f)-fp)/fw)**2))
+    #return P*(1./ (1.+((np.log(f)-fp)/fw)**2))
+    return P*(1./ (1.+((f-fp)/fw)**2))
     
 # define Gaussian-fitting function
 def Gauss(f, P, fp, fw):
@@ -520,10 +534,11 @@ def Gauss(f, P, fp, fw):
 """
 
 directory = 'F:'
-#date = '20001111'
+#directory = 'S:'
+#date = '20111210'
+#date = '20111210'
 date = '20130626'
-#date = '20140818'
-wavelength = 171
+wavelength = 1700
 
 global spectra
 global param1
@@ -536,6 +551,8 @@ stddev = np.memmap('%s/DATA/Temp/%s/%i/uncertainties_mmap.npy' % (directory, dat
 
 param1 = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
 
+#width = np.abs(np.sqrt(param1[4]**2 * param1[5]**2 + 1) - 1) / param1[5]
+#param1[5] = width
 
 global marker
 global toggle

@@ -33,7 +33,9 @@ from sunpy.map import Map
 
 
 #SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/spectra_20130815_193_1000_1600i_1950_2950j_rebin2.npy')
-SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/spectra_20130530_1600_2300_2600i_2200_3000j_data_rebin4.npy')
+#SPECTRA = np.load('C:/Users/Brendan/Desktop/SDO/spectra_20130530_1600_2300_2600i_2200_3000j_data_rebin4.npy')
+cube_shape = np.load('F:/DATA/Temp/20140818/304/spectra_mmap_shape.npy')
+SPECTRA = np.memmap('F:/DATA/Temp/20140818/304/spectra_mmap.npy', dtype='float64', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
 
 from scipy import fftpack    
 
@@ -54,8 +56,8 @@ def GaussPowerBase(f2, A2, n2, C2, P2, fp2, fw2):
 spectra_array = SPECTRA
 #spectra_array = spectra_array.astype(np.float32)  # possibly use this?
 
-print "The region size is %ii x %ij" % (SPECTRA.shape[0], SPECTRA.shape[1])
-print "%i frequencies were evaluated in the FFT" % SPECTRA.shape[2] 
+#print "The region size is %ii x %ij" % (SPECTRA.shape[0], SPECTRA.shape[1])
+#print "%i frequencies were evaluated in the FFT" % SPECTRA.shape[2] 
 
 num_freq = SPECTRA.shape[2]  # determine nubmer of frequencies that are used
     
@@ -96,8 +98,8 @@ bound_max = [1.6e-7, 2.1, 0.0000025, 0.017, -5.5, 0.47]
 
 params = np.zeros((7, (y2-y1), (x2-x1)))  # just for real-time demo
 
-#vis = np.load('F:/Users/Brendan/Desktop/SolarProject/visual/visual_20130815_193_1000_1600i_1950_2950j.npy')
-vis = np.load('E:/Users/Brendan/Desktop/SolarProject/visual/visual_20130530_1600_2300_2600i_2200_3000j_data_rebin4.npy')
+vis = np.load('F:/DATA/Output/20140818/304/visual.npy')
+#vis = np.load('E:/Users/Brendan/Desktop/SolarProject/visual/visual_20130530_1600_2300_2600i_2200_3000j_data_rebin4.npy')
 visual = vis[0]
 visual = visual[y1:y2,x1:x2]
 #visual = visual[x1:x2,y1:y2]
@@ -297,10 +299,10 @@ for l in range(y1,y2):
         T_est = T_init*(SPECTRA.shape[0])  
     else:
         T_est2 = T2*((SPECTRA.shape[0])-l)
-        print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est2)
+        #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (l, SPECTRA.shape[0], T_est2)
     T1 = T
 
 # print estimated and total program time to screen        
 T_act = timer() - start
-print "Actual total time = %i sec" % T_act           
+#print "Actual total time = %i sec" % T_act           
 

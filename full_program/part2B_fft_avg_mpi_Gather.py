@@ -24,9 +24,6 @@ Created on Tue Apr 10 09:49:17 2018
 
 import numpy as np
 import scipy.signal
-#matplotlib.use('TkAgg') 	# NOTE: This is a MAC/OSX thing. Probably REMOVE for linux/Win
-import matplotlib.pyplot as plt
-from pylab import *
 from scipy import signal
 import scipy.misc
 from timeit import default_timer as timer
@@ -56,7 +53,6 @@ def fft_avg(subcube):
     
         for jj in range(spectra_seg.shape[1]):        
         
-        
             pixmed = subcube[:,ii,jj] / exposure  # extract timeseries + normalize by exposure time   
         
             v_interp = np.interp(t_interp,time,pixmed)  # interpolate pixel-intensity values onto specified time grid
@@ -65,10 +61,10 @@ def fft_avg(subcube):
             
             avg_array = np.zeros((len(freqs)))  # initialize array to hold fourier powers
     
-            data = data[0:len(data)-rem]  # trim timeseries to be integer multiple of n_segments
+            data = data[:len(data)-rem]  # trim timeseries to be integer multiple of n_segments
             split = np.split(data, n_segments)  # create split array for each segment
        
-            for i in range(0,n_segments):               
+            for i in range(n_segments):               
                 
               ## perform Fast Fourier Transform on each segment       
               sig = split[i]
@@ -97,13 +93,11 @@ def fft_avg(subcube):
             T_est = T_init*(spectra_seg.shape[0])  
             T_min, T_sec = divmod(T_est, 60)
             T_hr, T_min = divmod(T_min, 60)
-            #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_seg.shape[0], T_est)
             print("Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spectra_seg.shape[0], T_hr, T_min, T_sec), flush=True)
         else:
             T_est2 = T2*(spectra_seg.shape[0]-ii)
             T_min2, T_sec2 = divmod(T_est2, 60)
             T_hr2, T_min2 = divmod(T_min2, 60)
-            #print "Currently on row %i of %i, estimated time remaining: %i seconds" % (ii, spectra_seg.shape[0], T_est2)
             print("Currently on row %i of %i, estimated time remaining: %i:%.2i:%.2i" % (ii, spectra_seg.shape[0], T_hr2, T_min2, T_sec2), flush=True)
         T1 = T
         
@@ -128,7 +122,7 @@ start = timer()
 
 size = MPI.COMM_WORLD.Get_size()  # How many processors do we have? (pulls from "-n 4" specified in terminal execution command) 
 
-
+# load variables from YAML config file
 stream = open('specFit_config.yaml', 'r')
 cfg = yaml.load(stream)
 
@@ -141,7 +135,6 @@ n_segments = cfg['num_segments']  # break data into # segments of equal length
 
 cube_shape = np.load('%s/DATA/Temp/%s/%i/derotated_mmap_shape.npy' % (directory, date, wavelength))
 cube = np.memmap('%s/DATA/Temp/%s/%i/derotated_mmap.npy' % (directory, date, wavelength), dtype='int16', mode='r', shape=(cube_shape[0], cube_shape[1], cube_shape[2]))
-
 
 ## trim top/bottom rows of input cube so that it divides cleanly by the # of processors
 trim_top = int(np.floor((cube_shape[1] % size) / 2))
@@ -159,7 +152,6 @@ for i in range(size):
 
 time = np.load('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength))
 exposure = np.load('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength))
-#num_seg = 6
 
 # determine frequency values that FFT will evaluate
 if wavelength in [1600,1700]:
@@ -169,25 +161,22 @@ else:
 
 t_interp = np.linspace(0, time[len(time)-1], (time[len(time)-1]/time_step)+1)  # interpolate onto default-cadence time-grid
     
-#n_segments = num_seg
 n = len(t_interp)
 rem = n % n_segments
 freq_size = (n - rem) // n_segments
-
 sample_freq = fftpack.fftfreq(freq_size, d=time_step)
 pidxs = np.where(sample_freq > 0)
 freqs = sample_freq[pidxs]
-
 
 
 """
 ### Each processor runs function on subcube, results are gathered when finished
 """
 # verify each processor received subcube with correct dimensions
-ss = np.shape(subcube)  # Validation	
-print("Processor", rank, "received an array with dimensions", ss, flush=True)  # Validation
+ss = np.shape(subcube)	
+print("Processor", rank, "received an array with dimensions", ss, flush=True)
 
-spectra_seg_part = fft_avg(subcube)  # Do something with the array
+spectra_seg_part = fft_avg(subcube)
 
 spectra_seg = None 
 

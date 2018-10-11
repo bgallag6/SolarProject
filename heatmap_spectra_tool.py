@@ -211,13 +211,13 @@ def Gauss(f, P, fp, fw):
 ##############################################################################
 """
 
-#directory = 'F:'
-#date = '20130626'
-#wavelength = 171
+directory = 'F:'
+date = '20130626'
+wavelength = 1700
 
-directory = 'S:'
-date = '20111210'
-wavelength = 171
+#directory = 'S:'
+#date = '20120606'
+#wavelength = 1600
 
 global spectra
 

@@ -17,12 +17,12 @@ import scipy
 
 def Gauss(f, P, fp, fw):
     #return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2) + C
-    return P*np.exp(-0.5*(((np.log(f))-fp)/fw)**2)
+    return P*np.exp(-0.5*((f-fp)/fw)**2)
 
 
 directory = 'F:'
 date = '20130626'
-wavelength = 193
+wavelength = 171
 
 #directory = 'S:'
 #date = '20001111'

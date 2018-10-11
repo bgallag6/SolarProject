@@ -11,8 +11,10 @@ echo "The process of this program:
 
 read -p "Enter the number of processors [ex. 16]: " num
 
-python part1_derotate_cube.py
+:: mpiexec -n $num python part1B_diff_derotate.py
 
-mpiexec -n $num python part2_fft_avg_mpi.py
+:: python part15B_merge_diff_chunks.py $num
+
+mpiexec -n $num python part2B_fft_avg_mpi_Gather.py
 
 mpiexec -n $num python part3_spec_fit_mpi.py

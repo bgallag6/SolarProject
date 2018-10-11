@@ -1,7 +1,7 @@
 fits_dir: !!python/str "S:"
-date: !!python/str "20111210"
-wavelength: !!python/int "171"
-sub_reg_coords: [200,350,225,375]
+date: !!python/str "20130625"
+wavelength: !!python/int "1700"
+sub_reg_coords: [-180,-30,-375,-225]
 coords_type: !!python/str "arc"
 bin_frac: !!python/int "1"
 

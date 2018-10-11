@@ -27,8 +27,8 @@ date = '20130626'
 wavelength = 171
 
 #directory = 'S:'
-#date = '20111210'
-#wavelength = 171
+#date = '20110909'
+#wavelength = 1600
 
 #del matplotlib.font_manager.weight_dict['roman']
 #matplotlib.font_manager._rebuild()
@@ -55,7 +55,7 @@ font_size = 27  # set the font size to be used for all text - titles, tick marks
 
 wavelength = wavelength    
 
-"""
+#"""
 # trim x/y dimensions equally so that resulting region is 1600x1600    
 trim_y = int((h_map.shape[1]-1600)/2)
 trim_x = int((h_map.shape[2]-1600)/2)
@@ -65,8 +65,9 @@ x_ticks = [0,200,400,600,800,1000,1200,1400,1600]
 y_ticks = [0,200,400,600,800,1000,1200,1400,1600]  
 x_ind = [-800,-600,-400,-200,0,200,400,600,800]
 y_ind = [800,600,400,200,0,-200,-400,-600,-800]    
-"""
+#"""
 
+"""
 xdim = int(np.floor(h_map.shape[2]/100))
 ydim = int(np.floor(h_map.shape[1]/100))
 
@@ -75,6 +76,7 @@ y_ticks = [100*i for i in range(ydim+1)]
 
 x_ind = x_ticks
 y_ind = y_ticks
+"""
 
 # generate p-value heatmap + masked Gaussian component heatmaps
 df1, df2 = 3, 6  # degrees of freedom for model M1, M2
@@ -105,6 +107,7 @@ fig_height = 10
 
 #for i in range(len(titles)-1):
 for i in [1,4,5]:  # use this from now on
+#for i in [10]:  # use this from now on
 #for i in range(4,5):
     
     #fig = plt.figure(figsize=(13,9))

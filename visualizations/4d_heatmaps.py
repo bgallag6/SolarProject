@@ -14,7 +14,7 @@ directory = 'S:'
 date = '20140822'
 wavelength = 1600
 
-H = np.load('%s/DATA/Output/%s/%i/param.npy' % (directory, date, wavelength))
+H = np.load('%s/DATA/Output/%s/%i/not_differentially_derotated/param.npy' % (directory, date, wavelength))
 #H = np.load('%s/DATA/Output/%s/PCB/%i/param.npy' % (directory, date, wavelength))
 
 titles = [r'Power Law Slope-Coefficient', r'Power Law Index', r'Power Law Tail', r'Gaussian Amplitude', r'Gaussian Location [min]', r'Gaussian Width', 'F-Statistic', r'Gaussian Amplitude Scaled', 'p-Value']

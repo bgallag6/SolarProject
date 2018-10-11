@@ -119,3 +119,7 @@ February:
 - added parenthesis to print statements in several scripts
 - added Lorentzian model to Spec_fit_mpi.py
 - revised download scripts to be compatible with Python 3
+
+7/24:
+- deleted a bunch of old / duplicate scripts
+- organized the directory somewhat 

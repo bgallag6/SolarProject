@@ -299,3 +299,5 @@ for i in [4,5,1]:
         
         #plt.savefig('C:/Users/Brendan/Desktop/20130626_%i_lorentz_loc_hist.pdf' % wavelength, format='pdf', bbox_inches='tight')
     #"""
+    
+Z = P*np.exp(-0.5*((f-fp)/fw)**2)

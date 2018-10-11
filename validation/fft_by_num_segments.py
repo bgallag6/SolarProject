@@ -21,15 +21,19 @@ import matplotlib.pyplot as plt
 from scipy import fftpack
 
 
-directory = 'F:/Users/Brendan/Desktop/SolarProject'
-date = '20120909'  # was 20130815, 171 for other figures
+#directory = 'F:'
+#date = '20120909'  # was 20130815, 171 for other figures
+#wavelength = 1600
+
+directory = 'S:'
+date = '20161012'
 wavelength = 1600
 
 DATA = np.load('%s/DATA/Temp/%s/%i/derotated.npy' % (directory, date, wavelength))
 
 TIME = np.load('%s/DATA/Temp/%s/%i/time.npy' % (directory, date, wavelength))
 
-#Ex = np.load('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength))
+Ex = np.load('%s/DATA/Temp/%s/%i/exposure.npy' % (directory, date, wavelength))
 
 #spec_std = np.load('C:/Users/Brendan/Desktop/spec_std.npy')
 #spec_segs = np.load('C:/Users/Brendan/Desktop/spec_9_test.npy')
@@ -48,7 +52,8 @@ pixmed=np.empty(DATA.shape[2])  # Initialize array to hold median pixel values
 
 
 #pixmed = DATA[:,164,246] / Ex  # extract timeseries + normalize by exposure time
-pixmed = DATA[10,10,:]  # Jacks
+pixmed = DATA[:,100,100] / Ex  # extract timeseries + normalize by exposure time
+#pixmed = DATA[10,10,:]  # Jacks
 
 v=pixmed  # 094/131/335 -- intensities too low to trim off negative values
 t=TIME
@@ -63,7 +68,7 @@ for n in range(len(num_seg)):
     n_segments = num_seg[n]  # break data into 12 segments of equal length
     r = len(t_interp)
     rem = r % n_segments
-    freq_size = (r - rem) / n_segments 
+    freq_size = (r - rem) // n_segments 
     
     sample_freq = fftpack.fftfreq(freq_size, d=time_step)
     pidxs = np.where(sample_freq > 0)
@@ -104,17 +109,21 @@ for n in range(len(num_seg)):
     #temp /= n_segments
     #spec_geo = np.power(10,temp)
     
+    
     if n_segments == 1:
         avg_array1 = avg_array
         #avg_array1 = spec_geo
     elif n_segments == 3:
-        avg_array3 = avg_array/3.
+        #avg_array3 = avg_array/3.
+        avg_array3 = avg_array
         #avg_array3 = spec_geo/3.
     elif n_segments == 6:
-        avg_array6 = avg_array/6.
+        #avg_array6 = avg_array/6.
+        avg_array6 = avg_array
         #avg_array6 = spec_geo/6.
     elif n_segments == 12:
-        avg_array12 = avg_array/12.
+        #avg_array12 = avg_array/12.
+        avg_array12 = avg_array
         #avg_array12 = spec_geo/12.
 
 #spectra_seg[jj-245+(ii-163)*3] = powers  # construct 3D array with averaged FFTs from each pixel
